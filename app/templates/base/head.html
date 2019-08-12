@@ -1,0 +1,20 @@
+<head>
+    {% if subtitle %}
+    <title>Hafta - {{subtitle}}</title>
+    {% else %}
+    <title>Hafta</title>
+    {% endif %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter-ui.css">	  
+    <link rel="stylesheet" href="{{ url_for('static' , filename='css/bulma.min.css')}}">
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.5.2/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static' , filename = 'css/main.css') }}">
+    
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+</head>

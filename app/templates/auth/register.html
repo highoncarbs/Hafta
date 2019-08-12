@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include 'base/head.html' %}
+
+<body>
+    <section class="section">
+        <div class="container has-text-centered">
+            <p class="libre title">Hafta</p>
+        </div>
+    </section>
+    <div class="content">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-one-quarter-desktop is-centered">
+                    <div class="box">
+                        <form action="{{ url_for('auth.register')}}" method="POST">
+                            {{form.hidden_tag()}}
+                            <div class="field">
+                                <div class="control">
+                                    <label for="username" class="libre label">Username</label>
+                                    {{form.username(class="input" , placeholder="Enter Username")}}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <label for="password" class="libre label">Key</label>
+                                    {{form.key(class="input" , placeholder="Enter Key")}}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <label for="password" class="libre label">Password</label>
+                                    {{form.password(class="input" , placeholder="Enter Password")}}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <label for="password" class="libre label">Retype Password</label>
+                                    {{form.password2(class="input" , placeholder="Retype Password")}}
+                                </div>
+                            </div>
+                            <br>
+                            <div class="level">
+                                <div class="level-start">
+                                    <div class="level-item">
+                                        <div class="control">
+                                            {{form.submit(class="button is-black")}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="level-end">
+                                    <div class="level-item">
+                                        <a href="{{ url_for( 'auth.login')}}" class="button is-text">Login?</a>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

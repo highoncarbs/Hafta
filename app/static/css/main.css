@@ -1,0 +1,38 @@
+
+.brand {
+    font-family: 'Inter UI', serif;
+    font-weight: 700;
+    letter-spacing: -4px;
+}
+
+body,html {
+    font-family: 'Inter UI', 'Roboto', sans-serif !important;
+}
+
+.libre {
+    font-family: 'Libre Baskerville', serif;
+}
+
+.navbar-item {
+    font-weight: 700;
+    margin-left: 2rem;
+}
+
+.icon-btn {
+    margin-right: 10px !important;
+    margin-bottom: 2px !important;
+    vertical-align: middle !important;
+}
+
+.icon-btn-in {
+    padding: 2px;
+    margin-right: 10px !important;
+}
+
+.content {
+    margin-top: 2rem;
+}
+
+i {
+    font-weight: 400i;
+}
