@@ -1,12 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Hafta</title>
-</head>
-<body>
+{% include 'base/head.html'%}
+<body class="hero is-fullheight">
+        <div class="navbar is-hidden-desktop ">
+            <div class="container" >
+                <div class="navbar-brand has-background-black ">
+                    <a class="navbar-item " href="{{url_for('main.home')}}" style="font-weight:bold;">
+                        <div class="brand">
+                            <p class="title rubik has-text-white" style="letter-spacing: -2px;">a</p>
+                        </div>
     
-</body>
+                    </a>
+                    <span class="navbar-burger burger has-text-white" data-target="navMenu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                </div>
+                <div id="navMenu" class="navbar-menu is-shadowless is-transparent has-navbar-fixed-top animated fadeIn"
+                    >
+    
+                    <div class="navbar-end is-size-5 is-center" style="padding-left:1rem; padding-top:2rem;">
+                        <aside class="menu" style="margin-bottom:2rem;">
+                            <p class="menu-label">
+                                Current Project
+                            </p>
+                            <div class="project-select rubik " style="margin-bottom:2rem;">
+                                <div class="dropdown is-hoverable">
+                                    <div class="dropdown-trigger">
+                                        <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                                            <span class="icon is-small">
+                                                <i data-feather="arrow-down" aria-hidden="true"></i>
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                        <div class="dropdown-content">
+                                          
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="menu-label">
+                                General
+                            </p>
+                            <ul class="menu-list is-size-5  has-text-weight-bold roboto">
+                                <li><a href="{{url_for('main.home')}}"><span class="icon icon-btn"><i
+                                                data-feather="zap"></i></span> Dashboard</a></li>
+                            
+                            </ul>
+                        </aside>
+    
+                        <aside class="menu" style="margin-bottom:2rem;">
+                            <p class="menu-label">
+                                Help
+                            </p>
+                            <ul class="menu-list is-size-5  has-text-weight-bold roboto">
+                                <li><a href="https://github.com/PadamSethia/automato/issues"><span class="icon icon-btn"><i data-feather="help-circle"></i></span> Raise Issue</a>
+                                </li>
+                                <li><a><span class="icon icon-btn"><i data-feather="life-buoy"></i></span> FAQ</a></li>
+                            </ul>
+                        </aside>
+    
+                        <aside class="menu is-fixed-bottom" style="margin-bottom:2rem;">
+                            <p class="menu-label">
+                                User - {{ current_user.username }}
+                            </p>
+                            <ul class="menu-list is-size-5  has-text-weight-bold roboto">
+                              
+                                <li><a href="{{url_for('auth.logout')}}"><span class="icon icon-btn"><i
+                                                data-feather="log-out"></i></span> Log Out</a></li>
+                            </ul>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            (function () {
+                var burger = document.querySelector('.burger');
+                var nav = document.querySelector('#' + burger.dataset.target);
+                burger.addEventListener('click', function () {
+                    burger.classList.toggle('is-active');
+                    nav.classList.toggle('is-active');
+                });
+            })();
+        </script>
+        <div class="columns  ">
+            <div class="column is-2 is-fullheight is-sidebar-menu is-hidden-touch has-background-black">
+                <div class="brand" style="margin-bottom : 2rem;">
+                    <p class="libre title has-text-white">Hafta</p>
+                    <p class="menu-label">
+                        Current Project
+                    </p>
+                    <div class="project-select rubik ">
+                        <div class="dropdown is-hoverable">
+                            <div class="dropdown-trigger">
+                                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                                    <span class="icon is-small">
+                                        <i data-feather="arrow-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                <div class="dropdown-content">
+                                  
+    
+    
+                                    <hr class="dropdown-divider">
+                                    <a href="{{ url_for('main.home')}}" class="dropdown-item">
+                                        All Projects
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <aside class="menu" style="margin-bottom:2rem;">
+                    <p class="menu-label">
+                        General
+                    </p>
+                    <ul class="menu-list is-size-5  has-text-weight-bold roboto">
+                        <li><a href="{{url_for('main.home')}}"><span class="icon icon-btn"><i data-feather="zap"></i></span>
+                                Dashboard</a></li>   
+                    </ul>
+                </aside>
+    
+                <aside class="menu" style="margin-bottom:2rem;">
+                    <p class="menu-label">
+                        Help
+                    </p>
+                    <ul class="menu-list is-size-5  has-text-weight-bold roboto">
+                        <li><a href="https://github.com/PadamSethia/automato/issues"><span class="icon icon-btn"><i data-feather="help-circle"></i></span> Raise Issue</a></li>
+                        <li><a><span class="icon icon-btn"><i data-feather="life-buoy"></i></span> FAQ</a></li>
+                    </ul>
+                </aside>
+    
+                <aside class="menu is-fixed-bottom">
+                    <p class="menu-label">
+                        User - <span class="tag is-light has-text-weight-bold">{{ current_user.username }}</span> 
+                    </p>
+                    <ul class="menu-list is-size-5  has-text-weight-bold roboto">
+                        <li><a href="{{url_for('main.home')}}"><span class="icon icon-btn"><i
+                                        data-feather="settings"></i></span> Settings</a></li>
+                       
+                    </ul>
+                </aside>
+    
+    
+            </div>
+            <div class="column is-main-content no-scroll">
+                <div class="container" style="margin-top:2rem;">
+                    <div class="container animated fadeIn">
+                        {% block content %}
+    
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+        <script>
+            feather.replace()
+        </script>
+    </body>
+
 </html>

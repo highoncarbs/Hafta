@@ -36,3 +36,26 @@ body,html {
 i {
     font-weight: 400i;
 }
+
+.is-sidebar-menu {
+    padding: 2.5rem;
+    background-color: mintcream;
+    position: sticky;
+    top: 0;
+    border-right : 2px solid rgba(0,0,0,0.1);
+}
+  .is-sidebar-menu li a {
+    color: black;
+  }
+  
+  .columns.is-fullheight {
+    min-height: 100vh;
+    max-height: 100% !important;
+    height: 100% !important;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+  }
+  .columns.is-fullheight .column {
+    overflow-y: auto;
+  }
