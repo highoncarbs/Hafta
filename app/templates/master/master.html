@@ -1,0 +1,87 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<script src="{{ url_for('static' , filename ='js/company.js' )}}"></script>
+<script src="{{ url_for('static' , filename ='js/location.js' )}}"></script>
+
+
+<section class="section">
+    <div id="master">
+        <div class="tabs">
+            <ul>
+
+                <li>
+                    <router-link to="/company">Company</router-link>
+                </li>
+                <li>
+                    <router-link to="/location">Location</router-link>
+                </li>
+                <li>
+                    <router-link to="/category">Emp. Category</router-link>
+                </li>
+                <li>
+                    <router-link to="/appointment">Appointment</router-link>
+                </li>
+                <li>
+                    <router-link to="/department">Department</router-link>
+                </li>
+                <li>
+                    <router-link to="/post">Post</router-link>
+                </li>
+                <li>
+                    <router-link to="/benefits">Benefits</router-link>
+                </li>
+                <li>
+                    <router-link to="/mode">Mode of Pay</router-link>
+                </li>
+                <li>
+                    <router-link to="/performance">Perfomance Factor</router-link>
+                </li>
+
+
+            </ul>
+        </div>
+        <br>
+        <!-- route outlet -->
+        <!-- component matched by the route will render here -->
+        <router-view></router-view>
+
+
+    </div>
+
+</section>
+
+<script>
+    // 2. Define some routes
+    // Each route should map to a component. The "component" can
+    // either be an actual component constructor created via
+    // `Vue.extend()`, or just a component options object.
+    // We'll talk about nested routes later.
+    const routes = [
+        { path: '/company', component: CompanyForm },
+        {
+            path: '/location', component: LocationForm,
+
+        }
+    ]
+
+    // 3. Create the router instance and pass the `routes` option
+    // You can pass in additional options here, but let's
+    // keep it simple for now.
+    const router = new VueRouter({
+        routes // short for `routes: routes`
+    })
+
+    // 4. Create and mount the root instance.
+    // Make sure to inject the router with the router option to make the
+    // whole app router-aware.
+    const app = new Vue({
+        router,
+        components: {
+            'company-form': CompanyForm,
+            'location-form': LocationForm,
+        }
+    }).$mount('#master')
+
+
+</script>
+{% endblock %}

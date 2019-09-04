@@ -12,3 +12,8 @@ from app import db
 @login_required
 def home():
     return render_template('base/base.html', title=('Home'))
+
+@bp.route('/employees' , methods=['GET'])
+@login_required
+def employees():
+    return render_template('employees/index.html')

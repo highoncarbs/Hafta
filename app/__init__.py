@@ -87,9 +87,11 @@ from flask_login import LoginManager
 from flask_moment import Moment 
 from config import Config 
 from werkzeug.debug import DebuggedApplication
+from flask_marshmallow import Marshmallow
 
 db = SQLAlchemy()
 migrate = Migrate()
+ma = Marshmallow()
 
 login = LoginManager()
 login.login_view = 'auth.login'
@@ -105,14 +107,19 @@ def create_app(config_class=Config):
     migrate.init_app(app , db)
     login.init_app(app)
     moment.init_app(app)
+    ma.init_app(app)
+    
     with app.app_context():
         db.create_all()
         
-    from app.auth import bp as auth_bp
-    app.register_blueprint(auth_bp, url_prefix='/auth')
-    
-    from app.main import bp as main_bp
-    app.register_blueprint(main_bp, url_prefix='/')
+        from app.auth import bp as auth_bp
+        app.register_blueprint(auth_bp, url_prefix='/auth')
+        
+        from app.main import bp as main_bp
+        app.register_blueprint(main_bp, url_prefix='/')
+
+        from app.master import bp as master_bp
+        app.register_blueprint(master_bp, url_prefix='/master')
     
     
     return app

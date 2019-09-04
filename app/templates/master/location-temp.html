@@ -1,0 +1,92 @@
+<template id="location-template">
+        <div>
+                <div class="modal animated is-active fadeIn" v-show="modal" >
+                    <div class="modal-background" @click="modal = !modal"></div>
+                    <div class="modal-content">
+            
+                        <div class="box">
+                            <p class="is-size-5">Edit Location</p>
+                            <br>
+                            <div class="field">
+                                <label class="label">Location</label>
+                                <input class="input" type="text" >
+                            </div>
+                            <br>
+                            <div class="field is-grouped">
+                                <p class="control">
+                                    <a class="button is-black"><span class="icon icon-btn icon-btn-in"><i
+                                                data-feather="plus"></i></span>Save
+                                    </a>
+                                </p>
+                               
+                                <p class="control">
+                                    <a class="button" @click="modal = !modal"><span class="icon icon-btn icon-btn-in"><i
+                                                data-feather="x"></i></span>Cancel
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        <button class="modal-close is-large" aria-label="close" @click="modal = !modal"></button>
+            
+                    </div>
+                   
+                </div>
+                <div v-if="form.mssg" class="notification animated fadeIn">
+                                    <p><span class="icon icon-btn" ><i data-feather="alert-circle" ></i></span>  [[ form.mssg['success'] ]]</p>
+                                    
+                                </div>
+                  <form id="data_entry" novalidate="true" @submit="submitData" v-show="view">
+                            <div v-if="form.errors.length" class="notification">
+                                    <p><span class="icon icon-btn"><i data-feather="slash" ></i></span>  ERROR</p>
+                                    <ul>
+                                            <li v-for="error in form.errors">[[ error ]]</li>
+                                        </ul>
+                                </div>
+                            
+                    <div class="field">
+                        <div class="control">
+                            <label for="" class="label">Location</label>
+                            <input type="text" class="input" v-model="form.name" placeholder="Enter Location">
+                        </div>
+                       
+                    </div>
+                    <div class="field is-grouped">
+                            <div class="control">
+                                    <button type="submit" @click="submitData" class="button is-black"><span class="icon icon-btn icon-btn-in"><i
+                                    data-feather="plus"></i></span> Add</button>
+                                </div>
+                                <div class="control">
+                                        <button  class="button" v-on:click="view = !view" @click="getData"><span class="icon icon-btn icon-btn-in"><i
+                                        data-feather="eye"   ></i></span> View</button>
+                                    </div>
+                    </div>
+                </form> 
+                <div v-show="!view"> 
+                <div class="table-container" id="data_view" >
+                
+                <table class="table is-bordered">
+                    <thead>
+                        <tr>
+                            <td></td>
+                            <td>Name</td>
+                            <td>Action</td>
+                        </tr>
+            
+                    </thead>
+                    <tbody>
+                        <tr v-for="loc in location">
+                            <td></td>
+                            <td>[[ loc.name]]</td>
+                            <td>
+                            <div class="buttons">
+                <div class="button" @click="editData([[loc.id]])"><span class="icon icon-btn icon-btn-in"><i data-feather="edit-2"></i></span> </div>
+                <div class="button" @click="deleteData([[id]])"><span class="icon icon-btn icon-btn-in"><i data-feather="x"></i></span></div>
+            </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            </div>
+            </div>
+</template>

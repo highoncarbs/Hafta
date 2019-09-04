@@ -14,8 +14,10 @@ body,html {
 }
 
 .navbar-item {
-    font-weight: 700;
-    margin-left: 2rem;
+}
+
+svg{
+    stroke-width: 1px;
 }
 
 .icon-btn {
@@ -26,7 +28,6 @@ body,html {
 
 .icon-btn-in {
     padding: 2px;
-    margin-right: 10px !important;
 }
 
 .content {
@@ -39,14 +40,12 @@ i {
 
 .is-sidebar-menu {
     padding: 2.5rem;
-    background-color: mintcream;
     position: sticky;
     top: 0;
+    
+
     border-right : 2px solid rgba(0,0,0,0.1);
 }
-  .is-sidebar-menu li a {
-    color: black;
-  }
   
   .columns.is-fullheight {
     min-height: 100vh;
@@ -58,4 +57,64 @@ i {
   }
   .columns.is-fullheight .column {
     overflow-y: auto;
+  }
+
+  .box{
+      border-radius: 0 !important;
+  }
+
+  .router-link-active {
+    font-weight: 600;
+    border-bottom: 1px solid black !important;
+  }
+  
+  .hero .tabs ul{
+      border-bottom: 1px solid #dbdbdb !important;
+  }
+
+  .button{
+      font-family: 'Inter';
+  }
+
+  .button svg{
+      stroke-width: 1.5px !important;
+  }
+
+  .notification{
+      padding: 1rem !important; 
+  }
+
+  .label{
+      font-weight: 600 !important;
+  }
+
+  .table-container {
+    overflow: visible;
+}
+
+/* Table Sizer */
+.table thead th.is-1 {
+    width: 1em !important;
+  }
+  .table thead th.is-2 {
+    width: 2.5em !important;
+  }
+  .table thead th.is-3 {
+    width: 3em !important;
+  }
+  .table thead th.is-4 {
+    width: 4em !important;
+  }
+  .table thead th.is-5 {
+    width: 5em !important;
+  }
+  .table thead th.is-6 {
+    width: 6em !important;
+  }
+  .table thead th.is-7 {
+    width: 20% !important;
+  }
+  
+  .is-underline{
+      text-decoration: underline;
   }
