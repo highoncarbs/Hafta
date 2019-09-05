@@ -2,6 +2,14 @@
 {% block content %}
 <script src="{{ url_for('static' , filename ='js/company.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/location.js' )}}"></script>
+<script src="{{ url_for('static' , filename ='js/empcat.js' )}}"></script>
+
+<script src="{{ url_for('static' , filename ='js/appointment.js' )}}"></script>
+<script src="{{ url_for('static' , filename ='js/department.js' )}}"></script>
+<script src="{{ url_for('static' , filename ='js/post.js' )}}"></script>
+<script src="{{ url_for('static' , filename ='js/benefits.js' )}}"></script>
+<script src="{{ url_for('static' , filename ='js/pay.js' )}}"></script>
+<script src="{{ url_for('static' , filename ='js/performance.js' )}}"></script>
 
 
 <section class="section">
@@ -31,7 +39,7 @@
                     <router-link to="/benefits">Benefits</router-link>
                 </li>
                 <li>
-                    <router-link to="/mode">Mode of Pay</router-link>
+                    <router-link to="/modeofpay">Mode of Pay</router-link>
                 </li>
                 <li>
                     <router-link to="/performance">Perfomance Factor</router-link>
@@ -58,10 +66,18 @@
     // We'll talk about nested routes later.
     const routes = [
         { path: '/company', component: CompanyForm },
-        {
-            path: '/location', component: LocationForm,
+        { path: '/location', component: LocationForm },
+        { path: '/category', component: EmpCatForm },
+        { path: '/appointment', component: AppointmentForm },
+        { path: '/department', component: DepartmentForm },
+        { path: '/post', component: PostForm },
+        { path: '/benefits', component: BenefitsForm },
+        { path: '/modeofpay', component: PayForm },
+        { path: '/performance', component: PerformanceForm },
 
-        }
+
+
+
     ]
 
     // 3. Create the router instance and pass the `routes` option
@@ -79,6 +95,16 @@
         components: {
             'company-form': CompanyForm,
             'location-form': LocationForm,
+            'category-form': EmpCatForm,
+            'appointment-form': AppointmentForm,
+            'department-form': DepartmentForm,
+            'post-form': PostForm,
+            'benefits-form': BenefitsForm,
+            'pay-form': PayForm,
+            'performance-form': PerformanceForm,
+
+
+
         }
     }).$mount('#master')
 

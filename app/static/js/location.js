@@ -11,10 +11,10 @@ const LocationForm =
         <div class="box">
 
             <div v-if="edit.mssg" class="notification animated fadeIn">
-                <p><span class="icon icon-btn" v-if="edit.mssg['success']"><i
-                            data-feather="alert-circle"></i></span> [[ edit.mssg['success'] ]]
+                <p v-if="edit.mssg['success']">
+                             [[ edit.mssg['success'] ]]
                 </p>
-                <p class="icon icon-btn" v-if="edit.mssg['message']">[[ edit.mssg['message'] ]]
+                <p class="is-inderline has-text-semibold" v-if="edit.mssg['message']">[[ edit.mssg['message'] ]]
                 </p>
 
             </div>
@@ -28,7 +28,7 @@ const LocationForm =
                 <br>
                 <div class="field">
                     <label class="label">Location</label>
-                    <input class="input" v-model="edit.name" type="text">
+                    <input class="input" ref="editname" v-model="edit.name" type="text">
                 </div>
                 <br>
                 <div class="field is-grouped">
@@ -71,7 +71,7 @@ const LocationForm =
     <div class="field">
         <div class="control">
             <label for="" class="label">Location</label>
-            <input type="text" class="input" v-model="form.name" placeholder="Enter Location">
+            <input type="text" class="input" v-model="form.name" ref="name" placeholder="Enter Location">
         </div>
 
     </div>
@@ -178,10 +178,11 @@ const LocationForm =
     delimiters: ["[[", "]]"], 
     mounted() {
         feather.replace();
+        this.$refs.name.focus();
     },
     methods: {
         checkData(e) {
-            if (this.form.name && this.form.location) {
+            if (this.form.name) {
                 return true;
             }
 
@@ -234,6 +235,7 @@ const LocationForm =
             this.modal = true
             this.edit.name = data.name
             this.edit.id = data.id
+            this.$refs.editname.focus();
 
         },
         saveEditData(e){

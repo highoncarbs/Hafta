@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask import render_template, redirect, url_for, request, session, jsonify
 from flask_login import login_user, logout_user, current_user
 from app.master import bp
-from app.master.model import Company, Location, LocationSchema , CompanySchema
+from app.master.model import Company, Location, LocationSchema , CompanySchema , EmployeeCategory , EmployeeCatSchema
 from app import db, ma
 
 
@@ -194,3 +194,96 @@ def delete_location():
 
     else:
         return jsonify({'message': 'Invalid HTTP method . Use POST instead.'})
+
+# Emp. Cat Master Routes
+
+
+@bp.route('/get/cat', methods=['GET'])
+def get_cat():
+    if request.method == 'GET':
+        data_schema = EmployeeCatSchema(many=True)
+        data = EmployeeCategory.query.all()
+        print(data)
+        json_data = data_schema.dump(data)
+        print(json_data)
+
+        return jsonify(json_data)
+
+
+@bp.route('/add/cat', methods=['POST'])
+def add_cat():
+    if request.method == 'POST':
+        payload = request.json
+        if payload['name'] is not None:
+
+            check_data = EmployeeCategory.query.filter_by(name=payload['name'])
+            if check_data.first():
+                return jsonify({'message': 'Emp. Category - '+check_data.first().name+' already exists.'})
+            else:
+                try:
+                    new_data = EmployeeCategory(payload['name'])
+                    db.session.add(new_data)
+                    db.session.commit()
+                    return jsonify({'success': 'Data Added'})
+
+                except Exception as e:
+                    db.session.rollback()
+                    db.session.close()
+                    return jsonify({'message': 'Something unexpected happened. Check logs', 'log': str(e)})
+        else:
+            return jsonify({'message': 'Empty Data.'})
+
+    else:
+        return jsonify({'message': 'Invalid HTTP method . Use POST instead.'})
+
+
+@bp.route('/edit/cat', methods=['POST'])
+def edit_cat():
+    if request.method == 'POST':
+        payload = request.json
+        if payload['name'] is not None:
+
+            check_data = EmployeeCategory.query.filter_by(name=payload['name'])
+            if check_data.first():
+                return jsonify({'message': 'Emp. Category - '+check_data.first().name+' already exists.'})
+            else:
+                try:
+                    new_data = EmployeeCategory.query.filter_by(
+                        id=payload['id']).first()
+                    new_data.name = payload['name']
+                    db.session.commit()
+                    return jsonify({'success': 'Data Updated'})
+
+                except Exception as e:
+                    db.session.rollback()
+                    db.session.close()
+                    return jsonify({'message': 'Something unexpected happened. Check logs', 'log': str(e)})
+        else:
+            return jsonify({'message': 'Empty Data.'})
+
+    else:
+        return jsonify({'message': 'Invalid HTTP method . Use POST instead.'})
+
+
+@bp.route('/delete/cat', methods=['POST'])
+def delete_cat():
+    if request.method == 'POST':
+        payload = request.json
+        print(payload['id'])
+        check_data = EmployeeCategory.query.filter_by(id=payload['id'])
+        if check_data.first():
+            try:
+                print(check_data.first().name)
+                check_data.delete()
+                db.session.commit()
+                return jsonify({'success': 'Data deleted'})
+            except Exception as e:
+                db.session.rollback()
+                db.session.close()
+                return jsonify({'message': 'Something unexpected happened. Check logs', 'log': str(e)})
+        else:
+            return jsonify({'message': 'Data does not exist.'})
+
+    else:
+        return jsonify({'message': 'Invalid HTTP method . Use POST instead.'})
+

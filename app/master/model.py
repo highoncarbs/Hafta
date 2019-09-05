@@ -91,7 +91,7 @@ class PostSchema(ma.ModelSchema):
         model = Post
 
 
-class EmployeeBenefit(db.Model):
+class Benefit(db.Model):
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), unique=True)
@@ -102,7 +102,7 @@ class EmployeeBenefit(db.Model):
 
 class BenefitSchema(ma.ModelSchema):
     class Meta:
-        model = EmployeeBenefit
+        model = Benefit
 
 
 class ModeOfPay(db.Model):
@@ -119,7 +119,7 @@ class PaySchema(ma.ModelSchema):
         model = ModeOfPay
 
 
-class PerformanceFactor(db.Model):
+class Performance(db.Model):
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), unique=True)
@@ -130,7 +130,7 @@ class PerformanceFactor(db.Model):
 
 class PerformanceSchema(ma.ModelSchema):
     class Meta:
-        model = PerformanceFactor
+        model = Performance
 
 
 class EmployeeCatSchema(ma.ModelSchema):

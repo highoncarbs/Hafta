@@ -1,4 +1,4 @@
-const CompanyForm =
+const BenefitsForm =
 {
     template: `  
             <div>
@@ -11,40 +11,24 @@ const CompanyForm =
         <div class="box">
 
             <div v-if="edit.mssg" class="notification animated fadeIn">
-                <p><span class="icon icon-btn" v-if="edit.mssg['success']"><i
-                            data-feather="alert-circle"></i></span> [[ edit.mssg['success'] ]]
+            <p v-if="edit.mssg['success']">
+                             [[ edit.mssg['success'] ]]
                 </p>
-                <p class="icon icon-btn" v-if="edit.mssg['message']">[[ edit.mssg['message'] ]]
+                <p class="is-inderline has-text-semibold" v-if="edit.mssg['message']">[[ edit.mssg['message'] ]]
                 </p>
-
             </div>
-            <form id="data_entry" novalidate="true" @submit="submitData">
+            <form id="data_entry" novalidate="true" @submit="saveEditData">
                 <div v-if="edit.errors.length" class="notification animated fadeIn">ERROR</p>
                     <ul>
                         <li v-for="error in edit.errors" class="is-underline">[[ error.message ]]</li>
                     </ul>
                 </div>
-                <p class="is-size-5">Edit Company</p>
+                <p class="is-size-5">Edit Benefits</p>
                 <br>
                 <div class="field">
-        <div class="control">
-            <label for="" class="label">Company</label>
-            <input type="text" class="input" v-model="edit.name" v-bind:class="[edit.name == '' ? 'is-danger' : '']" placeholder="Enter Comapny">
-        </div>
-
-    </div>
-    <div class="field">
-        <div class="control is-expanded">
-            <label for="" class="label">Location</label>
-            <div class="select is-fullwidth">
-                <select  v-model="edit.location" v-bind:class="[edit.location == -1 ? 'is-danger' : '']">
-                    <option value="-1" selected>Select Location</option>
-                    <option v-for="opt in options" v-bind:value="opt.id">[[opt.name]]</option>
-                </select>
-            </div>
-        </div>
-
-    </div>
+                    <label class="label">Benefits</label>
+                    <input class="input" ref="name" v-model="edit.name" type="text">
+                </div>
                 <br>
                 <div class="field is-grouped">
                     <p class="control">
@@ -69,13 +53,15 @@ const CompanyForm =
 </div>
 
 <!-- Entry Form -->
+
+<form id="data_entry" novalidate="true" @submit="submitData ;" v-show="view">
 <div v-if="form.mssg" class="notification animated fadeIn">
     <p v-if="form.mssg.success">[[ form.mssg['success'] ]]</p>
     <p v-if="form.mssg.message" class="is-underline">[[ form.mssg['message'] ]]</p>
 
 </div>
-<form id="data_entry" novalidate="true" @submit="submitData ;" v-show="view">
-    <div v-if="form.errors.length" class="notification">
+    
+<div v-if="form.errors.length" class="notification">
         <p class="has-text-weight-semibold"> ERROR</p>
         <ul>
             <li v-for="error in form.errors " class="is-underline">[[ error ]]</li>
@@ -84,20 +70,8 @@ const CompanyForm =
 
     <div class="field">
         <div class="control">
-            <label for="" class="label">Company</label>
-            <input type="text" class="input" ref="name" v-model="form.name" v-bind:class="[form.name == '' ? 'is-danger' : '']" placeholder="Enter Comapny">
-        </div>
-
-    </div>
-    <div class="field">
-        <div class="control is-expanded">
-            <label for="" class="label">Location</label>
-            <div class="select is-fullwidth">
-                <select  v-model="form.location" v-bind:class="[form.location == -1 ? 'is-danger' : '']">
-                    <option value="-1" selected>Select Location</option>
-                    <option v-for="opt in options" v-bind:value="opt.id">[[opt.name]]</option>
-                </select>
-            </div>
+            <label for="" class="label">Benefits</label>
+            <input type="text" class="input"ref="name" v-model="form.name" placeholder="Enter Benefits">
         </div>
 
     </div>
@@ -107,7 +81,7 @@ const CompanyForm =
                     class="icon icon-btn icon-btn-in"><i data-feather="plus"></i></span> Add</button>
         </div>
         <div class="control">
-            <button class="button" v-on:click="view = !view ; form.name = null ; form.location = -1; " @click="getData"><span
+            <button class="button" v-on:click="view = !view" @click="getData"><span
                     class="icon icon-btn icon-btn-in"><i data-feather="eye"></i></span> View</button>
         </div>
     </div>
@@ -123,24 +97,19 @@ const CompanyForm =
         </div>
         <br>
     <div class="table-container" id="data_view">
-       
+
         <table class="table is-bordered is-fullwidth">
             <thead>
                 <tr>
-                    <th v-on:click="sortTable()">Company</th>
-                    <th v-on:click="sortTable()">Location</th>
-
+                    <th v-on:click="sortTable()">Name</th>
                     <th>Action</th>
                 </tr>
 
             </thead>
             <tbody>
-                
                 <tr v-for="( row ,index ) in data" v-bind:index="index" @click="selectRow(row)"
                     v:bind:class="selected : isSelected">
                     <td>[[ row.name]]</td>
-                    <td>[[ row.location[0].name ]] </td>
-
                     <td>
                         <div class="buttons">
                             <div class="button" @click="editData(row)">Edit</div>
@@ -187,7 +156,6 @@ const CompanyForm =
                 errors: [],
                 id : null,
                 name: null,
-                location: -1,
                 mssg: null
             },
             data: null,
@@ -195,13 +163,11 @@ const CompanyForm =
             edit: {
                 errors: [],
                 name: null,
-                mssg: null,
-                location: null,
+                mssg: null
             },
             confirm: false,
             ascending: false,
             sortColumn: '',
-            options: null
         }
     },
     watch:{
@@ -212,50 +178,36 @@ const CompanyForm =
     delimiters: ["[[", "]]"], 
     mounted() {
         feather.replace();
-        var formdata = this;
-        axios.get('/master/get/location')
-            .then( function(response){
-                formdata.options = response.data;
-            })
-        this.focusInput()
+        this.focusInput();
     },
-    methods: {
+    methods: {      
         focusInput(){
             this.$refs.name.focus();
-        },
-        checkData() {
+        }  ,
+        checkData(e) {
+            if (this.form.name) {
+                return true;
+            }
+
             this.form.errors = []
 
-            
-
-            
             if (!this.form.name) {
-                this.form.name = '';
-                this.form.errors.push('Company required');
-            }
-            if (!this.form.location || this.form.location == -1)  {
-                this.form.location = -1;
-                this.form.errors.push('Location required');
-            }
-
-            if (this.form.name && this.form.location) {
-                return true;
+                this.form.errors.push('Benefits required');
             }
            
 
         },
         
         submitData(e) {
-            this.checkData();
+            this.checkData(e);
             var formdata = this ;
+
             if (this.form.errors.length == 0) {
                 axios
-                    .post('/master/add/company', this.form)
+                    .post('/master/add/benefits', this.form)
                     .then(function (response) {
                         formdata.form.mssg = response['data']
                         formdata.form.name = null;
-                        formdata.form.location = -1;
-
                         setTimeout( () => { formdata.form.mssg = null } , 3000);
                     })
                     .catch(function (error) {
@@ -263,13 +215,15 @@ const CompanyForm =
                     })
             }
             e.preventDefault();
+            this.focusInput()
         },
         getData(e){
             const formdata = this ;
 
             axios
-                    .get('/master/get/company')
+                    .get('/master/get/benefits')
                     .then(function (response) {
+                        console.log(response);
                         formdata.data = response['data']
 
                     })
@@ -285,23 +239,20 @@ const CompanyForm =
             this.modal = true
             this.edit.name = data.name
             this.edit.id = data.id
-            this.edit.location= data.location[0].id
-
 
         },
         saveEditData(e){
-            var formdata = this;
+            const formdata = this;
             var data  = this.data;
-        
             if (this.edit.name) {
                 
                 axios
-                .post('/master/edit/company' , this.edit)
+                .post('/master/edit/benefits' , this.edit)
                 .then(function (response) {
-                    if(response.data['success']){
+                    console.log(response.data.success)
+                    if(response.data.success){
                         data = data.filter( function(x){ return x.id === formdata.edit.id } )
                         data[0].name = formdata.edit.name
-                        data[0].location = [response.data['payload']]
                         formdata.modal =     !formdata.modal;
                     }
                     else{
@@ -312,14 +263,14 @@ const CompanyForm =
                 .catch(function (error) {
                     console.log(error)
                 })
-                return true;
             }
 
 
             this.edit.errors = []
+            console.log(this.edit.name)
 
             if (this.edit.name == "") {
-                this.edit.errors.push('Location required');
+                this.edit.errors.push('Benefits required');
                 
             }
           
@@ -327,14 +278,15 @@ const CompanyForm =
             
         },
         deleteData(data , index){
-            const removeId = data.id; 
-            var loc = this.data; 
+            // const removeId = data.id; 
+            console.log(data);
+            var datalist = this.data; 
 
             axios
-                    .post('/master/delete/company', data)
+                    .post('/master/delete/benefits', data)
                     .then(function (response) {
                         if(response.data.success){
-                            loc.splice(index, 1)
+                            datalist.splice(index, 1)
                         }
                     })
                     .catch(function (error) {

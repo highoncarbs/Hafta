@@ -4,24 +4,28 @@
 
 <body>
     <section class="section">
-        <div class="container has-text-centered">
-            <p class="libre is-size-4">Hafta</p>
-        
-            <div class="columns is-centered" style="margin-top:3rem;">
+        <div class="container">
+
+
+            <div class="columns is-centered" >
                 <div class="column is-one-quarter-desktop is-centered">
-                    <div class="box">
+                    <p class="libre is-size-3">Hafta</p>
+                    <br>
+                    <p class=" is-size-5">Welcome back. <br>
+                        Please login in to continue</p>
+                    <div class="" style="margin-top:3rem;">
                         <form action="{{ url_for('auth.login')}}" method="POST">
-                                {{form.hidden_tag()}}
+                            {{form.hidden_tag()}}
 
                             <div class="field">
                                 <div class="control">
-                                    <label for="username" class="libre label">Username</label>
+                                    <label for="username" class="label">Username</label>
                                     {{form.username(class="input" , placeholder="Enter Username")}}
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="control">
-                                    <label for="password" class="libre label">Password</label>
+                                    <label for="password" class="label">Password</label>
                                     {{form.password(class="input" , placeholder="Enter Password")}}
                                 </div>
                             </div>
@@ -29,9 +33,9 @@
                             <div class="level">
                                 <div class="level-start">
                                     <div class="level-item">
-                                            <div class="control">
-                                                    {{form.submit(class="button is-black")}}
-                                                </div>
+                                        <div class="control">
+                                            {{form.submit(class="button is-black")}}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="level-end">
@@ -39,7 +43,7 @@
                                         <a href="{{ url_for( 'auth.register')}}" class="button is-text">Sign Up?</a>
                                     </div>
                                 </div>
-                                
+
 
                             </div>
                         </form>
@@ -48,7 +52,11 @@
             </div>
         </div>
     </section>
-    
+    <footer class="footer has-background-white has-text-centered is-size-6">
+        <p>Payroll & HR software for Indian Businesses.</p>
+        <p><a href="mailto:padamsethia5@gmail.com" class="is-underline">Contact</a> for a license. </p>
+    </footer>
+
 </body>
 
 </html>
