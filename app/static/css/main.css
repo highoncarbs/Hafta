@@ -1,27 +1,26 @@
-
 .brand {
     font-family: 'Inter UI', serif;
     font-weight: 700;
     letter-spacing: -4px;
 }
 
-body,html {
+body, html {
     font-family: 'Inter UI', 'Roboto', sans-serif !important;
 }
 
-.input{
-  font-family: 'Inter UI', 'Roboto', sans-serif !important;
+.input {
+    font-family: 'Inter UI', 'Roboto', sans-serif !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
 
 .libre {
     font-family: 'Libre Baskerville', serif;
 }
 
-.navbar-item {
-}
-
-svg{
-    stroke-width: 1px;
+svg {
+    stroke-width: 1.5px;
+    opacity: 1;
 }
 
 .icon-btn {
@@ -34,10 +33,6 @@ svg{
     padding: 2px;
 }
 
-.content {
-    margin-top: 2rem;
-}
-
 i {
     font-weight: 400i;
 }
@@ -46,79 +41,75 @@ i {
     padding: 2.5rem;
     position: sticky;
     top: 0;
-    
-
-    border-right : 2px solid rgba(0,0,0,0.1);
+    border-right: 2px solid rgba(0, 0, 0, 0.1);
 }
-  
-  .columns.is-fullheight {
+
+.columns.is-fullheight {
     min-height: 100vh;
     max-height: 100% !important;
     height: 100% !important;
     display: flex;
     flex-direction: row;
     justify-content: stretch;
-  }
-  .columns.is-fullheight .column {
-    overflow-y: auto;
-  }
+}
 
-  .box{
-      border-radius: 0 !important;
-  }
+.columns.is-fullheight .column {
+    /* overflow-y: auto; */
+}
 
-  .router-link-active {
+.box {
+    border-radius: 0 !important;
+}
+
+.notification {
+    border-radius: 0 !important;
+}
+
+.router-link-active {
     font-weight: 600;
     border-bottom: 1px solid black !important;
-  }
-  
-  .hero .tabs ul{
-      border-bottom: 1px solid #dbdbdb !important;
-  }
+}
 
-  .button{
-      font-family: 'Inter';
-  }
+.hero .tabs ul {
+    border-bottom: 1px solid #dbdbdb !important;
+}
 
-  .button svg{
-      stroke-width: 1.5px !important;
-  }
+.button {
+    font-family: 'Inter';
+    border-radius: 0 !important;
+}
 
-  .notification{
-      padding: 1rem !important; 
-  }
+.notification {
+    padding: 1rem !important;
+}
 
-  .label{
-      font-weight: 600 !important;
-  }
+.label {
+    font-weight: 600 !important;
+}
 
-  .table-container {
+.table-container {
     overflow: visible;
 }
 
-/* Table Sizer */
-.table thead th.is-1 {
-    width: 1em !important;
-  }
-  .table thead th.is-2 {
-    width: 2.5em !important;
-  }
-  .table thead th.is-3 {
-    width: 3em !important;
-  }
-  .table thead th.is-4 {
-    width: 4em !important;
-  }
-  .table thead th.is-5 {
-    width: 5em !important;
-  }
-  .table thead th.is-6 {
-    width: 6em !important;
-  }
-  .table thead th.is-7 {
-    width: 20% !important;
-  }
-  
-  .is-underline{
-      text-decoration: underline;
-  }
+.is-underline {
+    text-decoration: underline;
+}
+
+#mainmenu .menu-list li a:hover {
+    background-color: rgb(63, 63, 63);
+}
+
+#submenu>.menu-list li a {
+    text-decoration: none;
+    background-color: none !important;
+}
+
+#submenu>.menu-list li a:hover {
+    text-decoration: underline;
+    background-color: none !important;
+}
+
+#submenu>.menu-list li a:focus {
+    text-decoration: underline;
+    background-color: none !important;
+}

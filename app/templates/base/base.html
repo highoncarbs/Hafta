@@ -4,7 +4,7 @@
 
 <body class="hero is-fullheight">
 
-    <!-- Mobile nAV -->
+    <!-- Mobile Nav -->
     <div class="navbar is-hidden-desktop ">
         <div class="container">
             <div class="navbar-brand has-background-black ">
@@ -89,11 +89,13 @@
             });
         })();
     </script>
+
+    <!-- Main Content -->
     <div class="columns is-fullheight" style="margin-top:0 ; margin-bottom: 0;">
 
         <!-- Desktop nav -->
-        <div
-            class="column has-text-white is-2 is-fullheight has-background-black is-sidebar-menu is-hidden-touch has-background-black">
+        <div class="column has-text-white is-2 is-fullheight has-background-black is-sidebar-menu is-hidden-touch has-background-black"
+            id="mainmenu">
             <div>
                 <p class="libre is-size-4 has-text-white" style="margin-bottom : 2rem;">Hafta</p>
 
@@ -110,9 +112,18 @@
                     <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
                                     data-feather="briefcase"></i></span>
                             Firms</a></li>
-                    <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
-                                    data-feather="users"></i></span>
+                    <li><a href="{{url_for('employee.show_employee')}}" class="has-text-white"><span
+                                class="icon icon-btn"><i data-feather="users"></i></span>
                             Employees</a></li>
+                    <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                    data-feather="coffee"></i></span>
+                            Leaves</a></li>
+                    <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                    data-feather="dollar-sign"></i></span>
+                            Advance</a></li>
+                    <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                    data-feather="award"></i></span>
+                            Performance</a></li>
                 </ul>
             </aside>
 
@@ -121,19 +132,24 @@
                     MASTER
                 </p>
                 <ul class="menu-list">
-                    <li><a href="{{url_for('master.view_master')}}" class="has-text-white"><span class="icon icon-btn"><i
-                                    data-feather="layers"></i></span>
+                    <li><a href="{{url_for('master.view_master')}}" class="has-text-white"><span
+                                class="icon icon-btn"><i data-feather="layers"></i></span>
                             Basic Master</a></li>
+                    <li><a href="{{url_for('employee.new')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                    data-feather="user-plus"></i></span>
+                            Add Employee</a></li>
                 </ul>
             </aside>
 
             <aside class="menu is-fixed-bottom">
                 <p class="menu-label">
-                    User - <span class="tag is-light has-text-weight-bold">{{ current_user.username }}</span>
+                    User
                 </p>
-                <ul class="menu-list is-size-5  has-text-weight-bold roboto">
-                    <li><a href="{{url_for('main.home')}}"><span class="icon icon-btn"><i
-                                    data-feather="settings"></i></span> Settings</a></li>
+                <ul class="menu-list ">
+                    <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                    data-feather="user"></i></span> {{current_user.username}}</a></li>
+                    <li><a href="{{url_for('auth.logout')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                    data-feather="log-out"></i></span> Logout</a></li>
 
                 </ul>
             </aside>
@@ -141,13 +157,13 @@
 
         </div>
         <div class="column is-main-content ">
-            <div class="container">
-                <div class="container animated fadeIn">
-                    {% block content %}
 
-                    {% endblock %}
-                </div>
+            <div class=" animated fadeIn">
+                {% block content %}
+
+                {% endblock %}
             </div>
+
         </div>
 
     </div>

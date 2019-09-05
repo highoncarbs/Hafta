@@ -124,16 +124,14 @@ const PerformanceForm =
                                     </div>
                                     <div class="dropdown-menu" style="z-index:10;" id="dropdown-menu4" role="menu">
                                         <div class="dropdown-content has-background-light">
-                                            <p class="dropdown-item">
+                                            <p class="dropdown-item is-size-6 is-underline">
                                                 Are you sure ?
                                             </p>
                                             <hr class="dropdown-divider">
 
                                             <a class="dropdown-item">
-                                                <div class="buttons ">
                                                     <div class="button is-danger is-small"
                                                         @click="deleteData(row , index)">Delete</div>
-                                                    <div class="button is-small">Cancel</div>
                                                 </div>
                                             </a>
                                         </div>

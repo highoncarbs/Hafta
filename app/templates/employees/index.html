@@ -1,33 +1,60 @@
 {% extends 'base/base.html' %}
 {% block content %}
 <section class="section">
-<div class="level">
-    <div class="level-left">
-        <p class="is-size-5">Employees</p>
-    </div>
-    <div class="level-right">
-        <div class="buttons">
-            <div class="button"><span class="icon icon-btn icon-btn-in"><i data-feather="search"></i></span> Search</div>
-            <div class="button"><span class="icon icon-btn icon-btn-in"><i data-feather="filter"></i></span>Filters</div>
-            <div class="button"><span class="icon icon-btn icon-btn-in"><i data-feather="plus"></i></span>Add Employee</div>
-            <div class="button"><span class="icon icon-btn icon-btn-in"><i data-feather="more-vertical"></i></span>More</div>
+    <div class="level">
+        <div class="level-left">
+            <p class="is-size-4 has-text-weight-semibold">Employees</p>
         </div>
+        <!-- <div class="level-right">
+            <div class="buttons">
+                <div class="button"><span class="icon icon-btn icon-btn-in"><i data-feather="filter"></i></span>Filters
+                </div>
+                <div class="button"><span class="icon icon-btn icon-btn-in"><i data-feather="plus"></i></span>Add
+                    Employee</div>
+                <div class="button"><span class="icon icon-btn icon-btn-in"><i
+                            data-feather="more-vertical"></i></span>More</div>
+            </div>
+        </div> -->
     </div>
-</div>
-<div class="tabel-container">
-    <table class="table is-bordered is-fullwidth">
-        <thead>
-            <tr>
-                <td>Select</td>
-                <td>Name</td>
-                <td>Firm</td>
-                <td>Salary</td>
-                <td>Actions</td>
+    <div class="tabel-container">
+        <table class="table is-bordered is-fullwidth">
+            <div class="field is-grouped">
+                <div class="control is-expanded has-icons-left">
+                    <input type="text" class="input is-fullwidth" placeholder="Search">
 
-            </tr>
-        </thead>
-        <tbody></tbody>
+                    <span class="icon icon-btn icon-btn-in is-left">
+                        <i data-feather="search"></i>
+                    </span>
+                </div>
+
+                <div class="control">
+                    <div class="buttons">
+                        <div class="button"><span class="icon icon-btn icon-btn-in"><i
+                                    data-feather="filter"></i></span>Filters
+                        </div>
+                        <div class="button"><span class="icon icon-btn icon-btn-in"><i
+                                    data-feather="plus"></i></span>Add
+                            Employee</div>
+                        <div class="button"><span class="icon icon-btn icon-btn-in"><i
+                                    data-feather="more-vertical"></i></span>More</div>
+                    </div>
+                </div>
+
+
+            </div>
+    </div>
+    <thead>
+        <tr>
+            <td>Select</td>
+            <td>Name</td>
+            <td>Firm</td>
+            <td>Salary</td>
+            <td>Actions</td>
+
+        </tr>
+    </thead>
+    <tbody></tbody>
     </table>
-</div>
+    </div>
 </section>
 {% endblock %}

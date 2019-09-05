@@ -120,6 +120,9 @@ def create_app(config_class=Config):
 
         from app.master import bp as master_bp
         app.register_blueprint(master_bp, url_prefix='/master')
+
+        from app.employee import bp as emp_bp
+        app.register_blueprint(emp_bp, url_prefix='/employee')
     
     
     return app
