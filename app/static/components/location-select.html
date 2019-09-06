@@ -1,0 +1,64 @@
+<template id="custom-select">
+    <span>
+        <div class="field">
+            <div class="control is-expanded">
+                <label for="" class="label">{{which}}</label>
+                <div class="select is-fullwidth">
+                    <select @change="change">
+                        <option value="-1" selected>Select {{which}}</option>
+                        <option v-for="opt in options" v-bind:value="opt.id">[[opt.name]]</option>
+                    </select>
+                </div>
+                <p v-if="error" class="is-underline has-text-danger is-small">[[error]]</p>
+
+            </div>
+
+        </div>
+    </span>
+
+</template>
+
+<script>
+
+    Vue.component('custom-select', {
+        props: ['options', 'which'],
+        template: '#custom-select',
+        data() {
+            return {
+                selected: null,
+                error: null
+            }
+        },
+        delimiters: ["[[", "]]"],
+        mounted(){
+            axios.get('/master/get/' + this.which)
+                .then(function (response) {
+                    if (response.data.success) {
+                        options = response.data;
+                    }
+                    else if (response.data.message) {
+                        error = response.data.message;
+                    }
+                    else {
+                        console.error(response);
+                        error = 'Something unexpected happened.'
+                    }
+                })
+        },
+        methods: {
+            change(e) {
+                const selectedCode = e.target;
+                if (selectedCode.value == -1) {
+                    this.error = 'Please select location'
+                    this.$emit("input", '');
+
+                }
+                else {
+                    this.error = null
+                    this.$emit("input", selectedCode.value);
+                }
+            }
+        }
+    })
+
+</script>

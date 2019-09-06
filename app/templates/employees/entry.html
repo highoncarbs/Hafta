@@ -1,11 +1,14 @@
 {% extends 'base/base.html' %}
 {% block content %}
-<script src="{{ url_for('static' , filename ='js/emp/entry.js' )}}"></script>
+
+<script src="https://unpkg.com/buefy/dist/components/taginput"></script>
+<script src="https://unpkg.com/buefy/dist/components/autocomplete"></script>
+
 
 <section class="section">
-
+    {% include 'component/custom-select.html'%}
     <div class="columns">
-        <div class="column is-2" >
+        <div class="column is-2">
             <div class="notification" style="position: sticky;top:2rem ;">
                 <aside class="menu" id="submenu" style="margin-bottom:2rem;">
                     <p class="menu-label">
@@ -25,12 +28,12 @@
                     <ul class="menu-list ">
                         <li><a href="">
                                 Post</a></li>
-                                <li><a href="">
-                                        Benefits</a></li>
-                                        <li><a href="">
-                                                Leaves</a></li>
-                                                <li><a href="">
-                                                        Advance</a></li>
+                        <li><a href="">
+                                Benefits</a></li>
+                        <li><a href="">
+                                Leaves</a></li>
+                        <li><a href="">
+                                Advance</a></li>
                     </ul>
                 </aside>
             </div>
@@ -43,240 +46,399 @@
                 </div>
 
             </div>
-            <form @submit="submitData" id="emp_entry">
-                <div class="field">
-                    <div class="control">
-                        <label for="" class="label">Name</label>
-                        <input type="text" class="input" placeholder="Enter Name">
-                    </div>
-                </div>
-
-                <label for="" class="label">Date of Birth</label>
-                <div class="field is-grouped">
-                    <div class="fiel">
-                        <div class="control">
-                            <input type="date" v-model="date" class="input">
-
-                        </div>
-                    </div>
-                </div>
-                <div class="field is-grouped is-fullwidth">
-
-                    <div class="control is-expanded">
-                        <label for="" class="label">Spouse Name</label>
-                        <input type="text" class="input is-fullwidth" placeholder="Enter Spouse Name">
-                    </div>
-
-                    <div class="control is-expanded">
-                        <label for="" class="label">Father Name</label>
-                        <input type="text" class="input is-fullwidth" placeholder="Enter Father Name">
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="control">
-                        <label for="" class="label">Education</label>
-                        <input type="text" class="input" placeholder="Enter Education">
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="control">
-                        <label for="" class="label">Contact No.</label>
-                        <input type="text" class="input" placeholder="Enter Contact No.">
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="control">
-                        <label for="" class="label">Current Address</label>
-                        <input type="text" class="input" placeholder="Enter Address">
-                    </div>
-
-                </div>
-                <div class="notification">
+            <div id="emp_entry">
+                <form v-on:submit="submitData" method="POST" novalidate=True>
                     <div class="field">
                         <div class="control">
-                            <button class="button"><span class="icon icon-btn icon-btn-in"><i
-                                        data-feather="copy"></i></span> Same as Current</button>
+                            <label for="" class="label">Name</label>
+                            <input type="text" class="input" placeholder="Enter Name">
+                        </div>
+                    </div>
 
+                    <label for="" class="label">Date of Birth</label>
+                    <div class="field is-grouped">
+                        <div class="fiel">
+                            <div class="control">
+                                <input type="date" v-model="formdata.date" class="input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-grouped is-fullwidth">
+
+                        <div class="control is-expanded">
+                            <label for="" class="label">Spouse Name</label>
+                            <input type="text" class="input is-fullwidth" placeholder="Enter Spouse Name">
+                        </div>
+
+                        <div class="control is-expanded">
+                            <label for="" class="label">Father Name</label>
+                            <input type="text" class="input is-fullwidth" placeholder="Enter Father Name">
                         </div>
                     </div>
                     <div class="field">
                         <div class="control">
-                            <label for="" class="label">Permanent Address</label>
+                            <label for="" class="label">Education</label>
+                            <input type="text" class="input" placeholder="Enter Education">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <label for="" class="label">Contact No.</label>
+                            <input type="text" class="input" placeholder="Enter Contact No.">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <label for="" class="label">Current Address</label>
                             <input type="text" class="input" placeholder="Enter Address">
                         </div>
+
                     </div>
-
-                </div>
-
-                <div class="field is-grouped is-fullwidth">
-
-                    <div class="control is-expanded">
-                        <label for="" class="label">PAN No.</label>
-                        <input type="text" class="input is-fullwidth" placeholder="Enter PAN No.">
-                    </div>
-
-                    <div class="control is-expanded ">
-                        <label for="" class="label">Upload file</label>
-                        <div class="file has-name is-fullwidth">
-                            <label class="file-label">
-                                <input class="file-input" type="file" name="resume">
-                                <span class="file-cta">
-                                    <span class="file-icon">
-                                        <i data-feather="upload"></i>
-                                    </span>
-                                    <span class="file-label">
-                                        Choose a file…
-                                    </span>
-                                </span>
-                                <span class="file-name">
-                                    DODO
-                                </span>
-                            </label>
+                    <div class="field">
+                        <div class="control">
+                            <label for="" class="label">Current City</label>
+                            <custom-select v-model="formdata.location" which="location"></custom-select>
                         </div>
                     </div>
-
-                </div>
-
-                <!-- AADHAR -->
-                <div class="field is-grouped is-fullwidth">
-
-                    <div class="control is-expanded">
-                        <label for="" class="label">Aadhar No.</label>
-                        <input type="text" class="input is-fullwidth" placeholder="Enter Aadhar No.">
-                    </div>
-
-                    <div class="control is-expanded ">
-                        <label for="" class="label">Upload file</label>
-                        <div class="file has-name is-fullwidth">
-                            <label class="file-label">
-                                <input class="file-input" type="file" name="resume">
-                                <span class="file-cta">
-                                    <span class="file-icon">
-                                        <i data-feather="upload"></i>
-                                    </span>
-                                    <span class="file-label">
-                                        Choose a file…
-                                    </span>
-                                </span>
-                                <span class="file-name">
-                                    Aadhar
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Extra Uploads - id , edu. cert -->
-                <div class="field is-grouped is-fullwidth">
-
-                    <div class="control is-expanded ">
-                        <label for="" class="label">Upload Extra I.D</label>
-                        <div class="file has-name is-fullwidth">
-                            <label class="file-label">
-                                <input class="file-input" type="file" name="resume">
-                                <span class="file-cta">
-                                    <span class="file-icon">
-                                        <i data-feather="upload"></i>
-                                    </span>
-                                    <span class="file-label">
-                                        Choose a file…
-                                    </span>
-                                </span>
-                                <span class="file-name">
-                                    I.D
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="control is-expanded ">
-                        <label for="" class="label">Upload Education Cert.</label>
-                        <div class="file has-name is-fullwidth">
-                            <label class="file-label">
-                                <input class="file-input" type="file" name="resume">
-                                <span class="file-cta">
-                                    <span class="file-icon">
-                                        <i data-feather="upload"></i>
-                                    </span>
-                                    <span class="file-label">
-                                        Choose a file…
-                                    </span>
-                                </span>
-                                <span class="file-name">
-                                    Resume
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Ref -->
-                <div class="field is-grouped is-fullwidth">
-
-                    <div class="control is-expanded">
-                        <label for="" class="label">Reference</label>
-                        <input type="text" class="input is-fullwidth" placeholder="Enter Reference">
-                    </div>
-
-                    <div class="control is-expanded ">
-                        <label for="" class="label">Upload Resume</label>
-                        <div class="file has-name is-fullwidth">
-                            <label class="file-label">
-                                <input class="file-input" type="file" name="resume">
-                                <span class="file-cta">
-                                    <span class="file-icon">
-                                        <i data-feather="upload"></i>
-                                    </span>
-                                    <span class="file-label">
-                                        Choose a file…
-                                    </span>
-                                </span>
-                                <span class="file-name">
-                                    Resume
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-
-                </div>
-
-                <hr>
-                <div class="notification">
-                    <label for="" class="label">Date of Appointment</label>
-                    <div class="field is-grouped">
+                    <div class="notification">
                         <div class="field">
                             <div class="control">
-                                <input type="date" v-model="date" class="input">
+                                <button class="button"><span class="icon icon-btn icon-btn-in"><i
+                                            data-feather="copy"></i></span> Same as Current</button>
 
                             </div>
                         </div>
+                        <div class="field">
+                            <div class="control">
+                                <label for="" class="label">Permanent Address</label>
+                                <input type="text" class="input" placeholder="Enter Address">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <label for="" class="label">Current City</label>
+                                <custom-select v-model="formdata.location" which="location"></custom-select>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="field is-grouped is-fullwidth">
 
                         <div class="control is-expanded">
-                            <label for="" class="label">Post</label>
-                            <input type="text" class="input is-fullwidth" placeholder="Enter Spouse Name">
+                            <label for="" class="label">PAN No.</label>
+                            <input type="text" class="input is-fullwidth" placeholder="Enter PAN No.">
                         </div>
 
-                        <div class="control is-expanded">
-                            <label for="" class="label">Company</label>
-                            <input type="text" class="input is-fullwidth" placeholder="Enter Spouse Name">
+                        <div class="control is-expanded ">
+                            <label for="" class="label">Upload file</label>
+                            <div class="file has-name is-fullwidth">
+                                <label class="file-label">
+                                    <input class="file-input" type="file" name="resume">
+                                    <span class="file-cta">
+                                        <span class="file-icon">
+                                            <i data-feather="upload"></i>
+                                        </span>
+                                        <span class="file-label">
+                                            Choose a file…
+                                        </span>
+                                    </span>
+                                    <span class="file-name">
+                                        DODO
+                                    </span>
+                                </label>
+                            </div>
                         </div>
 
-                        <div class="control is-expanded">
-                            <label for="" class="label">Department</label>
-                            <input type="text" class="input is-fullwidth" placeholder="Enter Father Name">
-                        </div>
                     </div>
 
-                </div>
-            </form>
+                    <!-- AADHAR -->
+                    <div class="field is-grouped is-fullwidth">
+
+                        <div class="control is-expanded">
+                            <label for="" class="label">Aadhar No.</label>
+                            <input type="text" class="input is-fullwidth" placeholder="Enter Aadhar No.">
+                        </div>
+
+                        <div class="control is-expanded ">
+                            <label for="" class="label">Upload file</label>
+                            <div class="file has-name is-fullwidth">
+                                <label class="file-label">
+                                    <input class="file-input" type="file" name="resume">
+                                    <span class="file-cta">
+                                        <span class="file-icon">
+                                            <i data-feather="upload"></i>
+                                        </span>
+                                        <span class="file-label">
+                                            Choose a file…
+                                        </span>
+                                    </span>
+                                    <span class="file-name">
+                                        Aadhar
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Extra Uploads - id , edu. cert -->
+                    <div class="field is-grouped is-fullwidth">
+
+                        <div class="control is-expanded ">
+                            <label for="" class="label">Upload Extra I.D</label>
+                            <div class="file has-name is-fullwidth">
+                                <label class="file-label">
+                                    <input class="file-input" type="file" name="resume">
+                                    <span class="file-cta">
+                                        <span class="file-icon">
+                                            <i data-feather="upload"></i>
+                                        </span>
+                                        <span class="file-label">
+                                            Choose a file…
+                                        </span>
+                                    </span>
+                                    <span class="file-name">
+                                        I.D
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="control is-expanded ">
+                            <label for="" class="label">Upload Education Cert.</label>
+                            <div class="file has-name is-fullwidth">
+                                <label class="file-label">
+                                    <input class="file-input" type="file" name="resume">
+                                    <span class="file-cta">
+                                        <span class="file-icon">
+                                            <i data-feather="upload"></i>
+                                        </span>
+                                        <span class="file-label">
+                                            Choose a file…
+                                        </span>
+                                    </span>
+                                    <span class="file-name">
+                                        Resume
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Ref -->
+                    <div class="field is-grouped is-fullwidth">
+
+                        <div class="control is-expanded">
+                            <label for="" class="label">Reference</label>
+                            <input type="text" class="input is-fullwidth" placeholder="Enter Reference">
+                        </div>
+
+                        <div class="control is-expanded ">
+                            <label for="" class="label">Upload Resume</label>
+                            <div class="file has-name is-fullwidth">
+                                <label class="file-label">
+                                    <input class="file-input" type="file" name="resume">
+                                    <span class="file-cta">
+                                        <span class="file-icon">
+                                            <i data-feather="upload"></i>
+                                        </span>
+                                        <span class="file-label">
+                                            Choose a file…
+                                        </span>
+                                    </span>
+                                    <span class="file-name">
+                                        Resume
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <hr>
+                    <div class="notification">
+                        <label for="" class="label">Date of Appointment</label>
+                        <div class="field is-grouped">
+                            <div class="field">
+                                <div class="control">
+                                    <input type="date" v-model="formdata.date" class="input">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped is-fullwidth">
+
+
+                            <div class="control is-expanded">
+                                <label for="" class="label">Post</label>
+                                <custom-select v-model="formdata.post" which="post"></custom-select>
+                            </div>
+                            <div class="control is-expanded">
+                                <label for="" class="label">Department</label>
+                                <custom-select v-model="formdata.department" which="department"></custom-select>
+                            </div>
+                            <div class="control is-expanded">
+                                <label for="" class="label">Company</label>
+                                <custom-select v-model="formdata.company" which="company">
+                                </custom-select>
+                            </div>
+
+
+                        </div>
+                        <div class="field is-grouped is-fullwidth">
+
+                            <div class="control is-expanded">
+
+                                <label class="label">Enter Benefits</label>
+                                <b-taginput v-model="formdata.benefits" :data="filteredBenefits" field="name"
+                                    size="is-normal" autocomplete type="is-black" placeholder="Add a benefit"
+                                    @typing="getFilteredTags">
+                                    <template slot-scope="props">
+
+
+                                        {{ '{{props.option.name}}'}}
+                                    </template>
+                                    <template slot="empty">
+                                        There are no items
+                                    </template>
+                                </b-taginput>
+
+                            </div>
+                        </div>
+                        <hr class="has-background-grey-light" style="height:1px;">
+                        <p for="" class="is-size-5">Salary Structure</p>
+                        <br>
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <label class="label ">Select payment model: </label>
+
+                            </div>
+                            <div class="control ">
+                                <label class="radio">
+                                    <input type="radio" value="month" v-model="formdata.salary_structure">
+                                    Month
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" value="year" v-model="formdata.salary_structure" checked>
+                                    Year
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped is-fullwidth">
+
+                            <div class="control is-expanded">
+                                <label for="" class="label">Basic</label>
+                                <input type="text" class="input is-fullwidth" placeholder="Enter Basic Pay">
+                            </div>
+
+                            <div class="control is-expanded">
+                                <label for="" class="label">P.F</label>
+                                <div class="control ">
+                                    <label class="radio">
+                                        <input type="radio" value="yes" v-model="formdata.pf">
+                                        Yes
+                                    </label>
+                                    <label class="radio">
+                                        <input type="radio" value="no" v-model="formdata.pf" checked>
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="control is-expanded">
+                                <label for="" class="label">ESI</label>
+                                <div class="control ">
+                                    <label class="radio">
+                                        <input type="radio" value="yes" v-model="formdata.esi">
+                                        Yes
+                                    </label>
+                                    <label class="radio">
+                                        <input type="radio" value="no" v-model="formdata.esi" checked>
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <br>
+                    <div class="field is-grouped">
+                                <div class="control">
+                                    <label class="label ">Salary Advance </label>
+    
+                                </div>
+                                <div class="control ">
+                                    <label class="radio">
+                                        <input type="radio" value="allowed" v-model="formdata.advance">
+                                        Allowed
+                                    </label>
+                                    <label class="radio">
+                                        <input type="radio" value="not" v-model="formdata.advance">
+                                        Not Allowed
+                                    </label>
+                                </div>
+                                <div class="control">
+                                    <input type="text" v-model="formdata.advancevalue" placeholder="Enter Max. advance" class="input" :disabled="formdata.advance == 'not' ? true : false">
+                                    
+                                </div>
+                            </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
 </section>
 
+<script>
+
+    new Vue({
+        el: '#emp_entry',
+        data() {
+            return {
+                filteredBenefits: null,
+                benefitsList: null,
+                formdata: {
+                    location: null,
+                    date: null,
+                    post: null,
+                    department: null,
+                    company: null,
+                    benefits: [],
+                    advance: 'allowed',
+                    advancevalue: null,
+
+
+                }
+            }
+        },
+        created() {
+            let data = this;
+            axios.get('/master/get/benefits')
+                .then(function (response) {
+                    data.filteredBenefits = response.data;
+                    data.benefitsList = response.data;
+                    console.log(response.data)
+
+                })
+        },
+        methods: {
+            submitData(e) {
+                console.log('boom');
+                e.preventDefault();
+            },
+            getFilteredTags(text) {
+                this.filteredBenefits = this.benefitsList.filter((option) => {
+                    return option.name
+                        .toString()
+                        .toLowerCase()
+                        .indexOf(text.toLowerCase()) >= 0
+                })
+            }
+        }
+    })
+</script>
 {% endblock %}
