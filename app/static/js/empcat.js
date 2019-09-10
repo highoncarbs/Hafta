@@ -185,11 +185,11 @@ const EmpCatForm =
             this.$refs.name.focus();
         }  ,
         checkData(e) {
+            this.form.errors = []
+
             if (this.form.name) {
                 return true;
             }
-
-            this.form.errors = []
 
             if (!this.form.name) {
                 this.form.errors.push('Category required');

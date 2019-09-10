@@ -105,3 +105,6 @@ venv.bak/
 
 # VSCode init
 .vscode
+
+# UPLOADS 
+app/static/uploads

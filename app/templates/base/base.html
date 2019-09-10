@@ -91,70 +91,71 @@
     </script>
 
     <!-- Main Content -->
-    <div class="columns is-fullheight" style="margin-top:0 ; margin-bottom: 0;">
+    <div class="columns is-fullheight" style="margin-top:0 ; margin-bottom: 0; ">
 
         <!-- Desktop nav -->
         <div class="column has-text-white is-2 is-fullheight has-background-black is-sidebar-menu is-hidden-touch has-background-black"
             id="mainmenu">
-            <div>
-                <p class="libre is-size-4 has-text-white" style="margin-bottom : 2rem;">Hafta</p>
+            <div id="side-menu" style="position: sticky !important; top:3rem;">
+                <div>
+                    <p class="libre is-size-4 has-text-white" style="margin-bottom : 2rem;">Hafta</p>
+
+                </div>
+
+                <aside class="menu" style="margin-bottom:2rem;">
+                    <p class="menu-label">
+                        General
+                    </p>
+                    <ul class="menu-list ">
+                        <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                        data-feather="zap"></i></span>
+                                Dashboard</a></li>
+                        <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                        data-feather="briefcase"></i></span>
+                                Firms</a></li>
+                        <li><a href="{{url_for('employee.show_employee')}}" class="has-text-white"><span
+                                    class="icon icon-btn"><i data-feather="users"></i></span>
+                                Employees</a></li>
+                        <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                        data-feather="coffee"></i></span>
+                                Leaves</a></li>
+                        <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                        data-feather="dollar-sign"></i></span>
+                                Advance</a></li>
+                        <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                        data-feather="award"></i></span>
+                                Performance</a></li>
+                    </ul>
+                </aside>
+
+                <aside class="menu" style="margin-bottom:2rem;">
+                    <p class="menu-label">
+                        MASTER
+                    </p>
+                    <ul class="menu-list">
+                        <li><a href="{{url_for('master.view_master')}}" class="has-text-white"><span
+                                    class="icon icon-btn"><i data-feather="layers"></i></span>
+                                Basic Master</a></li>
+                        <li><a href="{{url_for('employee.new')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                        data-feather="user-plus"></i></span>
+                                Add Employee</a></li>
+                    </ul>
+                </aside>
+
+                <aside class="menu is-fixed-bottom">
+                    <p class="menu-label">
+                        User
+                    </p>
+                    <ul class="menu-list ">
+                        <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                        data-feather="user"></i></span> {{current_user.username}}</a></li>
+                        <li><a href="{{url_for('auth.logout')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                        data-feather="log-out"></i></span> Logout</a></li>
+
+                    </ul>
+                </aside>
 
             </div>
-
-            <aside class="menu" style="margin-bottom:2rem;">
-                <p class="menu-label">
-                    General
-                </p>
-                <ul class="menu-list ">
-                    <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
-                                    data-feather="zap"></i></span>
-                            Dashboard</a></li>
-                    <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
-                                    data-feather="briefcase"></i></span>
-                            Firms</a></li>
-                    <li><a href="{{url_for('employee.show_employee')}}" class="has-text-white"><span
-                                class="icon icon-btn"><i data-feather="users"></i></span>
-                            Employees</a></li>
-                    <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
-                                    data-feather="coffee"></i></span>
-                            Leaves</a></li>
-                    <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
-                                    data-feather="dollar-sign"></i></span>
-                            Advance</a></li>
-                    <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
-                                    data-feather="award"></i></span>
-                            Performance</a></li>
-                </ul>
-            </aside>
-
-            <aside class="menu" style="margin-bottom:2rem;">
-                <p class="menu-label">
-                    MASTER
-                </p>
-                <ul class="menu-list">
-                    <li><a href="{{url_for('master.view_master')}}" class="has-text-white"><span
-                                class="icon icon-btn"><i data-feather="layers"></i></span>
-                            Basic Master</a></li>
-                    <li><a href="{{url_for('employee.new')}}" class="has-text-white"><span class="icon icon-btn"><i
-                                    data-feather="user-plus"></i></span>
-                            Add Employee</a></li>
-                </ul>
-            </aside>
-
-            <aside class="menu is-fixed-bottom">
-                <p class="menu-label">
-                    User
-                </p>
-                <ul class="menu-list ">
-                    <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
-                                    data-feather="user"></i></span> {{current_user.username}}</a></li>
-                    <li><a href="{{url_for('auth.logout')}}" class="has-text-white"><span class="icon icon-btn"><i
-                                    data-feather="log-out"></i></span> Logout</a></li>
-
-                </ul>
-            </aside>
-
-
         </div>
         <div class="column is-main-content ">
 

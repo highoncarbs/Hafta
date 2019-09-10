@@ -11,18 +11,10 @@ const AppointmentForm =
         <div class="box">
 
             <div v-if="edit.mssg" class="notification animated fadeIn">
-            <p v-if="edit.mssg['success']">
-                             [[ edit.mssg['success'] ]]
-                </p>
-                <p class="is-inderline has-text-semibold" v-if="edit.mssg['message']">[[ edit.mssg['message'] ]]
-                </p>
+          
             </div>
-            <form id="data_entry" novalidate="true" @submit="submitData">
-                <div v-if="edit.errors.length" class="notification animated fadeIn">ERROR</p>
-                    <ul>
-                        <li v-for="error in edit.errors" class="is-underline">[[ error.message ]]</li>
-                    </ul>
-                </div>
+            <form id="data_entry" novalidate="true" @submit="saveEditData">
+                
                 <p class="is-size-5">Edit Appointment</p>
                 <br>
                 <div class="field">
@@ -55,23 +47,13 @@ const AppointmentForm =
 <!-- Entry Form -->
 
 <form id="data_entry" novalidate="true" @submit="submitData ;" v-show="view">
-<div v-if="form.mssg" class="notification animated fadeIn">
-    <p v-if="form.mssg.success">[[ form.mssg['success'] ]]</p>
-    <p v-if="form.mssg.message" class="is-underline">[[ form.mssg['message'] ]]</p>
 
-</div>
-    
-<div v-if="form.errors.length" class="notification">
-        <p class="has-text-weight-semibold"> ERROR</p>
-        <ul>
-            <li v-for="error in form.errors " class="is-underline">[[ error ]]</li>
-        </ul>
-    </div>
+
 
     <div class="field">
         <div class="control">
             <label for="" class="label">Appointment</label>
-            <input type="text" class="input"ref="name" v-model="form.name" placeholder="Enter Appointment">
+            <input type="text" class="input"ref="name" v-model="form.name"  v-bind:class="[form.errors.length ? 'is-danger' : '']" placeholder="Enter Appointment">
         </div>
 
     </div>
@@ -177,6 +159,7 @@ const AppointmentForm =
     },
     delimiters: ["[[", "]]"], 
     mounted() {
+
         feather.replace();
         this.focusInput();
     },
@@ -185,14 +168,27 @@ const AppointmentForm =
             this.$refs.name.focus();
         }  ,
         checkData(e) {
+            this.form.errors = []
+
             if (this.form.name) {
                 return true;
             }
 
-            this.form.errors = []
+            
 
             if (!this.form.name) {
                 this.form.errors.push('Appointment required');
+                this.$buefy.snackbar.open({
+                    duration: 4000,
+                    message: 'Appointment required',
+                    type: 'is-light',
+                    position: 'is-top-right',
+                    actionText: 'Close',
+                    queue: true,
+                    onAction: () => {
+                        this.isActive = false; 
+                    }
+                })
             }
            
 
@@ -203,12 +199,25 @@ const AppointmentForm =
             var formdata = this ;
 
             if (this.form.errors.length == 0) {
+                
                 axios
                     .post('/master/add/appointment', this.form)
                     .then(function (response) {
                         formdata.form.mssg = response['data']
                         formdata.form.name = null;
-                        setTimeout( () => { formdata.form.mssg = null } , 3000);
+
+                        formdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.success,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false; 
+                            }
+                        })
+                        
                     })
                     .catch(function (error) {
                         console.log(error)
@@ -254,9 +263,33 @@ const AppointmentForm =
                         data = data.filter( function(x){ return x.id === formdata.edit.id } )
                         data[0].name = formdata.edit.name
                         formdata.modal =     !formdata.modal;
+
+                        formdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.success,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false; 
+                            }
+                        })
                     }
                     else{
                         formdata.edit.errors.push(response.data)
+
+                        formdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.message,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false; 
+                            }
+                        })
                     }
 
                 })
@@ -279,8 +312,9 @@ const AppointmentForm =
             
         },
         deleteData(data , index){
-            // const removeId = data.id; 
-            console.log(data);
+            // const removeId = data.id;
+            let formdata = this;
+ 
             var datalist = this.data; 
 
             axios
@@ -288,10 +322,33 @@ const AppointmentForm =
                     .then(function (response) {
                         if(response.data.success){
                             datalist.splice(index, 1)
+                            formdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.success,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false; 
+                                }
+                            })
                         }
                     })
                     .catch(function (error) {
                         console.log(error)
+                        formdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: error,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false; 
+                            }
+                        })
+
                     })
         },
         selectRow(){

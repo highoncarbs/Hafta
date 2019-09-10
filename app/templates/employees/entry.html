@@ -4,13 +4,12 @@
 <script src="https://unpkg.com/buefy/dist/components/taginput"></script>
 <script src="https://unpkg.com/buefy/dist/components/autocomplete"></script>
 
-
 <section class="section">
     {% include 'component/custom-select.html'%}
     <div class="columns">
         <div class="column is-2">
-            <div class="notification" style="position: sticky;top:2rem ;">
-                <aside class="menu" id="submenu" style="margin-bottom:2rem;">
+            <div class="notification" style="position: sticky;top:2rem ; ">
+                <aside class="menu" id="submenu">
                     <p class="menu-label">
                         EMPLOYEE INFO
                     </p>
@@ -50,16 +49,16 @@
                 <form v-on:submit="submitData" method="POST" novalidate=True>
                     <div class="field">
                         <div class="control">
-                            <label for="" class="label">Name</label>
-                            <input type="text" class="input" placeholder="Enter Name">
+                            <label for="" class="label">Name*</label>
+                            <input type="text" class="input" v-model="formdata.name" placeholder="Enter Name">
                         </div>
                     </div>
 
-                    <label for="" class="label">Date of Birth</label>
+                    <label for="" class="label">Date of Birth*</label>
                     <div class="field is-grouped">
                         <div class="fiel">
                             <div class="control">
-                                <input type="date" v-model="formdata.date" class="input">
+                                <input type="date" v-model="formdata.dob" class="input">
                             </div>
                         </div>
                     </div>
@@ -67,43 +66,47 @@
 
                         <div class="control is-expanded">
                             <label for="" class="label">Spouse Name</label>
-                            <input type="text" class="input is-fullwidth" placeholder="Enter Spouse Name">
+                            <input type="text" class="input is-fullwidth" v-model="formdata.spousename"
+                                placeholder="Enter Spouse Name">
                         </div>
 
                         <div class="control is-expanded">
-                            <label for="" class="label">Father Name</label>
-                            <input type="text" class="input is-fullwidth" placeholder="Enter Father Name">
+                            <label for="" class="label">Father Name*</label>
+                            <input type="text" class="input is-fullwidth" v-model="formdata.fathername"
+                                placeholder="Enter Father Name">
                         </div>
                     </div>
                     <div class="field">
                         <div class="control">
                             <label for="" class="label">Education</label>
-                            <input type="text" class="input" placeholder="Enter Education">
+                            <input type="text" class="input" v-model="formdata.education" placeholder="Enter Education">
                         </div>
                     </div>
                     <div class="field">
                         <div class="control">
                             <label for="" class="label">Contact No.</label>
-                            <input type="text" class="input" placeholder="Enter Contact No.">
+                            <input type="text" class="input" v-model="formdata.contact" placeholder="Enter Contact No.">
                         </div>
                     </div>
                     <div class="field">
                         <div class="control">
                             <label for="" class="label">Current Address</label>
-                            <input type="text" class="input" placeholder="Enter Address">
+                            <input type="text" class="input" v-model="formdata.curr_address"
+                                placeholder="Enter Address">
                         </div>
 
                     </div>
                     <div class="field">
                         <div class="control">
                             <label for="" class="label">Current City</label>
-                            <custom-select v-model="formdata.location" which="location"></custom-select>
+                            <custom-select v-model="formdata.curr_city" which="location">
+                            </custom-select>
                         </div>
                     </div>
                     <div class="notification">
                         <div class="field">
                             <div class="control">
-                                <button class="button"><span class="icon icon-btn icon-btn-in"><i
+                                <button class="button" @click="sameAddress"><span class="icon icon-btn icon-btn-in"><i
                                             data-feather="copy"></i></span> Same as Current</button>
 
                             </div>
@@ -111,13 +114,15 @@
                         <div class="field">
                             <div class="control">
                                 <label for="" class="label">Permanent Address</label>
-                                <input type="text" class="input" placeholder="Enter Address">
+                                <input type="text" class="input" v-model="formdata.perm_address"
+                                    placeholder="Enter Address">
                             </div>
                         </div>
                         <div class="field">
                             <div class="control">
-                                <label for="" class="label">Current City</label>
-                                <custom-select v-model="formdata.location" which="location"></custom-select>
+                                <label for="" class="label">Permanent City</label>
+                                <custom-select  v-model="formdata.perm_city"
+                                    which="location"></custom-select>
                             </div>
                         </div>
 
@@ -127,14 +132,16 @@
 
                         <div class="control is-expanded">
                             <label for="" class="label">PAN No.</label>
-                            <input type="text" class="input is-fullwidth" placeholder="Enter PAN No.">
+                            <input type="text" class="input is-fullwidth" v-model="formdata.pan" placeholder="Enter PAN No.">
                         </div>
 
                         <div class="control is-expanded ">
                             <label for="" class="label">Upload file</label>
-                            <div class="file has-name is-fullwidth">
+                            <div class="file has-name is-fullwidth"
+                                v-bind:class=" formdata.errors.pan ? 'is-danger' : '' ">
                                 <label class="file-label">
-                                    <input class="file-input" type="file" name="resume">
+                                    <input class="file-input" type="file" ref="panfile"
+                                        v-on:change="handleFileUpload('pan')">
                                     <span class="file-cta">
                                         <span class="file-icon">
                                             <i data-feather="upload"></i>
@@ -144,10 +151,16 @@
                                         </span>
                                     </span>
                                     <span class="file-name">
-                                        DODO
+                                        <p v-if="formfiles.panfile " v-html="formfiles.panfile.name">
+                                        </p>
+                                        <p v-if="formfiles.panfile == null ">PAN Card Copy</p>
                                     </span>
                                 </label>
+
                             </div>
+                            <small class="has-text-danger is-underline" v-if="formdata.errors.pan">[[
+                                formdata.errors.pan.error ]]</small>
+
                         </div>
 
                     </div>
@@ -157,14 +170,16 @@
 
                         <div class="control is-expanded">
                             <label for="" class="label">Aadhar No.</label>
-                            <input type="text" class="input is-fullwidth" placeholder="Enter Aadhar No.">
+                            <input type="text" class="input is-fullwidth" v-model="formdata.aadhar" placeholder="Enter Aadhar No.">
                         </div>
 
                         <div class="control is-expanded ">
                             <label for="" class="label">Upload file</label>
-                            <div class="file has-name is-fullwidth">
+                            <div class="file has-name is-fullwidth"
+                                v-bind:class=" formdata.errors.aadhar ? 'is-danger' : '' ">
                                 <label class="file-label">
-                                    <input class="file-input" type="file" name="resume">
+                                    <input class="file-input" type="file" ref="aadharfile"
+                                        v-on:change="handleFileUpload('aadhar')">
                                     <span class="file-cta">
                                         <span class="file-icon">
                                             <i data-feather="upload"></i>
@@ -174,10 +189,16 @@
                                         </span>
                                     </span>
                                     <span class="file-name">
-                                        Aadhar
+                                        <p v-if="formfiles.aadharfile " v-html="formfiles.aadharfile.name">
+                                        </p>
+                                        <p v-if="formfiles.aadharfile == null ">Aadhar Card Copy</p>
                                     </span>
                                 </label>
+
                             </div>
+                            <small class="has-text-danger is-underline" v-if="formdata.errors.aadhar">[[
+                                formdata.errors.aadhar.error ]]</small>
+
                         </div>
 
                     </div>
@@ -187,9 +208,11 @@
 
                         <div class="control is-expanded ">
                             <label for="" class="label">Upload Extra I.D</label>
-                            <div class="file has-name is-fullwidth">
+                            <div class="file has-name is-fullwidth"
+                                v-bind:class=" formdata.errors.extraidfile ? 'is-danger' : '' ">
                                 <label class="file-label">
-                                    <input class="file-input" type="file" name="resume">
+                                    <input class="file-input" type="file" ref="extraidfile"
+                                        v-on:change="handleFileUpload('extraidfile')">
                                     <span class="file-cta">
                                         <span class="file-icon">
                                             <i data-feather="upload"></i>
@@ -199,17 +222,25 @@
                                         </span>
                                     </span>
                                     <span class="file-name">
-                                        I.D
+                                        <p v-if="formfiles.extraidfile " v-html="formfiles.extraidfile.name">
+                                        </p>
+                                        <p v-if="formfiles.extraidfile == null ">Extra ID Copy</p>
                                     </span>
                                 </label>
+
                             </div>
+                            <small class="has-text-danger is-underline" v-if="formdata.errors.extraidfile">[[
+                                formdata.errors.extraidfile.error ]]</small>
+
                         </div>
 
                         <div class="control is-expanded ">
                             <label for="" class="label">Upload Education Cert.</label>
-                            <div class="file has-name is-fullwidth">
+                            <div class="file has-name is-fullwidth"
+                                v-bind:class=" formdata.errors.educertfile ? 'is-danger' : '' ">
                                 <label class="file-label">
-                                    <input class="file-input" type="file" name="resume">
+                                    <input class="file-input" type="file" ref="educertfile"
+                                        v-on:change="handleFileUpload('educertfile')">
                                     <span class="file-cta">
                                         <span class="file-icon">
                                             <i data-feather="upload"></i>
@@ -219,27 +250,35 @@
                                         </span>
                                     </span>
                                     <span class="file-name">
-                                        Resume
+                                        <p v-if="formfiles.educertfile " v-html="formfiles.educertfile.name">
+                                        </p>
+                                        <p v-if="formfiles.educertfile == null ">Edu. Cert. Copy</p>
                                     </span>
                                 </label>
-                            </div>
-                        </div>
 
+                            </div>
+                            <small class="has-text-danger is-underline" v-if="formdata.errors.educertfile">[[
+                                formdata.errors.educertfile.error ]]</small>
+                        </div>
                     </div>
+
+
 
                     <!-- Ref -->
                     <div class="field is-grouped is-fullwidth">
 
                         <div class="control is-expanded">
                             <label for="" class="label">Reference</label>
-                            <input type="text" class="input is-fullwidth" placeholder="Enter Reference">
+                            <input type="text" class="input is-fullwidth" v-model="formdata.reference" placeholder="Enter Reference">
                         </div>
 
                         <div class="control is-expanded ">
                             <label for="" class="label">Upload Resume</label>
-                            <div class="file has-name is-fullwidth">
+                            <div class="file has-name is-fullwidth"
+                                v-bind:class=" formdata.errors.resumefile ? 'is-danger' : '' ">
                                 <label class="file-label">
-                                    <input class="file-input" type="file" name="resume">
+                                    <input class="file-input" type="file" ref="resumefile"
+                                        v-on:change="handleFileUpload('resumefile')">
                                     <span class="file-cta">
                                         <span class="file-icon">
                                             <i data-feather="upload"></i>
@@ -249,10 +288,15 @@
                                         </span>
                                     </span>
                                     <span class="file-name">
-                                        Resume
+                                        <p v-if="formfiles.resumefile " v-html="formfiles.resumefile.name">
+                                        </p>
+                                        <p v-if="formfiles.resumefile == null ">Resume Copy</p>
                                     </span>
                                 </label>
+
                             </div>
+                            <small class="has-text-danger is-underline" v-if="formdata.errors.resumefile">[[
+                                formdata.errors.resumefile.error ]]</small>
                         </div>
 
                     </div>
@@ -263,7 +307,7 @@
                         <div class="field is-grouped">
                             <div class="field">
                                 <div class="control">
-                                    <input type="date" v-model="formdata.date" class="input">
+                                    <input type="date" v-model="formdata.dateofapp" class="input">
 
                                 </div>
                             </div>
@@ -299,7 +343,7 @@
                                     <template slot-scope="props">
 
 
-                                        {{ '{{props.option.name}}'}}
+                                        [[props.option.name]]
                                     </template>
                                     <template slot="empty">
                                         There are no items
@@ -311,7 +355,19 @@
                         <hr class="has-background-grey-light" style="height:1px;">
                         <p for="" class="is-size-5">Salary Structure</p>
                         <br>
+                        <label for="" class="label">Effective Date
+                            <br>
+                            <p class="has-text-weight-normal">When changing/updating salary , update the date.</p>
+
+                        </label>
                         <div class="field is-grouped">
+                            <div class="field">
+                                <div class="control">
+                                    <input type="date" v-model="formdata.dateeff" class="input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-grouped notification is-white">
                             <div class="control">
                                 <label class="label ">Select payment model: </label>
 
@@ -332,10 +388,10 @@
 
                             <div class="control is-expanded">
                                 <label for="" class="label">Basic</label>
-                                <input type="text" class="input is-fullwidth" placeholder="Enter Basic Pay">
+                                <input type="text" class="input is-fullwidth" v-model="formdata.basicpay" placeholder="Enter Basic Pay">
                             </div>
 
-                            <div class="control is-expanded">
+                            <div class="control is-expanded ">
                                 <label for="" class="label">P.F</label>
                                 <div class="control ">
                                     <label class="radio">
@@ -365,10 +421,11 @@
 
                         </div>
                         <br>
-                    <div class="field is-grouped">
+                        <div class="notification is-white">
+                            <div class="field is-grouped">
                                 <div class="control">
                                     <label class="label ">Salary Advance </label>
-    
+
                                 </div>
                                 <div class="control ">
                                     <label class="radio">
@@ -380,65 +437,58 @@
                                         Not Allowed
                                     </label>
                                 </div>
+
+                            </div>
+                            <div class="field is-grouped">
                                 <div class="control">
-                                    <input type="text" v-model="formdata.advancevalue" placeholder="Enter Max. advance" class="input" :disabled="formdata.advance == 'not' ? true : false">
-                                    
+                                    <label for="" class="label">Max. Advance</label>
+                                    <input type="text" v-model="formdata.advancevalue" placeholder="Enter Max. advance"
+                                        class="input" :disabled="formdata.advance == 'not' ? true : false">
+
+                                </div>
+                                <div class="control">
+                                    <label for="" class="label">Number of Advances </label>
+                                    <input type="text" v-model="formdata.advancenum"
+                                        placeholder="Enter Advances Allowed" class="input"
+                                        :disabled="formdata.advance == 'not' ? true : false">
+
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="control">
+                                <label for="" class="label">Paid Leaves ( in a year )</label>
+                                <input type="text" class="input" v-model="formdata.paidleave" placeholder="Enter Paid Leaves">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="control">
+                                <label for="" class="label">Increment Period ( in months )</label>
+                                <input type="text" class="input" v-model="formdata.incrementpr" placeholder="Enter period">
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <button class="button is-black">
+                                <span class="icon icon-btn icon-btn-in"><i data-feather="check"></i></span> Save</div>
+                        </button>
+                        <div class="control">
+
+                            <button class="button">
+                                <span class="icon icon-btn icon-btn-in"><i data-feather="x"></i></span> Clear</div>
+                        </button>
+                    </div>
+
                 </form>
             </div>
         </div>
     </div>
 
 </section>
+<script src="{{ url_for('static' , filename='js/emp/entry.js')}}"></script>
 
-<script>
-
-    new Vue({
-        el: '#emp_entry',
-        data() {
-            return {
-                filteredBenefits: null,
-                benefitsList: null,
-                formdata: {
-                    location: null,
-                    date: null,
-                    post: null,
-                    department: null,
-                    company: null,
-                    benefits: [],
-                    advance: 'allowed',
-                    advancevalue: null,
-
-
-                }
-            }
-        },
-        created() {
-            let data = this;
-            axios.get('/master/get/benefits')
-                .then(function (response) {
-                    data.filteredBenefits = response.data;
-                    data.benefitsList = response.data;
-                    console.log(response.data)
-
-                })
-        },
-        methods: {
-            submitData(e) {
-                console.log('boom');
-                e.preventDefault();
-            },
-            getFilteredTags(text) {
-                this.filteredBenefits = this.benefitsList.filter((option) => {
-                    return option.name
-                        .toString()
-                        .toLowerCase()
-                        .indexOf(text.toLowerCase()) >= 0
-                })
-            }
-        }
-    })
-</script>
 {% endblock %}
