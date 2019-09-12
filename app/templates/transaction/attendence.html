@@ -1,0 +1,165 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+<!-- <script src="https://unpkg.com/buefy/dist/components/autocomplete"></script> -->
+
+{% include 'component/custom-select.html'%}
+
+
+<section class="section">
+    <div class="container" id="attendence_form">
+        <div class="level">
+            <div class="level-left">
+                <p class="is-size-4 has-text-weight-semibold">Attendence</p>
+            </div>
+
+        </div>
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <div class="field">
+                        <div class="control">
+                            <label for="" class="label">Select company</label>
+                            <custom-select v-model="company" which="company">
+                            </custom-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="level-item">
+                    <div class="field">
+                        <div class="control">
+                            <label for="" class="label">Select month</label>
+                            <input type="month" class="input" v-model="month">
+                        </div>
+                    </div>
+                </div>
+                <div class="level-item">
+                    <div class="field">
+                        <div class="control">
+                            <label for="" class="label"> </label>
+
+                            <button class="button is-black" @click="getEmployee">
+                                <span class="icon icon-btn icon-btn-in">
+                                    <i data-feather="check"></i>
+                                </span>
+                                Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <table class="table is-bordered is-fullwidth is-hoverable" v-if="dataList.length != 0">
+            <div class="field is-grouped">
+                <div class="control is-expanded has-icons-left">
+                    <input type="text" class="input is-fullwidth" v-model="searchQuery" placeholder="Search">
+
+                    <span class="icon icon-btn icon-btn-in is-left">
+                        <i data-feather="search"></i>
+                    </span>
+                </div>
+
+                <div class="control">
+                    <div class="buttons">
+                        <div class="button"><span class="icon icon-btn icon-btn-in"><i
+                                    data-feather="filter"></i></span>Filters
+                        </div>
+                        <a href="{{ url_for('employee.new')}}" class="button is-black is-outlined"><span
+                                class="icon icon-btn icon-btn-in"><i data-feather="plus"></i></span>Add
+                            Employee</a>
+                        <a class="button"><span class="icon icon-btn icon-btn-in"><i
+                                    data-feather="more-vertical"></i></span>More</a>
+                    </div>
+                </div>
+
+
+            </div>
+            <thead style="cursor: pointer">
+                <!-- TABLE HEADER -->
+                <tr  class="has-text-weight-semibold ">
+                    <th @click="sortBy('id')">ID
+                        <span class="icon icon-btn icon-btn-in">
+
+                            <feather v-if="this.currentSort == 'id'"
+                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                        </span>
+                        </feather>
+                    </th>
+                    <td @click=" sortBy('name')">Name
+                        <span class="icon icon-btn icon-btn-in">
+
+                            <feather v-if="this.currentSort == 'name'"
+                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                        </span>
+                    </td>
+
+                    <td @click=" sortBy('name')">Dept.
+                        <span class="icon icon-btn icon-btn-in">
+
+                            <feather v-if="this.currentSort == 'name'"
+                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                        </span>
+                    </td>
+
+                    <td @click=" sortBy('name')">Post
+                        <span class="icon icon-btn icon-btn-in">
+
+                            <feather v-if="this.currentSort == 'name'"
+                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                        </span>
+                    </td>
+                    <td @click=" sortBy('name')">Days Attended
+                        <span class="icon icon-btn icon-btn-in">
+
+                            <feather v-if="this.currentSort == 'name'"
+                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                        </span>
+                    </td>
+                    <td @click=" sortBy('name')">Paid Leaves
+                        <span class="icon icon-btn icon-btn-in">
+
+                            <feather v-if="this.currentSort == 'name'"
+                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                        </span>
+                    </td>
+                    <td @click=" sortBy('name')">Late Come in
+                        <span class="icon icon-btn icon-btn-in">
+
+                            <feather v-if="this.currentSort == 'name'"
+                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                        </span>
+                    </td>
+                    <td @click=" sortBy('name')">Early Going
+                        <span class="icon icon-btn icon-btn-in">
+
+                            <feather v-if="this.currentSort == 'name'"
+                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                        </span>
+                    </td>
+
+                </tr>
+                <!-- EMPTY Mssg -->
+                <!-- <p v-if="filteredList.length == 0"
+                    class=" has-text-centered is-size-4 has-text-grey-light is-underline">
+                    <br>
+                    <span class="icon icon-btn"><i data-feather="slash"></i></span> Zero data matching query.
+                    <script> feather.replace()</script>
+                </p> -->
+
+            </thead>
+            <tbody>
+
+                <tr v-if="filteredList.length != 0" v-for="( row , index) in filteredList "
+                    v-on:dblclick="employeeDetail(row.id)">
+                    <td>[[ row.id ]]</td>
+                    <td>[[ row.name]] </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+<script src="{{ url_for('static' , filename='js/transaction/attendence.js')}}"></script>
+{% endblock %}

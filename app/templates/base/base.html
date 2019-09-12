@@ -5,12 +5,12 @@
 <body class="hero is-fullheight">
 
     <!-- Mobile Nav -->
-    <div class="navbar is-hidden-desktop ">
+    <div class="navbar is-hidden-desktop has-navbar-fixed-to" style="z-index: auto !important">
         <div class="container">
             <div class="navbar-brand has-background-black ">
                 <a class="navbar-item " href="{{url_for('main.home')}}" style="font-weight:bold;">
-                    <div class="brand">
-                        <p class="title rubik has-text-white" style="letter-spacing: -2px;">a</p>
+                    <div class="">
+                        <p class="is-size-4 libre has-text-white has-text-weight-light">Hafta</p>
                     </div>
 
                 </a>
@@ -20,65 +20,71 @@
                     <span></span>
                 </span>
             </div>
-            <div id="navMenu" class="navbar-menu is-shadowless is-transparent has-navbar-fixed-top animated fadeIn">
+            <div id="navMenu"
+                class="navbar-menu is-shadowless has-background-black has-navbar-fixed-top animated fadeIn">
 
                 <div class="navbar-end is-size-5 is-center" style="padding-left:1rem; padding-top:2rem;">
                     <aside class="menu" style="margin-bottom:2rem;">
                         <p class="menu-label">
-                            Current Project
-                        </p>
-                        <div class="project-select rubik " style="margin-bottom:2rem;">
-                            <div class="dropdown is-hoverable">
-                                <div class="dropdown-trigger">
-                                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                                        <span class="icon is-small">
-                                            <i data-feather="arrow-down" aria-hidden="true"></i>
-                                        </span>
-                                    </button>
-                                </div>
-                                <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                                    <div class="dropdown-content">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="menu-label">
                             General
                         </p>
-                        <ul class="menu-list is-size-5  has-text-weight-bold roboto">
-                            <li><a href="{{url_for('main.home')}}"><span class="icon icon-btn"><i
-                                            data-feather="zap"></i></span> Dashboard</a></li>
-
+                        <ul class="menu-list ">
+                            <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                            data-feather="zap"></i></span>
+                                    Dashboard</a></li>
+                            <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                            data-feather="briefcase"></i></span>
+                                    Firms</a></li>
+                            <li><a href="{{url_for('employee.show_employee')}}" class="has-text-white"><span
+                                        class="icon icon-btn"><i data-feather="users"></i></span>
+                                    Employees</a></li>
+                            <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                            data-feather="coffee"></i></span>
+                                    Leaves</a></li>
+                            <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                            data-feather="dollar-sign"></i></span>
+                                    Advance</a></li>
+                            <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                            data-feather="award"></i></span>
+                                    Performance</a></li>
+                            <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn">
+                                        <img src="{{ url_for('static' , filename="img/finger.svg")}}" alt="">
+                                    </span>
+                                    Attendence</a></li>
                         </ul>
                     </aside>
 
                     <aside class="menu" style="margin-bottom:2rem;">
                         <p class="menu-label">
-                            Help
+                            MASTER
                         </p>
-                        <ul class="menu-list is-size-5  has-text-weight-bold roboto">
-                            <li><a href="https://github.com/PadamSethia/automato/issues"><span class="icon icon-btn"><i
-                                            data-feather="help-circle"></i></span> Raise Issue</a>
-                            </li>
-                            <li><a><span class="icon icon-btn"><i data-feather="life-buoy"></i></span> FAQ</a></li>
+                        <ul class="menu-list">
+                            <li><a href="{{url_for('master.view_master')}}" class="has-text-white"><span
+                                        class="icon icon-btn"><i data-feather="layers"></i></span>
+                                    Basic Master</a></li>
+                            <li><a href="{{url_for('employee.new')}}" class="has-text-white"><span
+                                        class="icon icon-btn"><i data-feather="user-plus"></i></span>
+                                    Employee</a></li>
                         </ul>
                     </aside>
 
-                    <aside class="menu is-fixed-bottom" style="margin-bottom:2rem;">
+                    <aside class="menu is-fixed-bottom">
                         <p class="menu-label">
-                            User - {{ current_user.username }}
+                            User
                         </p>
-                        <ul class="menu-list is-size-5  has-text-weight-bold roboto">
+                        <ul class="menu-list ">
+                            <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
+                                            data-feather="user"></i></span> {{current_user.username}}</a></li>
+                            <li><a href="{{url_for('auth.logout')}}" class="has-text-white"><span
+                                        class="icon icon-btn"><i data-feather="log-out"></i></span> Logout</a></li>
 
-                            <li><a href="{{url_for('auth.logout')}}"><span class="icon icon-btn"><i
-                                            data-feather="log-out"></i></span> Log Out</a></li>
                         </ul>
                     </aside>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Burger Navingation  -->
     <script type="text/javascript">
         (function () {
             var burger = document.querySelector('.burger');
@@ -94,7 +100,7 @@
     <div class="columns is-fullheight" style="margin-top:0 ; margin-bottom: 0; ">
 
         <!-- Desktop nav -->
-        <div class="column has-text-white is-2 is-fullheight has-background-black is-sidebar-menu is-hidden-touch has-background-black"
+        <div class="column has-text-white is-2  is-fullheight has-background-black is-sidebar-menu is-hidden-touch has-background-black"
             id="mainmenu">
             <div id="side-menu" style="position: sticky !important; top:3rem;">
                 <div>
@@ -125,6 +131,9 @@
                         <li><a href="{{url_for('main.home')}}" class="has-text-white"><span class="icon icon-btn"><i
                                         data-feather="award"></i></span>
                                 Performance</a></li>
+                        <li><a href="{{url_for('transaction.show_attendence')}}" class="has-text-white"><span class="icon icon-btn"><i
+                            data-feather="clock"></i></span>
+                                Attendence</a></li>
                     </ul>
                 </aside>
 
@@ -138,7 +147,7 @@
                                 Basic Master</a></li>
                         <li><a href="{{url_for('employee.new')}}" class="has-text-white"><span class="icon icon-btn"><i
                                         data-feather="user-plus"></i></span>
-                                Add Employee</a></li>
+                                Employee</a></li>
                     </ul>
                 </aside>
 

@@ -4,6 +4,8 @@ new Vue({
         return {
             filteredBenefits: null,
             benefitsList: null,
+            submitting: false,
+            value: 'Save',
             formdata: {
                 name: null,
                 dob: null,
@@ -20,6 +22,7 @@ new Vue({
                 aadhar: null,
                 reference: null,
                 dateofapp: null,
+                appointment: null,
                 post: null,
                 department: null,
                 company: null,
@@ -74,7 +77,10 @@ new Vue({
         submitData(e) {
             if (this.checkData(e)) {
                 let formData = new FormData()
-
+                
+                this.submitting = true;
+                this.value = 'Saving';
+                
                 let rawdata = this
                 formData.append('data', JSON.stringify(rawdata.formdata))
 
@@ -117,6 +123,7 @@ new Vue({
                             })
                             rawdata.confirmExit = true
 
+
                         }
                         if (response.data.message) {
                             rawdata.$buefy.snackbar.open({
@@ -132,6 +139,8 @@ new Vue({
                             })
                         }
 
+                        rawdata.submitting = false;
+                        rawdata.value = 'Save';
                     })
 
                     .catch(function (error) {
@@ -145,9 +154,14 @@ new Vue({
                             onAction: () => {
                                 this.isActive = false;
                             }
+
                         })
                         console.error(error)
+
                     })
+
+
+
                 e.preventDefault();
             }
             else {

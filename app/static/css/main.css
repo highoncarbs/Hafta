@@ -49,9 +49,9 @@ i {
     min-height: 100vh;
     max-height: 100% !important;
     height: 100% !important;
-    display: flex;
+    /* display: flex;
     flex-direction: row;
-    justify-content: stretch;
+    justify-content: stretch; */
 }
 
 /* .columns.is-fullheight .column {
@@ -60,6 +60,8 @@ i {
 
 .box {
     border-radius: 0 !important;
+    box-shadow: none !important;
+    border: 1px solid lightgray;
 }
 
 .notification {
@@ -99,6 +101,10 @@ i {
 #mainmenu .menu-list li a:hover {
     background-color: rgb(63, 63, 63);
 }
+#navMenu .menu-list li a:hover {
+    background-color: rgb(63, 63, 63);
+}
+
 
 #submenu>.menu-list li a {
     text-decoration: none;
