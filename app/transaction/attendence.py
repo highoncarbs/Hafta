@@ -26,7 +26,7 @@ def get_attendence():
                 int(payload_date[0]), int(payload_date[1]), int(1))
             company = payload['company']
             data = Attendence.query.filter(
-                Attendence.company.any(Company.id == int(company))).all()
+                Attendence.company.any(Company.id == int(company)) , Attendence.date == payload_date ).all()
             data_schema = AttendenceSchema(many=True)
             json_data = data_schema.dumps(data)
             print(json_data)

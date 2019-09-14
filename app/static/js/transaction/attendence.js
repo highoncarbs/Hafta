@@ -13,7 +13,8 @@ new Vue({
             detailModal: false,
             empDetail: null,
             errors: [],
-            attendenceList: []
+            attendenceList: [],
+            attModal: false
 
 
 

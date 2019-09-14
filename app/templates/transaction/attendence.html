@@ -51,11 +51,14 @@
         <!-- Data table -->
 
         <table class="table is-bordered is-fullwidth is-hoverable " v-if="data && data.length != 0 && data != null">
-            <div class="notification is-light animated fadeIn" v-if="attendenceList.length !=0">
+            <div class="notification is-light animated fadeIn" v-if="attendenceList.length !=0"
+                @click="attModal = !attModal">
                 <!-- DATA LIST for data laready filled up -->
-                <p >Data already entered for : <span class="tag is-dark" v-for="(att , index ) in attendenceList"> [[
+                <p>Data already entered for : <span class="tag is-dark" v-for="(att , index ) in attendenceList"> [[
                         att.employee[0].name ]]</span></p>
             </div>
+
+
 
             <div class="field is-grouped animated fadeIn" v-if="data != null">
                 <div class="control is-expanded has-icons-left">
@@ -141,7 +144,7 @@
 
             </thead>
             <tfoot>
-                <tr >
+                <tr>
                     <th colspan="11" style="padding:1rem;">
                         <button class="button is-black" @click="submitData" type="submit">
                             <span class="icon icon-btn">
@@ -495,6 +498,48 @@
 
         </div>
 
+        <!-- Attendence detail List -->
+
+        <div v-if="attModal" :class="{ 'is-active' : attModal }" class="modal  ">
+            <div class="modal-background animated fadeIn" @click="attModal = !attModal"></div>
+            <div class="modal-content animated fadeIn ">
+
+                <div class="box is-fullwidth ">
+                    <div class="table-container">
+                        <table class="table is-fullwidth is-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Days Attended</th>
+                                    <th>Late Come in</th>
+                                    <th>Early Going</th>
+                                    <th>PF</th>
+                                    <th>ESI</th>
+                                    <th>TDS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="row in attendenceList">
+                                    <td> [[ row.employee[0].id ]] </td>
+                                    <td> [[ row.employee[0].name ]] </td>
+                                    <td>[[ row.daysatt ]] / <span class=" has-text-grey-light"> 30</span> </td>
+                                    <td> [[ row.latecomin ]] </td>
+                                    <td> [[ row.earlygoing ]] </td>
+                                    <td> [[ row.pf ]] </td>
+                                    <td> [[ row.esi ]] </td>
+                                    <td> [[ row.tds ]] </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <button class="modal-close is-large" @click="attModal = !attModal"></button>
+
+            </div>
+
+        </div>
 
     </div>
 
