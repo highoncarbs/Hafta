@@ -2,7 +2,7 @@ from app import db
 from app import ma
 from datetime import datetime
 from app.master.model import Post, Department, Company, CompanySchema,\
-     Benefit, Location, LocationSchema, PostSchema, DepartmentSchema, BenefitSchema
+    Benefit, Location, LocationSchema, PostSchema, DepartmentSchema, BenefitSchema
 from marshmallow_sqlalchemy import field_for
 
 
@@ -147,6 +147,21 @@ class EmployeeSchema(ma.ModelSchema):
     advancenum = field_for(Employee, 'advancenum', dump_only=True)
     paidleave = field_for(Employee, 'paidleave', dump_only=True)
     incrementpr = field_for(Employee, 'incrementpr', dump_only=True)
+
+    class meta:
+        model = Employee
+
+
+class EmployeeMainSchema(ma.ModelSchema):
+    id = field_for(Employee, 'id', dump_only=True)
+    name = field_for(Employee, 'name', dump_only=True)
+
+    basicpay = field_for(Employee, 'basicpay', dump_only=True)
+    pf = field_for(Employee, 'pf', dump_only=True)
+    esi = field_for(Employee, 'esi', dump_only=True)
+    post = ma.Nested(PostSchema, many=True)
+    department = ma.Nested(DepartmentSchema, many=True)
+    company = ma.Nested(CompanySchema, many=True)
 
     class meta:
         model = Employee

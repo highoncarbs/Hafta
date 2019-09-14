@@ -7,76 +7,83 @@
 
 
 <section class="section">
+
     <div class="container" id="attendence_form">
+
+        <!-- Heading Title -->
         <div class="level">
             <div class="level-left">
                 <p class="is-size-4 has-text-weight-semibold">Attendence</p>
             </div>
 
         </div>
-        <div class="level">
-            <div class="level-left">
-                <div class="level-item">
-                    <div class="field">
-                        <div class="control">
-                            <label for="" class="label">Select company</label>
-                            <custom-select v-model="company" which="company">
-                            </custom-select>
-                        </div>
-                    </div>
-                </div>
-                <div class="level-item">
-                    <div class="field">
-                        <div class="control">
-                            <label for="" class="label">Select month</label>
-                            <input type="month" class="input" v-model="month">
-                        </div>
-                    </div>
-                </div>
-                <div class="level-item">
-                    <div class="field">
-                        <div class="control">
-                            <label for="" class="label"> </label>
 
-                            <button class="button is-black" @click="getEmployee">
-                                <span class="icon icon-btn icon-btn-in">
-                                    <i data-feather="check"></i>
-                                </span>
-                                Submit</button>
-                        </div>
-                    </div>
-                </div>
+        <!-- Attendence COmpany and Date selection -->
+        <div class="field is-grouped">
+
+            <div class="control">
+                <label for="" class="label">Select company</label>
+                <custom-select v-model="company" which="company" class="is-danger">
+                </custom-select>
+            </div>
+
+            <div class="control">
+                <label for="" class="label">Select month</label>
+                <input type="month" class="input" v-model="month">
+            </div>
+
+            <div class="control">
+                <label for="" class="label has-text-white"> Submit</label>
+
+                <button class="button is-black" @click="getEmployee">
+                    <span class="icon icon-btn icon-btn-in">
+                        <i data-feather="check"></i>
+                    </span>
+                    Submit</button>
             </div>
 
         </div>
-        <table class="table is-bordered is-fullwidth is-hoverable" v-if="dataList.length != 0">
-            <div class="field is-grouped">
+        <small v-if="errors.submit " class="has-text-danger is-underline animated fadeInDown is-size-6">[[
+            errors.submit]]</small>
+        <br>
+        <br>
+
+        <!-- Data table -->
+
+        <table class="table is-bordered is-fullwidth is-hoverable " v-if="data && data.length != 0 && data != null">
+            <div class="notification is-light animated fadeIn" v-if="attendenceList.length !=0">
+                <!-- DATA LIST for data laready filled up -->
+                <p >Data already entered for : <span class="tag is-dark" v-for="(att , index ) in attendenceList"> [[
+                        att.employee[0].name ]]</span></p>
+            </div>
+
+            <div class="field is-grouped animated fadeIn" v-if="data != null">
                 <div class="control is-expanded has-icons-left">
-                    <input type="text" class="input is-fullwidth" v-model="searchQuery" placeholder="Search">
+                    <input type="text" class="input is-fdullwidth" v-model="searchQuery" placeholder="Search">
 
                     <span class="icon icon-btn icon-btn-in is-left">
-                        <i data-feather="search"></i>
+                        <feather type="search"></feather>
                     </span>
                 </div>
 
                 <div class="control">
                     <div class="buttons">
-                        <div class="button"><span class="icon icon-btn icon-btn-in"><i
-                                    data-feather="filter"></i></span>Filters
+                        <div class="button"><span class="icon icon-btn icon-btn-in">
+                                <feather type="filter" size="1.3rem"></feather>
+                            </span>Filters
                         </div>
-                        <a href="{{ url_for('employee.new')}}" class="button is-black is-outlined"><span
-                                class="icon icon-btn icon-btn-in"><i data-feather="plus"></i></span>Add
-                            Employee</a>
-                        <a class="button"><span class="icon icon-btn icon-btn-in"><i
-                                    data-feather="more-vertical"></i></span>More</a>
+
+                        <a class="button"><span class="icon icon-btn icon-btn-in">
+                                <feather type="more-vertical" size="1.3rem"></feather>
+                            </span>More</a>
                     </div>
                 </div>
 
 
             </div>
-            <thead style="cursor: pointer">
+            <thead style="cursor: pointer" class="animated fadeIn">
                 <!-- TABLE HEADER -->
-                <tr  class="has-text-weight-semibold ">
+                <tr class="has-text-weight-semibold ">
                     <th @click="sortBy('id')">ID
                         <span class="icon icon-btn icon-btn-in">
 
@@ -93,49 +100,35 @@
                         </span>
                     </td>
 
-                    <td @click=" sortBy('name')">Dept.
+                    <td @click=" sortBy('dept')">Dept.
                         <span class="icon icon-btn icon-btn-in">
 
-                            <feather v-if="this.currentSort == 'name'"
+                            <feather v-if="this.currentSort == 'dept'"
                                 :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
                         </span>
                     </td>
 
-                    <td @click=" sortBy('name')">Post
+                    <td @click=" sortBy('post')">Post
                         <span class="icon icon-btn icon-btn-in">
 
-                            <feather v-if="this.currentSort == 'name'"
+                            <feather v-if="this.currentSort == 'post'"
                                 :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
                         </span>
                     </td>
-                    <td @click=" sortBy('name')">Days Attended
-                        <span class="icon icon-btn icon-btn-in">
+                    <td @click=" sortBy('days')">Days Attended
+                        <small class="has-text-grey">30 DAYS</small>
 
-                            <feather v-if="this.currentSort == 'name'"
-                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
-                        </span>
                     </td>
-                    <td @click=" sortBy('name')">Paid Leaves
-                        <span class="icon icon-btn icon-btn-in">
+                    <td @click=" sortBy('late')">Late Come in
 
-                            <feather v-if="this.currentSort == 'name'"
-                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
-                        </span>
                     </td>
-                    <td @click=" sortBy('name')">Late Come in
-                        <span class="icon icon-btn icon-btn-in">
+                    <td @click=" sortBy('early')">Early Going
 
-                            <feather v-if="this.currentSort == 'name'"
-                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
-                        </span>
                     </td>
-                    <td @click=" sortBy('name')">Early Going
-                        <span class="icon icon-btn icon-btn-in">
+                    <td>PF</td>
+                    <td>ESI</td>
+                    <td>TDS</td>
 
-                            <feather v-if="this.currentSort == 'name'"
-                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
-                        </span>
-                    </td>
 
                 </tr>
                 <!-- EMPTY Mssg -->
@@ -147,17 +140,364 @@
                 </p> -->
 
             </thead>
-            <tbody>
+            <tfoot>
+                <tr >
+                    <th colspan="11" style="padding:1rem;">
+                        <button class="button is-black" @click="submitData" type="submit">
+                            <span class="icon icon-btn">
+                                <feather type="check"></feather>
+                            </span>
+                            Save
+                        </button>
+                        <span class="is-underline has-text-danger has-text-weight-normal" style="padding-left:1rem;"
+                            v-if="errors.length != 0"> Please fix the errors.</span>
+                    </th>
+                </tr>
 
-                <tr v-if="filteredList.length != 0" v-for="( row , index) in filteredList "
-                    v-on:dblclick="employeeDetail(row.id)">
+
+
+            </tfoot>
+            <tbody>
+                <!-- <tr v-show="filteredList.length == 0">
+                    <p class="is-szie-5 is-underline has-text-grey"> <feather type="slash"></feather> Zero results matching query. </p>
+                </tr> -->
+                <tr v-if="filteredList.length != 0" v-for="( row , index) in filteredList " class="animated fadeIn"
+                    v-on:dblclick="employeeDetail(row.id)" :key="index">
                     <td>[[ row.id ]]</td>
                     <td>[[ row.name]] </td>
+                    <td> [[ row.department[0].name]] </td>
+                    <td> [[ row.post[0].name]] </td>
+                    <td>
+                        <input type="number" class="input" v-model.number="row.daysatt" placeholder="Days Attended"
+                            :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].daysatt == true }">
+                    </td>
+                    <td>
+                        <input type="number" class="input" v-model.number="row.latecomin" placeholder="Late Come in"
+                            :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].latecomin == true }">
+
+                    </td>
+                    <td>
+                        <input type="text" class="input" v-model.number="row.earlygoing" placeholder="Early Going"
+                            :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].earlygoing == true }">
+
+                    </td>
+                    <td>
+                        <input type="text" class="input" v-model="row.pfval" placeholder="PF"
+                            :disabled="row.pf == 'no'">
+
+                    </td>
+                    <td>
+                        <input type="text" class="input" v-model="row.esival" placeholder="ESI"
+                            :disabled="row.esi == 'no'">
+
+                    </td>
+                    <td>
+                        <input type="text" class="input" v-model="row.tdsval" placeholder="TDS">
+
+                    </td>
                 </tr>
 
             </tbody>
+
+
+
+
+
         </table>
+
+        <!-- Employee Detail -->
+
+        <div :class="{ 'is-active' : detailModal }" class="modal  ">
+            <div class="modal-background animated fadeIn" @click="detailModal = !detailModal"></div>
+            <div class="modal-content animated fadeIn ">
+
+                <div class="box">
+
+                    <p v-if="empDetail == null " class="has-text-grey">
+                        <span class="icon icon-btn">
+                            <feather type="rotate-cw" animation="spin" animation-speed="slow"></feather>
+                        </span>
+                        Fetching data
+                    </p>
+                    <div v-if="empDetail != null " class="animated fadeIn">
+                        <div class="level is-mobile">
+                            <div class="level-left">
+                                <h2 class="is-size-5 has-text-weight-medium"> [[ empDetail.name ]] </h2>
+
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                    <a href="" class="button"><span class="icon icon-btn">
+                                            <feather type="edit" size="1.3rem"></feather>
+                                        </span> Edit</a>
+                                </div>
+                                <div class="level-item">
+                                    <a href="" class="button is-black"><span class="icon icon-btn">
+                                            <feather type="bar-chart-2" size="1.3rem"></feather>
+                                        </span> Report</a>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <table class="table is-bordered is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <td colspan="2">
+                                        <small class="has-text-weight-semibold"> NAME</small>
+
+                                        <p> [[ empDetail.name ]]</p>
+                                    </td>
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> DATE OF BIRTH</small>
+
+                                        <p>[[ formatedDate(empDetail.dob) ]] </p>
+                                    </td>
+                                    <td colspan="1">
+
+                                        <small class="has-text-weight-semibold"> FATHER'S NAME</small>
+                                        <p>[[ empDetail.fathername ]]
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+
+                                        <small class="has-text-weight-semibold">CONTACT</small>
+                                        <p v-html=" empDetail.contact != undefined ? empDetail.contact : 'None'">
+                                        </p>
+                                    </td>
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> SPOUSE NAME</small>
+
+                                        <p v-html=" empDetail.spousename != undefined ? empDetail.spousename : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> EDUCATION</small>
+
+                                        <p v-html=" empDetail.education != undefined ? empDetail.education : 'None'">
+                                        </p>
+
+                                    </td>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+
+                                        <small class="has-text-weight-semibold">CURRENT ADDRESS</small>
+                                        <p
+                                            v-html=" empDetail.curr_address != undefined ? empDetail.curr_address : 'None'">
+                                        </p>
+                                        <p v-html=" empDetail.curr_city != undefined ? empDetail.curr_city : 'None'">
+                                        </p>
+                                    </td>
+                                    <td colspan="2">
+                                        <small class="has-text-weight-semibold"> PERMANENT ADDRESS</small>
+
+                                        <p
+                                            v-html=" empDetail.perm_address != undefined ? empDetail.perm_address : 'None'">
+                                        </p>
+                                        <p v-html=" empDetail.perm_city != undefined ? empDetail.perm_city : 'None'">
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                <tr>
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> AADHAR NO</small>
+
+                                        <p v-html=" empDetail.aadahr != undefined ? empDetail.aadhar : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="2">
+
+                                        <small class="has-text-weight-semibold">PAN NO</small>
+                                        <p v-html=" empDetail.pan != undefined ? empDetail.pan : 'None'">
+                                        </p>
+                                    </td>
+
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> REFERENCE</small>
+
+                                        <p v-html=" empDetail.reference != undefined ? empDetail.reference : 'None'">
+                                        </p>
+
+                                    </td>
+
+                                </tr>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <small class="has-text-weight-semibold"> DATE OF APPOINTMENT</small>
+
+                                        <p
+                                            v-html="empDetail.dateofapp != undefined ?  formatedDate(empDetail.dateofapp) : 'None'">
+                                        </p>
+
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> APPOINTMENT</small>
+
+                                        <p
+                                            v-html=" empDetail.appointment != undefined ? empDetail.appointment : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="1">
+
+                                        <small class="has-text-weight-semibold">POST</small>
+                                        <p v-html=" empDetail.post != undefined ? empDetail.post : 'None'">
+                                        </p>
+                                    </td>
+
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> DEPARTMENT</small>
+
+                                        <p v-html=" empDetail.department != undefined ? empDetail.department : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> COMPANY</small>
+
+                                        <p v-html=" empDetail.company != undefined ? empDetail.company : 'None'">
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <small class="has-text-weight-semibold"> BENEFITS</small>
+
+                                        <p v-html=" empDetail.company != undefined ? empDetail.company : 'None'">
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr class="has-background-light">
+                                    <td colspan="4">
+                                        <p class="is-size-6 has-text-weight-semibold">SALARY STRUCTURE</p>
+
+                                    </td>
+
+                                </tr>
+                                <tr class="has-background-light">
+                                    <td colspan="2">
+                                        <small class="has-text-weight-semibold"> EFFECTIVE DATE</small>
+
+                                        <p
+                                            v-html="empDetail.dateeff != undefined ?  formatedDate(empDetail.dateeff) : 'None'">
+                                        </p>
+                                    </td>
+                                    <td colspan="2">
+                                        <small class="has-text-weight-semibold"> PAYMENT MODEL</small>
+
+                                        <p
+                                            v-html="empDetail.salary_structure != undefined ?  empDetail.salary_structure : 'None'">
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr class="has-background-light">
+                                    <td colspan="2">
+                                        <small class="has-text-weight-semibold"> BASIC PAY</small>
+
+                                        <p
+                                            v-html=" empDetail.basicpay != undefined ? formatedNumber(empDetail.basicpay) : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="1">
+
+                                        <small class="has-text-weight-semibold">P.F</small>
+                                        <p v-html=" empDetail.pf != undefined ? empDetail.pf : 'None'">
+                                        </p>
+                                    </td>
+
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> ESI</small>
+
+                                        <p v-html=" empDetail.esi != undefined ? empDetail.esi : 'None'">
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr class="has-background-light">
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> SALARY ADVANCE</small>
+
+                                        <p v-html=" empDetail.advance != undefined ? empDetail.advance : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="2">
+
+                                        <small class="has-text-weight-semibold">MAX. ADVANCE</small>
+                                        <p
+                                            v-html=" empDetail.advancevalue != undefined ? formatedNumber(empDetail.advancevalue) : 'None'">
+                                        </p>
+                                    </td>
+
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> ESI</small>
+
+                                        <p v-html=" empDetail.advancenum != undefined ? empDetail.advancenum : 'None'">
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr class="has-background-light">
+
+                                    <td colspan="2">
+                                        <small class="has-text-weight-semibold">PAID LEAVES</small>
+                                        <small>IN A YEAR</small>
+
+                                        <p v-html=" empDetail.paidleave != undefined ? empDetail.paidleave : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="2">
+
+                                        <small class="has-text-weight-semibold">INCREMENT PERIOD</small>
+                                        <small>IN MONTHS</small>
+
+                                        <p
+                                            v-html=" empDetail.incrementpr != undefined ? empDetail.incrementpr : 'None'">
+                                        </p>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+
+                    </div>
+
+                </div>
+                <button class="modal-close is-large" @click="detailModal = !detailModal"></button>
+
+            </div>
+
+        </div>
+
+
     </div>
+
 
 </section>
 

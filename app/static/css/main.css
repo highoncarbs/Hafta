@@ -41,7 +41,6 @@ i {
 .is-sidebar-menu {
     padding: 2.5rem;
     position: sticky !important;
-    
     border-right: 2px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -101,10 +100,10 @@ i {
 #mainmenu .menu-list li a:hover {
     background-color: rgb(63, 63, 63);
 }
+
 #navMenu .menu-list li a:hover {
     background-color: rgb(63, 63, 63);
 }
-
 
 #submenu>.menu-list li a {
     text-decoration: none;
@@ -119,6 +118,14 @@ i {
 #submenu>.menu-list li a:focus {
     text-decoration: underline;
     background-color: none !important;
+}
+
+.actionbar {
+    bottom: 0;
+    top: auto;
+    position: fixed;
+    padding:2rem 0;
+    border-top:1px solid #0a0a0a;
 }
 
 /* Autocomplete from Buefy */
@@ -200,9 +207,9 @@ i {
     pointer-events: none;
 }
 
- .notices .snackbar.is-top-right {
+.notices .snackbar.is-top-right {
     align-self: flex-end;
-} 
+}
 
 @media print, screen and (min-width: 769px) {}
 
@@ -248,10 +255,9 @@ i {
     padding: .5em;
     padding-left: 0;
     background-color: none;
-
 }
 
-.snackbar .button{
+.snackbar .button {
     background-color: #0a0a0a!important;
-    color:white;
+    color: white;
 }

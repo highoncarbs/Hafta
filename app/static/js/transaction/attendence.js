@@ -9,21 +9,30 @@ new Vue({
             currentSort: 'name',
             currentSortDir: 'asc',
             data: null,
-            dataList: []
+            dataList: [],
+            detailModal: false,
+            empDetail: null,
+            errors: [],
+            attendenceList: []
+
+
+
         }
     },
     mounted() {
     },
     computed: {
+        //  TODO:   load on click only - FIX
         filteredList() {
             if (this.company != null && this.month != null) {
-                this.dataList = this.data.filter(data => {
+
+                this.data = this.data.filter(data => {
                     return data.name.toLowerCase().includes(this.searchQuery.toLowerCase())
                 });
 
-                return this.dataList;
+                return this.data;
             }
-            return this.dataList;
+            return this.data;
         }
 
 
@@ -60,14 +69,149 @@ new Vue({
         },
         getEmployee(e) {
             let rawdata = this
-            axios.get('/employee/get/basic')
-                .then(function (response) {
-                    rawdata.data = JSON.parse(response.data)
-                    rawdata.dataList = JSON.parse(response.data)
+            this.errors = []
+            if (this.company && this.month) {
+                axios.get('/employee/get/by/company/' + String(this.company))
+                    .then(function (response) {
+                        console.log(response.data);
+                        // rawdata.data = JSON.parse(response.data)
+                        rawdata.dataList = JSON.parse(response.data)
+                       
+                        let attendenceform = { 'company': rawdata.company, 'date': rawdata.month }
+                        axios.post('/transaction/attendence/get', attendenceform)
+                            .then(function (response) {
+                                rawdata.attendenceList = []
+                                console.log(response.data)
+                                rawdata.attendenceList = JSON.parse(response.data)
 
-                })
+
+                                // Removes data from dataList if item present in AttendenceList
+                                rawdata.attendenceList.forEach(function (item) {
+                                    if (rawdata.dataList.length != 0)
+                                        rawdata.dataList.forEach(function (check, index) {
+                                            if (check.id == item.employee[0].id) {
+                                                console.log(check)
+                                                rawdata.dataList.splice(index, 1)
+                                            }
+
+                                        })
+                                })
+
+                                rawdata.data = rawdata.dataList
+                                
+
+                            });
+
+                    })
+
+
+                //    Need to pop emps whose data is already been filled
+            }
+            else {
+                this.$set(this.errors, 'submit', "Please select both company and month.")
+            }
             e.preventDefault();
-        }
+        },
+        employeeDetail(id) {
+            this.detailModal = !this.detailModal
+            let rawdata = this
+            axios.post('/employee/get/detail/' + String(id))
+                .then(function (response) {
+                    rawdata.empDetail = JSON.parse(response.data)
+                })
+        },
+        submitData(e) {
+            let rawdata = this
+            if (this.checkData(e)) {
+                if (this.errors.length == 0) {
+
+                    let formdata = { 'company': this.company, 'date': this.month, 'data': this.filteredList }
+                    console.log(formdata)
+                    axios.post('/transaction/attendence/save', formdata)
+                        .then(function (response) {
+                            if (response.data.success) {
+                                // Run notificaiton 
+                                // Open selection for reports and printing
+                            }
+                            else if (response.data.message) {
+                                // Run message
+                            }
+                        })
+                        .catch(function (error) {
+                            // RUn error 
+                            console.error(error);
+                        })
+                }
+            }
+
+            e.preventDefault();
+        },
+        checkData(e) {
+            this.errors = []
+            let raw = this
+            let rawError = this.errors
+            this.dataList.forEach(function (item) {
+                if (item.daysatt == undefined) {
+                    if (rawError[item.id]) {
+                        raw.$set(rawError[item.id], 'daysatt', true)
+
+                    }
+                    else {
+                        raw.$set(rawError, item.id, {})
+                        raw.$set(rawError[item.id], 'daysatt', true)
+
+                    }
+
+                }
+                if (item.latecomin == undefined) {
+
+                    if (rawError[item.id]) {
+                        raw.$set(rawError[item.id], 'latecomin', true)
+
+                    }
+                    else {
+                        raw.$set(rawError, item.id, {})
+                        raw.$set(rawError[item.id], 'latecomin', true)
+
+                    }
+
+
+                }
+                if (item.earlygoing == undefined) {
+                    if (rawError[item.id]) {
+                        raw.$set(rawError[item.id], 'earlygoing', true)
+
+                    }
+                    else {
+                        raw.$set(rawError, item.id, {})
+                        raw.$set(rawError[item.id], 'earlygoing', true)
+
+                    }
+
+                }
+
+
+
+
+                // Reconsider how to set this up
+
+                // if(item.pfval == null || item.pfval == undefined ){
+                //     this.$set(this.errors , 'pfval' , 'Please fill out P.F . Set <b>0</b> for None/Null')
+                // }
+                // if(item.esival== null || item.esival == undefined ){
+                //     this.$set(this.errors , 'esival' , 'Please fill out ESI . Set <b>0</b> for None/Null')
+                // }
+
+            })
+
+            e.preventDefault();
+            if (this.errors.length == 0) {
+                return true
+            }
+            else {
+                return false;
+            }
+        },
 
     }
 })
