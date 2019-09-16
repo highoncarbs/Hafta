@@ -93,3 +93,66 @@ def save_attendence():
             return jsonify({'message': 'Something went wrong'})
         else:
             return jsonify({'message': 'Empty data.'})
+
+
+@bp.route('/attendence/update', methods=['POST'])
+def update_attendence():
+    if request.method == 'POST':
+        payload = request.json
+        if payload != None:
+            print('this is it --')
+            print(payload)
+            print('---------------')
+            # payload_data = json.loads(payload['data'])
+            # payload_date = str(payload['date']).split('-')
+            # payload_date = datetime(
+            #     int(payload_date[0]), int(payload_date[1]), int(1))
+            # Date checks to be done
+            # print(payload_date)
+            table_columns = (
+                'daysatt',
+                'latecomin',
+                'earlygoing',
+            )
+            try:
+
+                # Need Update check inside
+                for item in payload:
+                    saved_att = db.session.query(Attendence).filter_by(id = int(item['id'])).first()
+                    for field in table_columns:
+                        val = item[field]
+                        if val == '' or val is None:
+                            continue
+                        setattr(saved_att, field, val)
+
+                    if 'tdsval' in item.keys():
+                        val = item['tdsval']
+                        if val == '' or val is None:
+                            continue
+                        setattr(saved_att, 'tds', item['tdsval'])
+
+                    if 'esival' in item.keys():
+                        val = item['esival']
+                        if val == '' or val is None:
+                            continue
+                        setattr(saved_att, 'esi', item['esival'])
+
+                    if 'pfval' in item.keys():
+                        val = item['pfval']
+                        if val == '' or val is None:
+                            continue
+                        setattr(saved_att, 'pf', item['pfval'])
+
+                   
+                # db.session.add(new_data)
+                db.session.commit()
+                return jsonify({'success': 'Data Added'})
+
+            except Exception as e:
+                print(str(e))
+                db.session.rollback()
+                return jsonify({'message': 'Something went wrong'})
+
+            return jsonify({'message': 'Something went wrong'})
+        else:
+            return jsonify({'message': 'Empty data.'})

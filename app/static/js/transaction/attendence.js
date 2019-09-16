@@ -14,7 +14,8 @@ new Vue({
             empDetail: null,
             errors: [],
             attendenceList: [],
-            attModal: false
+            attModal: false,
+            showEditTable: false
 
 
 
@@ -27,13 +28,13 @@ new Vue({
         filteredList() {
             if (this.company != null && this.month != null) {
 
-                this.data = this.data.filter(data => {
+                this.dataList = this.data.filter(data => {
                     return data.name.toLowerCase().includes(this.searchQuery.toLowerCase())
                 });
 
-                return this.data;
+                return this.dataList;
             }
-            return this.data;
+            return this.dataList;
         }
 
 
@@ -71,13 +72,17 @@ new Vue({
         getEmployee(e) {
             let rawdata = this
             this.errors = []
+            this.data = null
+            this.dataList = []
+            this.attModal = false
+            this.showEditTable = false
             if (this.company && this.month) {
                 axios.get('/employee/get/by/company/' + String(this.company))
                     .then(function (response) {
                         console.log(response.data);
                         // rawdata.data = JSON.parse(response.data)
                         rawdata.dataList = JSON.parse(response.data)
-                       
+
                         let attendenceform = { 'company': rawdata.company, 'date': rawdata.month }
                         axios.post('/transaction/attendence/get', attendenceform)
                             .then(function (response) {
@@ -99,7 +104,7 @@ new Vue({
                                 })
 
                                 rawdata.data = rawdata.dataList
-                                
+
 
                             });
 
@@ -113,13 +118,42 @@ new Vue({
             }
             e.preventDefault();
         },
-        employeeDetail(id) {
-            this.detailModal = !this.detailModal
+        updateData(e) {
             let rawdata = this
-            axios.post('/employee/get/detail/' + String(id))
+            let formdata = { 'company': this.company, 'date': this.month, 'data': this.attendenceList }
+            axios.post('/transaction/attendence/update', rawdata.attendenceList)
                 .then(function (response) {
-                    rawdata.empDetail = JSON.parse(response.data)
+                    console.log(response)
+                    if (response.data.success) {
+                        rawdata.$buefy.snackbar.open({
+                            duration: 5000,
+                            message: response.data.success,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                    }
+
+                    if (response.data.message) {
+                        rawdata.$buefy.snackbar.open({
+                            duration: 8000,
+                            message: response.data.message,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                    }
                 })
+
+            e.preventDefault();
         },
         submitData(e) {
             let rawdata = this

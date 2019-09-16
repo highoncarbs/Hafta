@@ -46,17 +46,202 @@
         <small v-if="errors.submit " class="has-text-danger is-underline animated fadeInDown is-size-6">[[
             errors.submit]]</small>
         <br>
-        <br>
 
-        <!-- Data table -->
 
-        <table class="table is-bordered is-fullwidth is-hoverable " v-if="data && data.length != 0 && data != null">
-            <div class="notification is-light animated fadeIn" v-if="attendenceList.length !=0"
-                @click="attModal = !attModal">
-                <!-- DATA LIST for data laready filled up -->
-                <p>Data already entered for : <span class="tag is-dark" v-for="(att , index ) in attendenceList"> [[
-                        att.employee[0].name ]]</span></p>
+        <!-- Edit Data table -->
+
+
+        <div class="box animated fadeIn has-background-light" v-if="attendenceList.length !=0">
+            <div class="level">
+                <div class="level-left">
+                    <!-- DATA LIST for data laready filled up -->
+                    <p v-if= "attendenceList.length > 4">
+                            Data already entered for : [[ attendenceList.length ]] employees
+                    </p>
+                    <p v-else="attendenceList.length <= 4">Data already entered for : <span class="tag is-dark" v-for="(att , index ) in attendenceList"> [[
+                            att.employee[0].name ]]</span></p>
+                </div>
+                <div class="level-right">
+                    <div class="butttons">
+                        <button class="button " @click="attModal = !attModal">
+                            <span class="icon icon-btn">
+                                <feather type="eye" size="1.3rem"></feather>
+                            </span>
+                            View</button>
+                        <button class="button is-black" @click="showEditTable = !showEditTable">
+                            <span class="icon icon-btn">
+                                <feather v-if="!showEditTable" type="edit" size="1.3rem"></feather>
+                                <feather v-if="showEditTable" type="x" size="1.3rem"></feather>
+
+                            </span>
+                            Edit</button>
+
+                    </div>
+                </div>
+
+
             </div>
+            <div v-if="showEditTable">
+                <table class="table is-bordered is-fullwidth is-hoverable " v-if="attendenceList.length != 0">
+
+
+
+
+                    <div class="field is-grouped animated fadeIn" v-if="data != null">
+                        <div class="control is-expanded has-icons-left">
+                            <input type="text" class="input is-fdullwidth" v-model="searchQuery" placeholder="Search">
+
+                            <span class="icon icon-btn icon-btn-in is-left">
+                                <feather type="search"></feather>
+                            </span>
+                        </div>
+
+                        <div class="control">
+                            <div class="buttons">
+                                <div class="button"><span class="icon icon-btn icon-btn-in">
+                                        <feather type="filter" size="1.3rem"></feather>
+                                    </span>Filters
+                                </div>
+
+                                <a class="button"><span class="icon icon-btn icon-btn-in">
+                                        <feather type="more-vertical" size="1.3rem"></feather>
+                                    </span>More</a>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <thead style="cursor: pointer" class="animated fadeIn">
+                        <!-- TABLE HEADER -->
+                        <tr class="has-text-weight-semibold ">
+                            <th @click="sortBy('id')">ID
+                                <span class="icon icon-btn icon-btn-in">
+
+                                    <feather v-if="this.currentSort == 'id'"
+                                        :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                                </span>
+                                </feather>
+                            </th>
+                            <td @click=" sortBy('name')">Name
+                                <span class="icon icon-btn icon-btn-in">
+
+                                    <feather v-if="this.currentSort == 'name'"
+                                        :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                                </span>
+                            </td>
+
+                            <td @click=" sortBy('dept')">Dept.
+                                <span class="icon icon-btn icon-btn-in">
+
+                                    <feather v-if="this.currentSort == 'dept'"
+                                        :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                                </span>
+                            </td>
+
+                            <td @click=" sortBy('post')">Post
+                                <span class="icon icon-btn icon-btn-in">
+
+                                    <feather v-if="this.currentSort == 'post'"
+                                        :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                                </span>
+                            </td>
+                            <td @click=" sortBy('days')">Days Attended
+                                <small class="has-text-grey">30 DAYS</small>
+
+                            </td>
+                            <td @click=" sortBy('late')">Late Come in
+
+                            </td>
+                            <td @click=" sortBy('early')">Early Going
+
+                            </td>
+                            <td>PF</td>
+                            <td>ESI</td>
+                            <td>TDS</td>
+
+
+                        </tr>
+                        <!-- EMPTY Mssg -->
+                        <!-- <p v-if="filteredList.length == 0"
+                                    class=" has-text-centered is-size-4 has-text-grey-light is-underline">
+                                    <br>
+                                    <span class="icon icon-btn"><i data-feather="slash"></i></span> Zero data matching query.
+                                    <script> feather.replace()</script>
+                                </p> -->
+
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th colspan="11" style="padding:1rem;">
+                                <button class="button is-black" @click="updateData" type="submit">
+                                    <span class="icon icon-btn">
+                                        <feather type="refresh-cw" SIZE="1.3rem"></feather>
+                                    </span>
+                                    Update
+                                </button>
+                                <span class="is-underline has-text-danger has-text-weight-normal"
+                                    style="padding-left:1rem;" v-if="errors.length != 0"> Please fix the errors.</span>
+                            </th>
+                        </tr>
+
+
+
+                    </tfoot>
+                    <tbody>
+                        <!-- <tr v-show="filteredList.length == 0">
+                                    <p class="is-szie-5 is-underline has-text-grey"> <feather type="slash"></feather> Zero results matching query. </p>
+                                </tr> -->
+                        <tr v-for="( row , index) in attendenceList " class="animated fadeIn"
+                            v-on:dblclick="employeeDetail(row.id)" :key="index">
+                            <td>[[ row.employee[0].id ]]</td>
+                            <td>[[ row.employee[0].name]] </td>
+                            <td> [[ row.employee[0].department[0].name]] </td>
+                            <td> [[ row.employee[0].post[0].name]] </td>
+                            <td>
+                                <input type="number" class="input" v-model.number="row.daysatt"
+                                    placeholder="Days Attended"
+                                    :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].daysatt == true }">
+                            </td>
+                            <td>
+                                <input type="number" class="input" v-model.number="row.latecomin"
+                                    placeholder="Late Come in"
+                                    :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].latecomin == true }">
+
+                            </td>
+                            <td>
+                                <input type="text" class="input" v-model.number="row.earlygoing"
+                                    placeholder="Early Going"
+                                    :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].earlygoing == true }">
+
+                            </td>
+                            <td>
+                                <input type="text" class="input" v-model="row.pf" placeholder="PF"
+                                    :disabled="row.pf == 'no'">
+
+                            </td>
+                            <td>
+                                <input type="text" class="input" v-model="row.esi" placeholder="ESI"
+                                    :disabled="row.esi == 'no'">
+
+                            </td>
+                            <td>
+                                <input type="text" class="input" v-model="row.tds" placeholder="TDS">
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+
+
+
+
+                </table>
+            </div>
+
+        </div>
+        <table class="table is-bordered is-fullwidth is-hoverable " v-if="data && data.length != 0 && !showEditTable">
+
 
 
 
@@ -208,7 +393,7 @@
 
         </table>
 
-        <!-- Employee Detail -->
+        <!-- Employee Detail  Popup-->
 
         <div :class="{ 'is-active' : detailModal }" class="modal  ">
             <div class="modal-background animated fadeIn" @click="detailModal = !detailModal"></div>
@@ -498,7 +683,7 @@
 
         </div>
 
-        <!-- Attendence detail List -->
+        <!-- Attendence detail List popup -->
 
         <div v-if="attModal" :class="{ 'is-active' : attModal }" class="modal  ">
             <div class="modal-background animated fadeIn" @click="attModal = !attModal"></div>

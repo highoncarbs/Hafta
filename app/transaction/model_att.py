@@ -4,7 +4,7 @@ from datetime import datetime
 from app.master.model import Post, Department, Company, CompanySchema,\
     Benefit, Location, LocationSchema, PostSchema, DepartmentSchema, BenefitSchema
 from marshmallow_sqlalchemy import field_for
-from app.employee.model import Employee, EmployeeBasicSchema
+from app.employee.model import Employee, EmployeeMainSchema
 
 
 class TimestampMixin(object):
@@ -53,6 +53,7 @@ db.Table('att_comp',
 
 
 class AttendenceSchema(ma.ModelSchema):
+    id = field_for(Attendence , 'id' , dump_only = True)
     date = field_for(Attendence, 'date', dump_only=True)
     daysatt = field_for(Attendence, 'daysatt', dump_only=True)
     latecomin = field_for(Attendence, 'latecomin', dump_only=True)
@@ -61,7 +62,7 @@ class AttendenceSchema(ma.ModelSchema):
     pf = field_for(Attendence, 'pf', dump_only=True)
     tds = field_for(Attendence, 'tds', dump_only=True)
 
-    employee = ma.Nested(EmployeeBasicSchema, many=True)
+    employee = ma.Nested(EmployeeMainSchema, many=True)
     company = ma.Nested(CompanySchema, many=True)
     basicpay = field_for(Employee, 'basicpay', dump_only=True)
 
