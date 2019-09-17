@@ -185,7 +185,7 @@ def add_emp():
                     if temp == 'appointment' and (val is not None):
                         if val is not '-1':
                             data = Appointment.query.filter_by(id=int(val)).first()
-                            new_data.appontment.append(data)
+                            new_data.appointment.append(data)
                             continue
                         else:
                             return jsonify({'message': 'Please select appointment.'})

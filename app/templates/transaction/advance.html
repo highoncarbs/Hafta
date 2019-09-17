@@ -1,0 +1,237 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+<script src="https://unpkg.com/buefy/dist/components/autocomplete"></script>
+
+{% include 'component/custom-select.html'%}
+
+
+<section class="section">
+
+    <div class="container" id="advance_form">
+
+
+        <div :class="{ 'is-active' : detailModal }" class="modal  " v-if="empAdvanceList != null">
+            <div class="modal-background animated fadeIn" @click="detailModal = !detailModal"></div>
+            <div class="modal-content animated fadeIn ">
+
+                <div class="box">
+                    <p class="is-size-5 has-text-weight-semibold">Advance List</p>
+                    <br>
+                    <div class="table-container">
+                        <table class="table is-fullwidth is-bordered is-striped">
+
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Cheque No.</th>
+                                    <th>Letter</th>
+                                    <th>Deduction</th>
+                                    <th>Deduction Period </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr v-for="adv in empAdvanceList">
+                                    <td>[[ formatedDate(adv.date)]]</td>
+                                    <td> [[ formatedNumber(adv.advanceamt) ]]</td>
+                                    <td> [[ adv.cheque_no]]</td>
+                                    <td> [[ adv.letter]]</td>
+                                    <td> [[ formatedNumber(adv.deduction) ]]</td>
+                                    <td>[[ adv.deduction_period ]]</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <button class="modal-close is-large" @click="detailModal = !detailModal"></button>
+
+        </div>
+
+
+        <!-- Heading Title -->
+        <div class="level">
+            <div class="level-left">
+                <p class="is-size-4 has-text-weight-semibold">Advance</p>
+            </div>
+
+        </div>
+
+        <!-- Advacne Company and Date selection -->
+        <div class="field is-grouped is-grouped-multiline">
+
+            <div class="control">
+                <label for="" class="label">Select company</label>
+                <custom-select v-model="company" which="company">
+                </custom-select>
+            </div>
+
+            <div class="control">
+                <label for="" class="label">Select month</label>
+                <input type="month" class="input" v-model="month">
+            </div>
+
+            <div class="control">
+                <label for="" class="label has-text-white"> Submit</label>
+
+                <button class="button is-black" @click="getEmployee">
+                    <span class="icon icon-btn icon-btn-in">
+                        <i data-feather="check"></i>
+                    </span>
+                    Submit</button>
+            </div>
+
+        </div>
+        <br>
+        <div class="field is-grouped is-grouped-multiline animated fadeInDown" v-if="showEmpSelect">
+
+            <div class="control">
+                <label for="" class="label">Select Employee</label>
+                <b-autocomplete v-model="employee" placeholder="e.g. Jitendre" :keep-first='true' :open-on-focus='true'
+                    :data="filteredDataObj" field="name" @select="getSelected">
+
+
+                </b-autocomplete>
+            </div>
+            <div class="control">
+                <label for="" class="label has-text-white"> Submit</label>
+
+                <button class="button is-black" @click="getAdvanceDetail">
+                    <span class="icon icon-btn icon-btn-in">
+                        <feather type="check" size="1.3rem"></feather>
+                    </span>
+                    Submit</button>
+            </div>
+
+        </div>
+
+
+        <small v-if="errors.submit " class="has-text-danger is-underline animated fadeInDown is-size-6">[[
+            errors.submit]]</small>
+        <br>
+        <div class="box has-background-light" v-if="empAdvanceDetail != null && empAdvanceDetail.advance == 'not'">
+            <p>This employee has not been allowed advance. <br> If you'd like to change that , please edit employee's
+                details.</p>
+            <br>
+            <div class="field">
+                <div class="control"><button class="button"><span class="icon icon-btn">
+                            <feather type="edit" size="1.3rem"></feather>
+                        </span> Edit [[ employee ]]</button></div>
+            </div>
+        </div>
+
+
+        <div class="box has-background-light" v-if="empAdvanceDetail != null && empAdvanceDetail.advance != 'not'">
+            <p class="is-size-5 has-text-weight-semibold">Outstanding Advance :  [[ getOutstandingAdvance() ]]</p>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-black" @click="detailModal = true">
+                        <span class="icon icon-btn">
+                            <feather type="eye" size="1.3rem"></feather>
+                        </span>
+                        View
+                    </button>
+                </div>
+            </div>
+            <br>
+            <div class="table-container">
+                <table class="table is-bordered is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>Advance</th>
+                            <th>Max. Advance</th>
+                            <th>Number of Advances</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>[[ empAdvanceDetail.advance ]]</td>
+                            <td v-html="formatedNumber( empAdvanceDetail.advancevalue )"> </td>
+                            <td>[[ empAdvanceDetail.advancenum ]]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="field is-grouped is-grouped-multiline">
+                <div class="control">
+                    <label for="" class="label">Select Date</label>
+                    <input type="date" class="input" v-model="advanceForm.date">
+                </div>
+                <div class="control">
+                    <label for="" class="label">Enter Amount</label>
+                    <input type="text" class="input" v-model="advanceForm.advanceamt">
+                </div>
+                <div class="control">
+                    <label for="" class="label">Total Advance</label>
+                    <p >[[ total ]] </p>
+                </div>
+
+            </div>
+            <hr style="background-color:rgba(0,0,0,0.2) !important; height: 1px !important;">
+            <div>
+                <p class="is-size-5 has-text-weight-semibold">Security </p>
+                <br>
+                <div class="field is-grouped is-grouped-multiline">
+                    <div class="control">
+                        <label for="" class="label">Cheque No.</label>
+                        <input type="text" class="input" v-model="advanceForm.cheque_no">
+                    </div>
+                    <div class="control">
+                        <label for="" class="label">Letter</label>
+
+                        <label class="radio">
+                            <input type="radio" value="yes" v-model="advanceForm.letter">
+                            Yes
+                        </label>
+                        <label class="radio">
+                            <input type="radio" value="no" v-model="advanceForm.letter">
+                            no
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="field is-grouped is-grouped-multiline">
+                <div class="control">
+                    <label for="" class="label">Deduction Amount</label>
+                    <input type="text" class="input" v-model="advanceForm.deduction">
+                </div>
+                <div class="control">
+                    <label for="" class="label">Period</label>
+
+                    <label class="radio">
+                        <input type="radio" value="month" v-model="advanceForm.deduction_period">
+                        Month
+                    </label>
+                    <label class="radio">
+                        <input type="radio" value="year" v-model="advanceForm.deduction_period">
+                        Year
+                    </label>
+                </div>
+            </div>
+            <br>
+            <div class="field">
+                <div class="control">
+
+                    <button class="button is-black" @click="submitData" :disabled="submitting">
+                        <span class="icon icon-btn">
+                            <feather type="check" size="1.3rem"></feather>
+
+                        </span>
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</section>
+
+<script src="{{ url_for('static' , filename='js/transaction/advance.js')}}"></script>
+
+{% endblock %}

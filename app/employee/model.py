@@ -2,7 +2,8 @@ from app import db
 from app import ma
 from datetime import datetime
 from app.master.model import Post, Department, Company, CompanySchema,\
-    Benefit, Location, LocationSchema, PostSchema, DepartmentSchema, BenefitSchema
+    Benefit, Location, LocationSchema, PostSchema, DepartmentSchema, BenefitSchema , Appointment , AppointmentSchema
+        
 from marshmallow_sqlalchemy import field_for
 
 
@@ -35,6 +36,8 @@ class Employee(TimestampMixin, db.Model):
     resumefile = db.Column(db.String(250), default=None)
     reference = db.Column(db.String(250), default=None)
     dateofapp = db.Column(db.DateTime, default=None)
+    appointment = db.relationship('Appointment', secondary='emp_appt',
+                           backref='emp_appt', cascade='all ,delete', lazy='joined')
     post = db.relationship('Post', secondary='emp_post',
                            backref='emp_post', cascade='all ,delete', lazy='joined')
     department = db.relationship('Department', secondary='emp_department',
@@ -78,6 +81,12 @@ db.Table('emp_post',
              'employee.id', ondelete='SET NULL')),
          db.Column('post_id', db.Integer, db.ForeignKey(
              'post.id', ondelete='SET NULL'))
+         )
+db.Table('emp_appt',
+         db.Column('emp_id', db.Integer, db.ForeignKey(
+             'employee.id', ondelete='SET NULL')),
+         db.Column('appt_id', db.Integer, db.ForeignKey(
+             'appointment.id', ondelete='SET NULL'))
          )
 
 db.Table('emp_department',
@@ -159,6 +168,22 @@ class EmployeeMainSchema(ma.ModelSchema):
     basicpay = field_for(Employee, 'basicpay', dump_only=True)
     pf = field_for(Employee, 'pf', dump_only=True)
     esi = field_for(Employee, 'esi', dump_only=True)
+    post = ma.Nested(PostSchema, many=True)
+    department = ma.Nested(DepartmentSchema, many=True)
+    company = ma.Nested(CompanySchema, many=True)
+
+    class meta:
+        model = Employee
+
+
+class EmployeeAdvanceSchema(ma.ModelSchema):
+    id = field_for(Employee, 'id', dump_only=True)
+    name = field_for(Employee, 'name', dump_only=True)
+
+    basicpay = field_for(Employee, 'basicpay', dump_only=True)
+    advance = field_for(Employee, 'advance', dump_only=True)
+    advancevalue = field_for(Employee, 'advancevalue', dump_only=True)
+    advancenum = field_for(Employee, 'advancenum', dump_only=True)
     post = ma.Nested(PostSchema, many=True)
     department = ma.Nested(DepartmentSchema, many=True)
     company = ma.Nested(CompanySchema, many=True)

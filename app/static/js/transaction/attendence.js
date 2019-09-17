@@ -15,7 +15,10 @@ new Vue({
             errors: [],
             attendenceList: [],
             attModal: false,
-            showEditTable: false
+            showEditTable: false,
+            value: 'Save',
+            submitting: false,
+            showEmpSelect: false
 
 
 
@@ -69,6 +72,34 @@ new Vue({
                     rawdata.empDetail = JSON.parse(response.data)
                 })
         },
+        getAttendence() {
+            let rawdata = this
+            let attendenceform = { 'company': this.company, 'date': this.month }
+            axios.post('/transaction/attendence/get', attendenceform)
+                .then(function (response) {
+                    rawdata.attendenceList = []
+                    console.log(response.data)
+                    rawdata.attendenceList = JSON.parse(response.data)
+
+
+                    // Removes data from dataList if item present in AttendenceList
+                    rawdata.attendenceList.forEach(function (item) {
+                        if (rawdata.dataList.length != 0)
+                            rawdata.dataList.forEach(function (check, index) {
+                                if (check.id == item.employee[0].id) {
+                                    console.log(check)
+                                    rawdata.dataList.splice(index, 1)
+                                }
+
+                            })
+                    })
+
+                    rawdata.data = rawdata.dataList
+
+
+                });
+
+        },
         getEmployee(e) {
             let rawdata = this
             this.errors = []
@@ -82,31 +113,8 @@ new Vue({
                         console.log(response.data);
                         // rawdata.data = JSON.parse(response.data)
                         rawdata.dataList = JSON.parse(response.data)
+                        rawdata.getAttendence();
 
-                        let attendenceform = { 'company': rawdata.company, 'date': rawdata.month }
-                        axios.post('/transaction/attendence/get', attendenceform)
-                            .then(function (response) {
-                                rawdata.attendenceList = []
-                                console.log(response.data)
-                                rawdata.attendenceList = JSON.parse(response.data)
-
-
-                                // Removes data from dataList if item present in AttendenceList
-                                rawdata.attendenceList.forEach(function (item) {
-                                    if (rawdata.dataList.length != 0)
-                                        rawdata.dataList.forEach(function (check, index) {
-                                            if (check.id == item.employee[0].id) {
-                                                console.log(check)
-                                                rawdata.dataList.splice(index, 1)
-                                            }
-
-                                        })
-                                })
-
-                                rawdata.data = rawdata.dataList
-
-
-                            });
 
                     })
 
@@ -157,6 +165,8 @@ new Vue({
         },
         submitData(e) {
             let rawdata = this
+            this.submitting = true;
+            this.value = 'Saving';
             if (this.checkData(e)) {
                 if (this.errors.length == 0) {
 
@@ -167,14 +177,43 @@ new Vue({
                             if (response.data.success) {
                                 // Run notificaiton 
                                 // Open selection for reports and printing
+                                rawdata.$buefy.snackbar.open({
+                                    duration: 4000,
+                                    message: response.data.success,
+                                    type: 'is-light',
+                                    position: 'is-top-right',
+                                    actionText: 'Close',
+                                    queue: true,
+                                    onAction: () => {
+                                        this.isActive = false;
+                                    }
+                                })
+
+                                rawdata.getAttendence();
                             }
                             else if (response.data.message) {
-                                // Run message
+                                rawdata.$buefy.snackbar.open({
+                                    duration: 4000,
+                                    message: response.data.message,
+                                    type: 'is-light',
+                                    position: 'is-top-right',
+                                    actionText: 'Close',
+                                    queue: true,
+                                    onAction: () => {
+                                        this.isActive = false;
+                                    }
+                                })
+
                             }
+
+                            rawdata.submitting = false;
+                            rawdata.value = 'Save';
                         })
                         .catch(function (error) {
                             // RUn error 
                             console.error(error);
+                            rawdata.submitting = false;
+                            rawdata.value = 'Save';
                         })
                 }
             }
