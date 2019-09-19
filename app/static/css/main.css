@@ -61,6 +61,7 @@ i {
     border-radius: 0 !important;
     box-shadow: none !important;
     border: 1px solid lightgray;
+    z-index: 2 !important;
 }
 
 .notification {

@@ -128,9 +128,29 @@ class Performance(db.Model):
         self.name = name
 
 
+class AttendenceRules(db.Model):
+    __table_args__ = {'extend_existing': True}
+    id = db.Column(db.Integer, primary_key=True)
+    late_comin = db.Column(db.Float, unique=True)
+    late_comin_day = db.Column(db.Float, unique=True)
+    early_going = db.Column(db.Float, unique=True)
+    early_going_day = db.Column(db.Float, unique=True)
+    db.CheckConstraint('id =1', name='check1')
+
+    def __init__(self, late_comin, late_comin_day, early_going, early_going_day):
+        self.late_comin = late_comin
+        self.early_going = early_going
+        self.late_comin_day = late_comin_day
+        self.early_going_day = early_going_day
+
+
 class PerformanceSchema(ma.ModelSchema):
     class Meta:
         model = Performance
+
+class AttendenceRuleSchema(ma.ModelSchema):
+    class Meta:
+        model = AttendenceRules
 
 
 class EmployeeCatSchema(ma.ModelSchema):

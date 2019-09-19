@@ -1,0 +1,118 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+<script src="https://unpkg.com/buefy/dist/components/autocomplete"></script>
+
+{% include 'component/custom-select.html'%}
+
+
+<section class="section">
+
+    <div class="container" id="salary_sheet_form">
+
+        <!-- Heading Title -->
+        <div class="level">
+            <div class="level-left">
+                <p class="is-size-4 has-text-weight-semibold">Salary Sheet</p>
+            </div>
+
+        </div>
+
+        <!-- Advacne Company and Date selection -->
+        <div class="field is-grouped is-grouped-multiline">
+
+            <div class="control">
+                <label for="" class="label">Select company</label>
+                <custom-select v-model="company" which="company">
+                </custom-select>
+            </div>
+
+            <div class="control">
+                <label for="" class="label">Select month</label>
+                <input type="month" class="input" v-model="month">
+            </div>
+
+            <div class="control">
+                <label for="" class="label has-text-white"> Generate</label>
+
+                <button class="button is-black" @click="generateSalarySheet()">
+                    <span class="icon icon-btn icon-btn-in">
+                        <i data-feather="check"></i>
+                    </span>
+                    Submit</button>
+            </div>
+
+        </div>
+        <small v-if="errors.req == true" class="has-text-danger is-underline">
+            Please set both company and month.
+        </small>
+
+        <br>
+        <div class="box has-background-light animated fadeIn" v-if="isGenerating">
+            <p class="has-text-weight-semibold has-text-grey animated">
+                <span class="icon icon-btn icon-btn-in">
+                    <feather type="loader" size="1.3rem" animation="spin"></feather>
+                </span>
+                Generating Salary Sheet </p>
+        </div>
+
+        <div v-if="salarySheet != null">
+            <div class="table-container">
+                <table class="table is-fullwidth is-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Dept.</th>
+                            <th>Post</th>
+                            <th>Days Attended</th>
+                            <th>Salary</th>
+                            <th>Days payable <span class="has-text-grey">INCL. Late and early leaves.</span></th>
+                            <th>Pay #1</th>
+                            <th>Advance Deduction</th>
+                            <th>ESI</th>
+                            <th>PF</th>
+                            <th>TDS</th>
+                            <th>Other Deduction</th>
+                            <th>Total Deductions #2</th>
+                            <th>Net Payable ( #1 - #2)</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <td colspan="14">Pay</td>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        <template v-for="row in salarySheet">
+                            <tr>
+                                <td>[[ row.employee[0].name]]</td>
+                                <td>[[ row.employee[0].post[0].name]]</td>
+                                <td>[[ row.employee[0].department[0].name]]</td>
+                                <td> [[ row.daysatt ]]</td>
+                                <td>[[  formatedNumber(row.employee[0].basicpay) ]]</td>
+                                <td>[[ row.employee[0].daysatt ]]</td>
+                                <td>[[ row.employee[0].basicpay ]]</td>
+                                <td>
+                                    <small class="has-text-grey">MONTHLY</small>
+                                    
+                                    <ul v-for="dec in row.deductions.month ">
+                                        <li>[[ formatedNumber(dec) ]]</li>
+                                    </ul>
+                                </td>
+                                <td>[[ row.esi ]]</td>
+                                <td>[[ row.pf ]]</td>
+                                <td>[[ row.tds ]]</td>
+                                <td>[[ row.tds ]]</td>
+                                <td>[[ row.tds ]]</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="{{ url_for('static' , filename='js/transaction/salary.js')}}"></script>
+
+{% endblock %}

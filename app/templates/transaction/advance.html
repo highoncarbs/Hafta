@@ -11,6 +11,7 @@
     <div class="container" id="advance_form">
 
 
+
         <div :class="{ 'is-active' : detailModal }" class="modal  " v-if="empAdvanceList != null">
             <div class="modal-background animated fadeIn" @click="detailModal = !detailModal"></div>
             <div class="modal-content animated fadeIn ">
@@ -85,12 +86,14 @@
             </div>
 
         </div>
+
+        
         <br>
         <div class="field is-grouped is-grouped-multiline animated fadeInDown" v-if="showEmpSelect">
 
             <div class="control">
                 <label for="" class="label">Select Employee</label>
-                <b-autocomplete v-model="employee" placeholder="e.g. Jitendre" :keep-first='true' :open-on-focus='true'
+                <b-autocomplete  v-model="employee" placeholder="e.g. Jitendre" :keep-first='true' :open-on-focus='true'
                     :data="filteredDataObj" field="name" @select="getSelected">
 
 
@@ -124,8 +127,22 @@
         </div>
 
 
-        <div class="box has-background-light" v-if="empAdvanceDetail != null && empAdvanceDetail.advance != 'not'">
-            <p class="is-size-5 has-text-weight-semibold">Outstanding Advance :  [[ getOutstandingAdvance() ]]</p>
+        <div class="box has-background-light animated fadeIn"
+            v-if="empAdvanceDetail != null && empAdvanceDetail.advance != 'not'">
+            <div v-if="!more" class="box has-background-white animated bounce ">
+                <p class="has-text-weight-semibold is-underline">
+                    Employee has reached the allowed
+                    advance limit. <br>
+                    If you'd like to increase advance limit , please edit Employee details.
+                </p>
+                <br>
+                <div class="field">
+                    <div class="control"><button class="button"><span class="icon icon-btn">
+                                <feather type="edit" size="1.3rem"></feather>
+                            </span> Edit [[ employee ]]</button></div>
+                </div>
+            </div>
+            <p class="is-size-5 has-text-weight-semibold">Outstanding Advance : [[ getOutstandingAdvance() ]]</p>
             <div class="field">
                 <div class="control">
                     <button class="button is-black" @click="detailModal = true">
@@ -158,15 +175,19 @@
             <div class="field is-grouped is-grouped-multiline">
                 <div class="control">
                     <label for="" class="label">Select Date</label>
-                    <input type="date" class="input" v-model="advanceForm.date">
+                    <input type="date" class="input" v-model="advanceForm.date" :disabled="!more"
+                        :class="{ 'is-danger' :  advanceForm.errors.date == true }">
                 </div>
                 <div class="control">
                     <label for="" class="label">Enter Amount</label>
-                    <input type="text" class="input" v-model="advanceForm.advanceamt">
+                    <input type="text" class="input" v-model="advanceForm.advanceamt" :disabled="!more"
+                        :class="{ 'is-danger' :  advanceForm.errors.advanceamt == true || advanceForm.errors.maxadv == true  }">
+                    <small v-if="advanceForm.errors.maxadv == true"
+                    class="has-text-danger is-underline">Amount greater than Max. Advance. </small>
                 </div>
                 <div class="control">
                     <label for="" class="label">Total Advance</label>
-                    <p >[[ total ]] </p>
+                    <p>[[ total ]] </p>
                 </div>
 
             </div>
@@ -177,17 +198,22 @@
                 <div class="field is-grouped is-grouped-multiline">
                     <div class="control">
                         <label for="" class="label">Cheque No.</label>
-                        <input type="text" class="input" v-model="advanceForm.cheque_no">
+                        <input type="text" class="input" v-model="advanceForm.cheque_no" placeholder="Cheque No."
+                            :disabled="!more" :class="{ 'is-danger' :  advanceForm.errors.cheque_no == true }">
                     </div>
                     <div class="control">
-                        <label for="" class="label">Letter</label>
+                        <label for="" class="label">Letter
+                            <small v-if="advanceForm.errors.letter == true" class="has-text-danger is-underline">Please
+                                select
+                            </small>
+                        </label>
 
                         <label class="radio">
-                            <input type="radio" value="yes" v-model="advanceForm.letter">
+                            <input type="radio" value="yes" v-model="advanceForm.letter" :disabled="!more">
                             Yes
                         </label>
                         <label class="radio">
-                            <input type="radio" value="no" v-model="advanceForm.letter">
+                            <input type="radio" value="no" v-model="advanceForm.letter" :disabled="!more">
                             no
                         </label>
                     </div>
@@ -197,17 +223,20 @@
             <div class="field is-grouped is-grouped-multiline">
                 <div class="control">
                     <label for="" class="label">Deduction Amount</label>
-                    <input type="text" class="input" v-model="advanceForm.deduction">
+                    <input type="text" class="input" v-model="advanceForm.deduction" placeholder="Deduction Amount"
+                        :disabled="!more" :class="{ 'is-danger' :  advanceForm.errors.deduction == true }">
                 </div>
                 <div class="control">
-                    <label for="" class="label">Period</label>
+                    <label for="" class="label">Period <small v-if="advanceForm.errors.deduction_period == true"
+                            class="has-text-danger is-underline">Please select. </small>
+                    </label>
 
                     <label class="radio">
-                        <input type="radio" value="month" v-model="advanceForm.deduction_period">
+                        <input type="radio" value="month" v-model="advanceForm.deduction_period" :disabled="!more">
                         Month
                     </label>
                     <label class="radio">
-                        <input type="radio" value="year" v-model="advanceForm.deduction_period">
+                        <input type="radio" value="year" v-model="advanceForm.deduction_period" :disabled="!more">
                         Year
                     </label>
                 </div>
@@ -216,13 +245,16 @@
             <div class="field">
                 <div class="control">
 
-                    <button class="button is-black" @click="submitData" :disabled="submitting">
+                    <button class="button is-black" @click="submitData" :disabled="submitting" :disabled="!more">
                         <span class="icon icon-btn">
                             <feather type="check" size="1.3rem"></feather>
 
                         </span>
                         Save
                     </button>
+
+                    <span style="padding-left:1rem;" v-if="Object.keys(advanceForm.errors).length != 0 && advanceForm.errors.constructor === Object
+                    " class="has-text-danger is-underline animated pulse"> Please fix the errors.</span>
                 </div>
             </div>
         </div>

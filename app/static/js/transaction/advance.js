@@ -1,3 +1,5 @@
+// Reset all data when changing selection of select employee
+
 new Vue({
     el: "#advance_form",
     data() {
@@ -17,7 +19,8 @@ new Vue({
                 advanceamt: 0,
                 cheque_no: null,
                 deduction_period: null,
-                deduction: null
+                deduction: null,
+                errors: {}
 
             },
             dataName: null,
@@ -25,10 +28,11 @@ new Vue({
             dataList: [],
             detailModal: false,
             empDetail: null,
-            errors: [],
+            errors: {},
             submitting: false,
             value: 'Save',
-            showEmpSelect: false
+            showEmpSelect: false,
+            more: true
 
 
 
@@ -51,7 +55,8 @@ new Vue({
 
         total: function(){
             console.log(this.advanceForm.totalAdvance , this.advanceForm.advanceamt)
-            return Number(this.advanceForm.totalAdvance) + Number(this.advanceForm.advanceamt) }
+            return Number(this.advanceForm.totalAdvance) + Number(this.advanceForm.advanceamt) },
+        
             // return this.formatedNumber(this.advanceForm.totalAmount)
     },
     delimiters: ['[[', ']]'],
@@ -86,13 +91,18 @@ new Vue({
                         console.log(response.data);
                         rawdata.empAdvanceDetail = JSON.parse(response.data)
                         rawdata.getAdvanceList();
+
+                      
+
                     })
                     .catch(function (error) {
                         console.log(error)
                     })
             }
             else {
-                this.$set(this.errors, 'empadv', 'Null ID for employee')
+                this.advanceForm.errors = {}
+                console.log("NUll ID")
+                this.$set(this.advanceForm.errors, 'empadv', 'Null ID for employee')
             }
 
             e.preventDefault();
@@ -105,13 +115,19 @@ new Vue({
                     .then(function (response) {
                         console.log(response.data);
                         rawdata.empAdvanceList = JSON.parse(response.data)
+                        console.log(rawdata.empAdvanceList.length , )
+                        rawdata.more = true
+                        if(rawdata.empAdvanceList.length >= rawdata.empAdvanceDetail.advancenum){
+                            rawdata.more = false;
+                        }
+
                     })
                     .catch(function (error) {
                         console.log(error)
                     })
             }
             else {
-                this.$set(this.errors, 'empadv', 'Null ID for employee')
+                this.$set(this.advanceForm.errors, 'empadv', 'Null ID for employee')
             }
 
         },
@@ -128,7 +144,7 @@ new Vue({
         },
         getEmployee(e) {
             let rawdata = this
-            this.errors = []
+            this.advanceForm.errors = {}
             this.data = null
             this.dataList = []
             this.attModal = false
@@ -142,84 +158,21 @@ new Vue({
                         rawdata.showEmpSelect = !rawdata.showEmpSelect
                         rawdata.dataList.forEach((item) => rawdata.dataName.push(item))
 
-
-
-                        // let attendenceform = { 'company': rawdata.company, 'date': rawdata.month }
-                        // axios.post('/transaction/attendence/get', attendenceform)
-                        //     .then(function (response) {
-                        //         rawdata.attendenceList = []
-                        //         console.log(response.data)
-                        //         rawdata.attendenceList = JSON.parse(response.data)
-
-
-                        //         // Removes data from dataList if item present in AttendenceList
-                        //         rawdata.attendenceList.forEach(function (item) {
-                        //             if (rawdata.dataList.length != 0)
-                        //                 rawdata.dataList.forEach(function (check, index) {
-                        //                     if (check.id == item.employee[0].id) {
-                        //                         console.log(check)
-                        //                         rawdata.dataList.splice(index, 1)
-                        //                     }
-
-                        //                 })
-                        //         })
-
-                        //         rawdata.data = rawdata.dataList
-
-
-                        //     });
-
                     })
 
 
                 //    Need to pop emps whose data is already been filled
             }
             else {
-                this.$set(this.errors, 'submit', "Please select both company and month.")
+                this.$set(this.advanceForm.errors, 'submit', "Please select both company and month.")
             }
-            e.preventDefault();
-        },
-        updateData(e) {
-            let rawdata = this
-            let formdata = { 'company': this.company, 'date': this.month, 'data': this.attendenceList }
-            axios.post('/transaction/attendence/update', rawdata.attendenceList)
-                .then(function (response) {
-                    console.log(response)
-                    if (response.data.success) {
-                        rawdata.$buefy.snackbar.open({
-                            duration: 5000,
-                            message: response.data.success,
-                            type: 'is-light',
-                            position: 'is-top-right',
-                            actionText: 'Close',
-                            queue: true,
-                            onAction: () => {
-                                this.isActive = false;
-                            }
-                        })
-                    }
-
-                    if (response.data.message) {
-                        rawdata.$buefy.snackbar.open({
-                            duration: 8000,
-                            message: response.data.message,
-                            type: 'is-light',
-                            position: 'is-top-right',
-                            actionText: 'Close',
-                            queue: true,
-                            onAction: () => {
-                                this.isActive = false;
-                            }
-                        })
-                    }
-                })
-
             e.preventDefault();
         },
         submitData(e) {
             let rawdata = this
-            if (this.checkData(e)) {
-                if (this.errors.length == 0) {
+            if (this.checkData()) {
+                console.log(this.advanceForm.errors.length)
+                if (this.advanceForm.errors.length == 0) {
 
                     this.submitting = true
                     this.value = 'Saving'
@@ -276,66 +229,36 @@ new Vue({
 
             e.preventDefault();
         },
-        checkData(e) {
-            this.errors = []
-            let raw = this
-            let rawError = this.errors
-            // this.dataList.forEach(function (item) {
-            //     if (!item.daysatt == undefined) {
-            //         if (rawError[item.id]) {
-            //             raw.$set(rawError[item.id], 'daysatt', true)
+        checkData() {
+            this.advanceForm.errors = {}
 
-            //         }
-            //         else {
-            //             raw.$set(rawError, item.id, {})
-            //             raw.$set(rawError[item.id], 'daysatt', true)
+            console.log('Inside cehckdata' , this.advanceForm.date , this.advanceForm.cheque_no , this.advanceForm.deduction)
+            
+            if(!this.advanceForm.date){
+                this.$set(this.advanceForm.errors, 'date', true)
+            }
+            if(!this.advanceForm.letter){
+                this.$set(this.advanceForm.errors, 'letter', true)
+            }
+            if(!this.advanceForm.advanceamt){
+                this.$set(this.advanceForm.errors, 'advanceamt', true)
+            }
+            if(!this.advanceForm.cheque_no){
+                this.$set(this.advanceForm.errors, 'cheque_no', true)
+            }
+            if(!this.advanceForm.deduction_period){
+                this.$set(this.advanceForm.errors, 'deduction_period', true)
+            }
+            if(!this.advanceForm.deduction){
+                this.$set(this.advanceForm.errors, 'deduction', true)
+            }
 
-            //         }
+            if(this.advanceForm.advanceamt > this.empAdvanceDetail.advancevalue){
+                this.$set(this.advanceForm.errors, 'maxadv', true)
 
-            //     }
-            //     if (item.latecomin == undefined) {
+            }
 
-            //         if (rawError[item.id]) {
-            //             raw.$set(rawError[item.id], 'latecomin', true)
-
-            //         }
-            //         else {
-            //             raw.$set(rawError, item.id, {})
-            //             raw.$set(rawError[item.id], 'latecomin', true)
-
-            //         }
-
-
-            //     }
-            //     if (item.earlygoing == undefined) {
-            //         if (rawError[item.id]) {
-            //             raw.$set(rawError[item.id], 'earlygoing', true)
-
-            //         }
-            //         else {
-            //             raw.$set(rawError, item.id, {})
-            //             raw.$set(rawError[item.id], 'earlygoing', true)
-
-            //         }
-
-            //     }
-
-
-
-
-            //     // Reconsider how to set this up
-
-            //     // if(item.pfval == null || item.pfval == undefined ){
-            //     //     this.$set(this.errors , 'pfval' , 'Please fill out P.F . Set <b>0</b> for None/Null')
-            //     // }
-            //     // if(item.esival== null || item.esival == undefined ){
-            //     //     this.$set(this.errors , 'esival' , 'Please fill out ESI . Set <b>0</b> for None/Null')
-            //     // }
-
-            // })
-
-            e.preventDefault();
-            if (this.errors.length == 0) {
+            if(Object.keys(this.advanceForm.errors).length === 0 ) {
                 return true
             }
             else {

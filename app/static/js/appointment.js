@@ -351,8 +351,5 @@ const AppointmentForm =
 
                     })
         },
-        selectRow(){
-
-        },
     }
 }

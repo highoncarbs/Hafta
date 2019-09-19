@@ -1,0 +1,215 @@
+<template id="attendence_rules_form">
+    <div>
+
+        <!-- Edit Modal -->
+        <div class="modal animated is-active fadeIn" v-show="modal">
+            <div class="modal-background" @click="modal = !modal"></div>
+            <div class="modal-content">
+
+                <div class="box">
+
+                    <div v-if="edit.mssg" class="notification animated fadeIn">
+
+                    </div>
+                    <form id="data_entry" novalidate="true" @submit="saveEditData">
+
+                        <p class="is-size-5">Edit Attendence Rules</p>
+                        <br>
+                        <div class="field is-grouped is-grouped-multiline">
+                            <div class="control">
+                                <label for="" class="label">Late Come In</label>
+                                <input type="text" class="input" ref="name" v-model="edit.late_comin"
+                                    v-bind:class="[edit.errors.late_comin ? 'is-danger' : '']"
+                                    placeholder="Number of Late Comins">
+
+                            </div>
+                            <div class="control">
+                                <label for="" class="label">Actual Days</label>
+                                <input type="text" class="input" v-model="edit.late_comin_day"
+                                    v-bind:class="[edit.errors.late_comin_day ? 'is-danger' : '']"
+                                    placeholder="Actual Pay Day">
+
+                            </div>
+
+                        </div>
+                        <div class="field is-grouped is-grouped-multiline">
+                            <div class="control">
+                                <label for="" class="label">Early Going</label>
+                                <input type="text" class="input" v-model="edit.early_going"
+                                    v-bind:class="[edit.errors.early_going ? 'is-danger' : '']"
+                                    placeholder="Number of Early Going">
+
+                            </div>
+                            <div class="control">
+                                <label for="" class="label">Actual Days</label>
+                                <input type="text" class="input" v-model="edit.early_going_day"
+                                    v-bind:class="[edit.errors.early_going_day ? 'is-danger' : '']"
+                                    placeholder="Actual Pay Day">
+
+                            </div>
+
+                        </div>
+                        <br>
+                        <div class="field is-grouped">
+                            <p class="control">
+                                <a class="button is-black" @click="saveEditData"><span
+                                        class="icon icon-btn icon-btn-in"><i data-feather="plus"></i></span>Save
+                                </a>
+                            </p>
+
+                            <p class="control">
+                                <a class="button" @click="modal = !modal"><span class="icon icon-btn icon-btn-in"><i
+                                            data-feather="x"></i></span>Cancel
+                                </a>
+                            </p>
+                            <div class="control" v-if="Object.keys(edit.errors).length != 0">
+                                <p class="has-text-danger is-underline">Please fix the errors</p>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <button class="modal-close is-large" aria-label="close" @click="modal = !modal"></button>
+
+            </div>
+
+        </div>
+
+        <!-- Entry Form -->
+
+        <form id="data_entry" novalidate="true" @submit="submitData ;" v-show="view">
+
+
+            <p for="" class="is-size-5 has-text-weight-semibold">Attendence Rules</p>
+            <br>
+            <div class="box  is-narrow">
+
+                <p>
+                    <span class="icon icon-btn">
+                        <i data-feather="info"></i>
+                    </span>
+                    This section defines how to translate <u>late come ins</u> and <u>early goings</u> into actual pay
+                    days.
+                </p>
+                <hr style="margin: 1rem;">
+                <p>
+                    <b>For e.g <br> - 3 early goings would translate to 0.5 day ( half-day).</b>
+                    <br>
+                    <b> - 5 Late Come Ins would translate to 1 day.</b>
+
+                </p>
+            </div>
+            <div class="field is-grouped is-grouped-multiline">
+                <div class="control">
+                    <label for="" class="label">Late Come In</label>
+                    <input type="text" class="input" ref="name" v-model="form.late_comin"
+                        v-bind:class="[form.errors.late_comin ? 'is-danger' : '']" placeholder="Number of Late Comins">
+
+                </div>
+                <div class="control">
+                    <label for="" class="label">Actual Days</label>
+                    <input type="text" class="input" v-model="form.late_comin_day"
+                        v-bind:class="[form.errors.late_comin_day ? 'is-danger' : '']" placeholder="Actual Pay Day">
+
+                </div>
+
+            </div>
+            <div class="field is-grouped is-grouped-multiline">
+                <div class="control">
+                    <label for="" class="label">Early Going</label>
+                    <input type="text" class="input" v-model="form.early_going"
+                        v-bind:class="[form.errors.early_going ? 'is-danger' : '']" placeholder="Number of Early Going">
+
+                </div>
+                <div class="control">
+                    <label for="" class="label">Actual Days</label>
+                    <input type="text" class="input" v-model="form.early_going_day"
+                        v-bind:class="[form.errors.early_going_day ? 'is-danger' : '']" placeholder="Actual Pay Day">
+
+                </div>
+
+            </div>
+            <div class="field is-grouped is-grouped-multiline">
+                <div class="control">
+                    <button type="submit" @click="submitData" class="button is-black"><span
+                            class="icon icon-btn icon-btn-in"><i data-feather="plus"></i></span> Add</button>
+                </div>
+                <div class="control">
+                    <button class="button" v-on:click="view = !view" @click="getData"><span
+                            class="icon icon-btn icon-btn-in"><i data-feather="eye"></i></span> View</button>
+                </div>
+                <div class="control" v-if="Object.keys(form.errors).length != 0">
+                    <p class="has-text-danger is-underline">Please fix the errors</p>
+                </div>
+            </div>
+        </form>
+
+
+        <!-- Table  -->
+
+        <div v-show="!view">
+            <div class="control">
+                <button class="button" v-on:click="view = !view ; form.errors = [] ; "><span
+                        class="icon icon-btn icon-btn-in"><i data-feather="eye"></i></span> View</button>
+            </div>
+            <br>
+            <div class="table-container" id="data_view">
+
+                <table class="table is-bordered is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>Late Come In</th>
+                            <th>Late Come In -> Actual Days</th>
+                            <th>Early Going</th>
+                            <th>Early Going -> Actual Days</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        <tr v-for="( row ,index ) in data" v-bind:index="index">
+                            <td colspan="1">[[ row.late_comin]]</td>
+                            <td colspan="1">[[ row.late_comin_day]]</td>
+                            <td colspan="1">[[ row.early_going]]</td>
+                            <td colspan="1">[[ row.early_going_day ]]</td>
+                            <td>
+                                <div class="buttons">
+                                    <div class="button" @click="editData(row)">Edit</div>
+                                    <div class="dropdown">
+                                        <div class="dropdown is-hoverable">
+                                            <div class="dropdown-trigger">
+                                                <button class="button is-danger" aria-haspopup="true"
+                                                    aria-controls="dropdown-menu4">
+                                                    <span>Delete</span>
+
+                                                </button>
+                                            </div>
+                                            <div class="dropdown-menu" style="z-index:10;" id="dropdown-menu4"
+                                                role="menu">
+                                                <div class="dropdown-content has-background-light">
+                                                    <p class="dropdown-item">
+                                                        Are you sure ?
+                                                    </p>
+                                                    <hr class="dropdown-divider">
+
+                                                    <a class="dropdown-item">
+                                                        <div class="buttons ">
+                                                            <div class="button is-danger is-small"
+                                                                @click="deleteData(row , index)">Delete</div>
+                                                            <div class="button is-small">Cancel</div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</template>

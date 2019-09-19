@@ -10,53 +10,62 @@
 <script src="{{ url_for('static' , filename ='js/benefits.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/pay.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/performance.js' )}}"></script>
+<script src="{{ url_for('static' , filename ='js/attendence_rules.js' )}}"></script>
+
+{% include 'master/attendence_rules.html' %}
+
+<div class="container">
+
+    <section class="section">
+        <div id="master">
+            <div class="tabs">
+                <ul>
+
+                    <li>
+                        <router-link to="/company">Company</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/location">Location</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/category">Emp. Category</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/appointment">Appointment</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/department">Department</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/post">Post</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/benefits">Benefits</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/modeofpay">Mode of Pay</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/performance">Perfomance Factor</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/attendence-rules">Attendence Rules</router-link>
+                    </li>
 
 
-<section class="section">
-    <div id="master">
-        <div class="tabs">
-            <ul>
-
-                <li>
-                    <router-link to="/company">Company</router-link>
-                </li>
-                <li>
-                    <router-link to="/location">Location</router-link>
-                </li>
-                <li>
-                    <router-link to="/category">Emp. Category</router-link>
-                </li>
-                <li>
-                    <router-link to="/appointment">Appointment</router-link>
-                </li>
-                <li>
-                    <router-link to="/department">Department</router-link>
-                </li>
-                <li>
-                    <router-link to="/post">Post</router-link>
-                </li>
-                <li>
-                    <router-link to="/benefits">Benefits</router-link>
-                </li>
-                <li>
-                    <router-link to="/modeofpay">Mode of Pay</router-link>
-                </li>
-                <li>
-                    <router-link to="/performance">Perfomance Factor</router-link>
-                </li>
+                </ul>
+            </div>
+            <br>
+            <!-- route outlet -->
+            <!-- component matched by the route will render here -->
+            <router-view></router-view>
 
 
-            </ul>
         </div>
-        <br>
-        <!-- route outlet -->
-        <!-- component matched by the route will render here -->
-        <router-view></router-view>
 
+    </section>
 
-    </div>
-
-</section>
+</div>
 
 <script>
     // import { Edit2Icon } from 'vue-feather-icons'
@@ -80,6 +89,7 @@
         { path: '/benefits', component: BenefitsForm },
         { path: '/modeofpay', component: PayForm },
         { path: '/performance', component: PerformanceForm },
+        { path: '/attendence-rules', component: AttendenceRulesForm },
 
 
 
@@ -108,6 +118,7 @@
             'benefits-form': BenefitsForm,
             'pay-form': PayForm,
             'performance-form': PerformanceForm,
+            'attendence_rules': AttendenceRulesForm,
 
 
         }
