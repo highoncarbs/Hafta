@@ -56,7 +56,15 @@
                 Generating Salary Sheet </p>
         </div>
 
-        <div v-if="salarySheet != null">
+
+        <div v-if="salarySheet != null && salarySheet.length == 0">
+            <div class="box has-text-centered has-text-weight-bold has-text-grey animated fadeIn">
+                <feather type="info" size="1.3rem"></feather>
+                <p>Attendence has not been added for this month. <br>
+                Please add them before processing salary sheet for the month.</p>
+            </div>
+        </div>
+        <div v-if="salarySheet != null && salarySheet.length != 0" class="animated fadeInn ">
             <div class="table-container">
                 <table class="table is-fullwidth is-bordered">
                     <thead>
@@ -64,37 +72,49 @@
                             <th>Name</th>
                             <th>Dept.</th>
                             <th>Post</th>
-                            <th>Days Attended</th>
+                            <th>Days Attn.</th>
+                            <th>Late Comin <br><span class="has-text-grey">No.</span></th>
+                            <th>Early Going <br><span class="has-text-grey">No.</span></th>
                             <th>Salary</th>
-                            <th>Days payable <span class="has-text-grey">INCL. Late and early leaves.</span></th>
+                            <th>Days Payable</th>
                             <th>Pay #1</th>
-                            <th>Advance Deduction</th>
+                            <th>Adv. Ded.</th>
                             <th>ESI</th>
                             <th>PF</th>
                             <th>TDS</th>
-                            <th>Other Deduction</th>
-                            <th>Total Deductions #2</th>
+                            <th>Other Ded.</th>
+                            <th>Total Ded. #2</th>
                             <th>Net Payable ( #1 - #2)</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
-                            <td colspan="14">Pay</td>
+                            <td colspan="16">
+                                <button class="button is-black">
+                                    <span class="icon icon-btn">
+                                        <feather type="refresh-cw" size="1.3rem"></feather>
+                                    </span>
+                                    Process
+
+                                </button>
+                            </td>
                         </tr>
                     </tfoot>
                     <tbody>
                         <template v-for="row in salarySheet">
                             <tr>
                                 <td>[[ row.employee[0].name]]</td>
-                                <td>[[ row.employee[0].post[0].name]]</td>
                                 <td>[[ row.employee[0].department[0].name]]</td>
+                                <td>[[ row.employee[0].post[0].name]]</td>
                                 <td> [[ row.daysatt ]]</td>
-                                <td>[[  formatedNumber(row.employee[0].basicpay) ]]</td>
-                                <td>[[ row.employee[0].daysatt ]]</td>
-                                <td>[[ row.employee[0].basicpay ]]</td>
+                                <td> [[ row.latecomin ]]</td>
+                                <td> [[ row.earlygoing ]]</td>
+                                <td>[[ formatedNumber(row.employee[0].basicpay) ]]</td>
+                                <td>[[ formatedNumber(row.days_payable) ]]</td>
+                                <td>[[ formatedNumber(row.pay_1) ]]</td>
                                 <td>
                                     <small class="has-text-grey">MONTHLY</small>
-                                    
+
                                     <ul v-for="dec in row.deductions.month ">
                                         <li>[[ formatedNumber(dec) ]]</li>
                                     </ul>
@@ -102,8 +122,9 @@
                                 <td>[[ row.esi ]]</td>
                                 <td>[[ row.pf ]]</td>
                                 <td>[[ row.tds ]]</td>
-                                <td>[[ row.tds ]]</td>
-                                <td>[[ row.tds ]]</td>
+                                <td>[[ row.other_deduction ]]</td>
+                                <td>[[ formatedNumber(row.total_deductions) ]]</td>
+                                <td>[[ formatedNumber(row.net_payable) ]]</td>
                             </tr>
                         </template>
                     </tbody>

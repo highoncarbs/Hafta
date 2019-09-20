@@ -166,6 +166,7 @@
                                 <td>PF</td>
                                 <td>ESI</td>
                                 <td>TDS</td>
+                                <td>Other Deduction</td>
 
 
                             </tr>
@@ -237,14 +238,13 @@
                                     <input type="text" class="input" v-model="row.tds" placeholder="TDS">
 
                                 </td>
+                                <td>
+                                    <input type="text" class="input" v-model="row.other_deduction" placeholder="Other Deduction">
+
+                                </td>
                             </tr>
 
                         </tbody>
-
-
-
-
-
                     </table>
                 </div>
             </div>
@@ -326,6 +326,7 @@
                     <td>PF</td>
                     <td>ESI</td>
                     <td>TDS</td>
+                    <td>Other Deduction</td>
 
 
                 </tr>
@@ -387,6 +388,10 @@
                     </td>
                     <td>
                         <input type="text" class="input" v-model="row.tdsval" placeholder="TDS">
+
+                    </td>
+                    <td>
+                        <input type="text" class="input" v-model="row.other_deduction" placeholder="Other Deduction">
 
                     </td>
                 </tr>
@@ -708,6 +713,7 @@
                                     <th>PF</th>
                                     <th>ESI</th>
                                     <th>TDS</th>
+                                    <th>Other Deduction</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -720,6 +726,7 @@
                                     <td> [[ row.pf ]] </td>
                                     <td> [[ row.esi ]] </td>
                                     <td> [[ row.tds ]] </td>
+                                    <td> [[ row.other_deduction ]] </td>
                                 </tr>
                             </tbody>
                         </table>

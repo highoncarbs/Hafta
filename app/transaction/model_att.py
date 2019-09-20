@@ -14,6 +14,7 @@ class TimestampMixin(object):
 
 
 class Attendence(TimestampMixin,  db.Model):
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     employee = db.relationship('Employee', secondary='att_emp',
                                backref='att_emp', cascade='all ,delete', lazy='joined')
@@ -27,6 +28,7 @@ class Attendence(TimestampMixin,  db.Model):
     esi = db.Column(db.Float, default=None)
     pf = db.Column(db.Float, default=None)
     tds = db.Column(db.Float, default=None)
+    other_deduction = db.Column(db.Float, default=None)
     # __table_args__ = (db.UniqueConstraint(
     #     'employee.id', 'date', name='att_id'), )
 
@@ -61,6 +63,7 @@ class AttendenceSchema(ma.ModelSchema):
     esi = field_for(Attendence, 'esi', dump_only=True)
     pf = field_for(Attendence, 'pf', dump_only=True)
     tds = field_for(Attendence, 'tds', dump_only=True)
+    other_deduction = field_for(Attendence, 'other_deduction', dump_only=True)
 
     employee = ma.Nested(EmployeeMainSchema, many=True)
     company = ma.Nested(CompanySchema, many=True)

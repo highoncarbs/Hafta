@@ -26,7 +26,7 @@ new Vue({
             dataName: null,
             data: null,
             dataList: [],
-            detailModal: false,
+            advEdit: false,
             empDetail: null,
             errors: {},
             submitting: false,

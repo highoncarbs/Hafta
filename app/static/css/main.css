@@ -90,8 +90,8 @@ i {
     font-weight: 600 !important;
 }
 
-.table-container {
-    overflow: visible;
+.box .table-container {
+    overflow-x: scroll;
 }
 
 .is-underline {

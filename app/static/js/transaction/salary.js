@@ -10,7 +10,7 @@ new Vue({
             salarySheet: null
         }
     },
-    delimiters: ['[[' , ']]'],
+    delimiters: ['[[', ']]'],
     methods: {
         generateSalarySheet() {
             console.log("DAD")
@@ -20,9 +20,25 @@ new Vue({
                 let formdata = { 'company': this.company, 'month': this.month }
                 axios.post('/transaction/salary_sheet/generate', formdata)
                     .then(function (response) {
-                        rawdata.salarySheet = response.data 
+                        rawdata.salarySheet = response.data
 
                         rawdata.isGenerating = null;
+                    })
+                    .catch(function (error) {
+                        rawdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: 'Salary sheet could not be geenrated. Please check logs.',
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+
+                        rawdata.isGenerating = null;
+
                     })
             }
             else {
@@ -32,13 +48,14 @@ new Vue({
 
         },
         formatedNumber(val) {
-            let test = Number(val).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
+            let test = Number(val).toLocaleString('en-IN');
             return test
         },
+
         checkData() {
             this.errors = {}
 
-            if (!this.company || !this.month ) {
+            if (!this.company || !this.month) {
                 this.$set(this.errors, 'req', true)
             }
 

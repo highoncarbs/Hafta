@@ -52,6 +52,7 @@ def save_attendence():
                 'daysatt',
                 'latecomin',
                 'earlygoing',
+                'other_deduction'
 
             )
             try:
@@ -113,6 +114,7 @@ def update_attendence():
                 'daysatt',
                 'latecomin',
                 'earlygoing',
+                'other_deduction'
             )
             try:
 
