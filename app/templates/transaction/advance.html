@@ -131,33 +131,30 @@
 
                 <p class="is-size-5 has-text-weight-semibold">Advance List - [[ employee ]]</p>
                 <br>
-                <div class="table-container">
-                    <table class="table is-fullwidth is-bordered is-striped">
+                <table class="table is-fullwidth is-bordered is-striped">
 
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Cheque No.</th>
-                                <th>Letter</th>
-                                <th>Deduction</th>
-                                <th>Deduction Period </th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Cheque No.</th>
+                            <th>Letter</th>
+                            <th>Deduction</th>
+                            <th>Deduction Period </th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                            <tr v-for="adv in empAdvanceList">
-                                <td>[[ formatedDate(adv.date)]]</td>
-                                <td> [[ formatedNumber(adv.advanceamt) ]]</td>
-                                <td> [[ adv.cheque_no]]</td>
-                                <td> [[ adv.letter]]</td>
-                                <td> [[ formatedNumber(adv.deduction) ]]</td>
-                                <td>[[ adv.deduction_period ]]</td>
-                            </tr>
-                        </tbody>
+                        <tr v-for="adv in empAdvanceList">
+                            <td>[[ formatedDate(adv.date)]]</td>
+                            <td> [[ formatedNumber(adv.advanceamt) ]]</td>
+                            <td> [[ adv.cheque_no]]</td>
+                            <td> [[ adv.letter]]</td>
+                            <td> [[ formatedNumber(adv.deduction) ]]</td>
+                            <td>[[ adv.deduction_period ]]</td>
+                        </tr>
+                    </tbody>
 
-                    </table>
-                </div>
                 </table>
             </div>
 
