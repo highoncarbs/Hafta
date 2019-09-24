@@ -30,7 +30,7 @@ def add_perfomance():
                 return jsonify({'message': 'Performance - '+check_data.first().name+' already exists.'})
             else:
                 try:
-                    new_data = Performance(payload['name'])
+                    new_data = Performance(payload['name'] ,payload['score'] , payload['weight'] )
                     db.session.add(new_data)
                     db.session.commit()
                     return jsonify({'success': 'Data Added'})
@@ -59,6 +59,8 @@ def edit_perfomance():
                     new_data = Performance.query.filter_by(
                         id=payload['id']).first()
                     new_data.name = payload['name']
+                    new_data.score = payload['score']
+                    new_data.weight = payload['weight']
                     db.session.commit()
                     return jsonify({'success': 'Data Updated'})
 

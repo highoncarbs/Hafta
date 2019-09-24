@@ -1,0 +1,133 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+<script src="https://unpkg.com/buefy/dist/components/autocomplete"></script>
+
+{% include 'component/custom-select.html'%}
+
+<meta>
+<section class="section">
+
+    <div class="container" id="performance_form">
+
+        <!-- Heading Title -->
+        <div class="level">
+            <div class="level-left">
+                <p class="is-size-4 has-text-weight-semibold">Performance</p>
+            </div>
+
+        </div>
+
+        <!-- Advacne Company and Date selection -->
+        <div class="field is-grouped is-grouped-multiline">
+
+            <div class="control">
+                <label for="" class="label">Select company</label>
+                <custom-select v-model="company" which="company">
+                </custom-select>
+            </div>
+
+            <div class="control">
+                <label for="" class="label">From</label>
+                <input type="date" class="input" v-model="frommonth" format="dd/mm/yyy">
+            </div>
+            <div class="control">
+                <label for="" class="label">To</label>
+                <input type="date" class="input" v-model="tomonth">
+            </div>
+
+            <div class="control">
+                <label for="" class="label has-text-white"> Generate</label>
+
+                <button class="button is-black" @click="getEmployee()">
+                    <span class="icon icon-btn icon-btn-in">
+                        <i data-feather="check"></i>
+                    </span>
+                    Submit</button>
+            </div>
+        </div>
+        <small v-if="errors.submit" class="has-text-danger is-underline">
+            Please set both company and dates.
+        </small>
+
+        <br>
+        <div class="field is-grouped is-grouped-multiline animated fadeIn" v-if="showEmpSelect">
+
+            <div class="control">
+                <label for="" class="label">Select Employee</label>
+                <b-autocomplete v-model="employee" placeholder="e.g. Jitendre" :keep-first='true' :open-on-focus='true'
+                    :data="filteredDataObj" field="name" @select="getSelected">
+
+
+                </b-autocomplete>
+            </div>
+            <div class="control">
+                <label for="" class="label has-text-white"> Submit</label>
+
+                <button class="button is-black" @click="getFactor">
+                    <span class="icon icon-btn icon-btn-in">
+                        <feather type="check" size="1.3rem"></feather>
+                    </span>
+                    Submit</button>
+            </div>
+
+        </div>
+        <br>
+        <div class="table-container animated fadeIn" style="overflow: visible;" v-if="emp_id != null">
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <th>Factor</th>
+                    <th>Max. Score</th>
+                    <th>Weight</th>
+                    <th>Obtained Score</th>
+                    <th></th>
+                </thead>
+
+                <tfoot>
+                    <tr>
+                        <td colspan="5">
+                            <div class="buttons">
+                                <button class="button" @click="addRow">
+                                    <span class="icon icon-btn">
+                                        <feather type="plus" size="1.3rem"></feather>
+                                    </span>
+                                    Add
+                                </button>
+                                <button class="button is-black">
+                                    <span class="icon icon-btn">
+                                        <feather type="check" size="1.3rem"></feather>
+                                    </span>
+                                    Save
+                                </button>
+
+                            </div>
+
+                        </td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr v-for="(row , index) in rows" :key="index">
+                        <td>
+                            <b-autocomplete v-model="row.name" placeholder="e.g. Cleanliness" :keep-first='true'
+                                :open-on-focus='true' :data="filteredFactorObj(index)" field="name" @select="option => getSelectedFactor(option , index)" >
+                            </b-autocomplete>
+                        </td>
+                        <td v-html="row.score"></td>
+                        <td v-html="row.weight"></td>
+                        <td> <input type="text" class="input" v-model="row.obt_score" placeholder="Enter Obtained Score">
+                        </td>
+                        <td>
+                            <button class="button is-danger" @click="removeElement(index);">
+                                <span class="icon ">
+                                    <feather type="x" size="1.3rem"></feather>
+                                </span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+<script src="{{ url_for('static' ,filename='js/transaction/performance.js')}}"></script>
+{% endblock %}

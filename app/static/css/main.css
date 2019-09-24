@@ -61,7 +61,8 @@ i {
     border-radius: 0 !important;
     box-shadow: none !important;
     border: 1px solid lightgray;
-    z-index: 2 !important;
+    /* z-index: 2 !important; */
+    position: relative;
 }
 
 .notification {
@@ -135,14 +136,14 @@ i {
 }
 /* Autocomplete from Buefy */
 
-.autocomplete {
-    position: relative;
-}
+
 
 .autocomplete .dropdown-menu {
     display: block;
     min-width: 100%;
     max-width: 100%;
+    overflow: visible;
+    position: relative;
 }
 
 .autocomplete .dropdown-menu.is-opened-top {
@@ -150,11 +151,12 @@ i {
     bottom: 100%;
 }
 
-.autocomplete .dropdown-content {
+/* .autocomplete .dropdown-content {
     overflow: auto;
     max-height: 200px;
-}
-
+    z-index: 500 !important
+} */
+/* 
 .autocomplete .dropdown-item, .autocomplete .dropdown .dropdown-menu .has-link a, .dropdown .dropdown-menu .has-link .autocomplete a {
     white-space: nowrap;
     overflow: hidden;
@@ -182,7 +184,7 @@ i {
 
 .autocomplete.is-large {
     font-size: 1.5rem;
-}
+} */
 
 .taginput-container .tag {
     margin-bottom: 0.5rem;
@@ -208,7 +210,7 @@ i {
     right: 0;
     padding: 2em;
     overflow: hidden;
-    z-index: 1000;
+    /* z-index: 1000; */
     pointer-events: none;
 }
 

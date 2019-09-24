@@ -123,9 +123,13 @@ class Performance(db.Model):
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), unique=True)
+    score = db.Column(db.Integer , nullable= False)
+    weight = db.Column(db.Integer , nullable = False)
 
-    def __init__(self, name):
+    def __init__(self, name , score , weight):
         self.name = name
+        self.score= score
+        self.weight= weight
 
 
 class AttendenceRules(db.Model):
