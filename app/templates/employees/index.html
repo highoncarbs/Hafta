@@ -71,11 +71,19 @@
 
                     </tr>
                     <!-- EMPTY Mssg -->
-                    <p v-if="filteredList.length == 0"
+                    <p v-if="filteredList.length == 0 && filteredList != null && searchQuery != '' "
                         class=" has-text-centered is-size-4 has-text-grey-light is-underline">
                         <br>
                         <span class="icon icon-btn"><i data-feather="slash"></i></span> Zero data matching query.
                         <script> feather.replace()</script>
+                    </p>
+
+                    <p v-if="filteredList.length == 0 && searchQuery == '' "
+                        class=" has-text-centered is-size-4 has-text-grey-light">
+                        <br>
+                        <span class="icon icon-btn">
+                            <feather type="rotate-cw" animation="spin"></feather>
+                        </span> Loading
                     </p>
 
                 </thead>
@@ -139,7 +147,7 @@
                 </tbody>
             </table>
 
-            <div v-show="detailModal" class="modal is-active ">
+            <div v-show="detailModal" class="modal" :class="{'is-active': detailModal}">
                 <div class="modal-background animated fadeIn" @click="detailModal = !detailModal"></div>
                 <div class="modal-content animated fadeIn ">
 
