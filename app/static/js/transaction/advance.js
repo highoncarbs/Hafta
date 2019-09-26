@@ -68,8 +68,6 @@ new Vue({
         formatedDate(val) {
             var date = new Date(val)
             return (date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear());
-
-
         },
         employeeDetail(id) {
             this.detailModal = !this.detailModal
