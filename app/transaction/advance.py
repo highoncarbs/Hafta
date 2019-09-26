@@ -151,3 +151,19 @@ def update_advance():
             return jsonify({'message': 'Something went wrong'})
         else:
             return jsonify({'message': 'Empty data.'})
+
+
+@bp.route('/advance/delete/<adv_id>', methods=['POST'])
+def delete_advance(adv_id): 
+    advance = Advance.query.filter_by(id = int(adv_id))
+    if advance.first() is None:
+        return jsonify({'message': 'Could not find advance transaction'})
+    else:
+        try:
+            advance.employee = []
+            advance.delete()
+            db.session.commit()
+            return jsonify({'success': 'Advance transaction deleted'})
+        except Exception as e:
+            print(str(e))
+            return jsonify({'message': 'Somethign went wrong .'})

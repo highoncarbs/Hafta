@@ -50,11 +50,12 @@ new Vue({
             }
         },
 
-        total: function(){
-            console.log(this.advanceForm.totalAdvance , this.advanceForm.advanceamt)
-            return Number(this.advanceForm.totalAdvance) + Number(this.advanceForm.advanceamt) },
-        
-            // return this.formatedNumber(this.advanceForm.totalAmount)
+        total: function () {
+            console.log(this.advanceForm.totalAdvance, this.advanceForm.advanceamt)
+            return Number(this.advanceForm.totalAdvance) + Number(this.advanceForm.advanceamt)
+        },
+
+        // return this.formatedNumber(this.advanceForm.totalAmount)
     },
     delimiters: ['[[', ']]'],
     methods: {
@@ -87,7 +88,7 @@ new Vue({
                         rawdata.empAdvanceDetail = JSON.parse(response.data)
                         rawdata.getAdvanceList();
 
-                      
+
 
                     })
                     .catch(function (error) {
@@ -110,9 +111,9 @@ new Vue({
                     .then(function (response) {
                         console.log(response.data);
                         rawdata.empAdvanceList = JSON.parse(response.data)
-                        console.log(rawdata.empAdvanceList.length , )
+                        console.log(rawdata.empAdvanceList.length)
                         rawdata.more = true
-                        if(rawdata.empAdvanceList.length >= rawdata.empAdvanceDetail.advancenum){
+                        if (rawdata.empAdvanceList.length >= rawdata.empAdvanceDetail.advancenum) {
                             rawdata.more = false;
                         }
 
@@ -227,39 +228,72 @@ new Vue({
         checkData() {
             this.advanceForm.errors = {}
 
-            console.log('Inside cehckdata' , this.advanceForm.date , this.advanceForm.cheque_no , this.advanceForm.deduction)
-            
-            if(!this.advanceForm.date){
+            console.log('Inside cehckdata', this.advanceForm.date, this.advanceForm.cheque_no, this.advanceForm.deduction)
+
+            if (!this.advanceForm.date) {
                 this.$set(this.advanceForm.errors, 'date', true)
             }
-            if(!this.advanceForm.letter){
+            if (!this.advanceForm.letter) {
                 this.$set(this.advanceForm.errors, 'letter', true)
             }
-            if(!this.advanceForm.advanceamt){
+            if (!this.advanceForm.advanceamt) {
                 this.$set(this.advanceForm.errors, 'advanceamt', true)
             }
-            if(!this.advanceForm.cheque_no){
+            if (!this.advanceForm.cheque_no) {
                 this.$set(this.advanceForm.errors, 'cheque_no', true)
             }
-            if(!this.advanceForm.deduction_period){
+            if (!this.advanceForm.deduction_period) {
                 this.$set(this.advanceForm.errors, 'deduction_period', true)
             }
-            if(!this.advanceForm.deduction){
+            if (!this.advanceForm.deduction) {
                 this.$set(this.advanceForm.errors, 'deduction', true)
             }
 
-            if(this.advanceForm.advanceamt > this.empAdvanceDetail.advancevalue){
+            if (this.advanceForm.advanceamt > this.empAdvanceDetail.advancevalue) {
                 this.$set(this.advanceForm.errors, 'maxadv', true)
 
             }
 
-            if(Object.keys(this.advanceForm.errors).length === 0 ) {
+            if (Object.keys(this.advanceForm.errors).length === 0) {
                 return true
             }
             else {
                 return false;
             }
         },
+        deleteAdvance(id , index) {
+            let rawdata = this
+            axios.post('/transaction/advance/delete/' + String(id))
+                .then(function (response) {
+                    if (response.data.success) {
+                        rawdata.empAdvanceList.splice(index ,1)
+                        rawdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.success,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                    }
+                    else if (response.data.message) {
+                        rawdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.message,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                    }
+                })
+        }
 
     }
 })

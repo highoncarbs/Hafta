@@ -141,17 +141,25 @@
                             <th>Letter</th>
                             <th>Deduction</th>
                             <th>Deduction Period </th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
 
-                        <tr v-for="adv in empAdvanceList">
+                        <tr v-for="(adv , index) in empAdvanceList">
                             <td>[[ formatedDate(adv.date)]]</td>
                             <td> [[ formatedNumber(adv.advanceamt) ]]</td>
                             <td> [[ adv.cheque_no]]</td>
                             <td> [[ adv.letter]]</td>
                             <td> [[ formatedNumber(adv.deduction) ]]</td>
                             <td>[[ adv.deduction_period ]]</td>
+                            <td>
+                                <button class="button is-danger" @click="deleteAdvance(adv.id , index)">
+                                    <span class="icon">
+                                        <feather type="x" size="1.3rem"></feather>
+                                    </span>
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
 
