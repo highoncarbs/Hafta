@@ -29,11 +29,11 @@
 
             <div class="control">
                 <label for="" class="label">From</label>
-                <input type="date" class="input" v-model="frommonth" format="dd/mm/yyy">
+                <input type="date" class="input" v-model="fromdate">
             </div>
             <div class="control">
                 <label for="" class="label">To</label>
-                <input type="date" class="input" v-model="tomonth">
+                <input type="date" class="input" v-model="todate">
             </div>
 
             <div class="control">
@@ -44,6 +44,15 @@
                         <i data-feather="check"></i>
                     </span>
                     Submit</button>
+            </div>
+            <div class="control">
+                <label for="" class="label has-text-white"> View Past</label>
+
+                <button class="button" @click="viewPastRecords">
+                    <span class="icon icon-btn icon-btn-in">
+                        <feather type="eye" size="1.3rem"></feather>
+                    </span>
+                    View</button>
             </div>
         </div>
         <small v-if="errors.submit" class="has-text-danger is-underline">
@@ -61,7 +70,7 @@
 
                 </b-autocomplete>
             </div>
-            <div class="control">
+            <div class="control animated fadeIn">
                 <label for="" class="label has-text-white"> Submit</label>
 
                 <button class="button is-black" @click="getFactor">
@@ -71,29 +80,143 @@
                     Submit</button>
             </div>
 
+
         </div>
         <br>
-        <div class="table-container animated fadeIn" style="overflow: visible;" v-if="emp_id != null">
+
+        <!-- Modal Attention for performance -->
+
+        <div v-if="attModal" :class="{ 'is-active' : attModal }" class="modal  ">
+            <div class="modal-background animated fadeIn" @click="attModal = !attModal"></div>
+            <div class="modal-content animated fadeIn ">
+
+                <div class="box is-fullwidth ">
+                    <p class="is-size-5"> Performance Details for - <span class="has-text-weight-semibold"> [[
+                            performanceDetail.employee[0].name ]]</span> </p>
+                    <small class=" has-text-grey">DATE: <span class="has-text-weight-semibold">[[
+                            formatedDate(performanceDetail.fromdate)]] - [[ formatedDate(performanceDetail.todate)
+                            ]]</span>
+                    </small>
+                    <br>
+                    <br>
+                    <div class="table-container">
+                        <table class="table is-fullwidth is-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Factor</th>
+                                    <th>Weight</th>
+                                    <th>Max. Score</th>
+                                    <th>Obtained Score</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="row in performanceDetail.performance_items">
+                                    <td> [[ row.performance.name ]]</td>
+                                    <td> [[ row.performance.weight ]]</td>
+                                    <td> [[ row.performance.score ]]</td>
+                                    <td> [[ row.obt_score ]]</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <button class="modal-close is-large" @click="attModal = !attModal"></button>
+
+            </div>
+
+        </div>
+        <div class="table-container animated fadeIn" style="overflow: visible;" v-if="viewPast">
+            <div class="field is-grouped">
+                <div class="control is-expanded has-icons-left">
+                    <input type="text" class="input is-fullwidth" v-model="searchQuery" placeholder="Search">
+
+                    <span class="icon icon-btn  is-left">
+                        <feather type="search" size="1.3rem"></feather>
+                    </span>
+                </div>
+            </div>
+
+            <table class="table is-fullwidth is-bordered is-hoverable">
+
+                <thead style="cursor: pointer">
+                    <!-- TABLE HEADER -->
+                    <tr class="has-text-weight-semibold ">
+                        <th @click="sortBy('from')">From
+                            <span class="icon icon-btn icon-btn-in">
+
+                                <feather v-if="this.currentSort == 'from'"
+                                    :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                            </span>
+                            </feather>
+                        </th>
+
+                        <th @click=" sortBy('to')">To
+                            <span class="icon icon-btn icon-btn-in">
+
+                                <feather v-if="this.currentSort == 'to'"
+                                    :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                            </span>
+                        </th>
+                        <th @click=" sortBy('name')">Employee
+                            <span class="icon icon-btn icon-btn-in">
+
+                                <feather v-if="this.currentSort == 'name'"
+                                    :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                            </span>
+                        </th>
+                        <th @click=" sortBy('performance')">Performance
+                            <span class="icon icon-btn icon-btn-in">
+
+                                <feather v-if="this.currentSort == 'performance'"
+                                    :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                            </span>
+                        </th>
+                    </tr>
+
+                    <!-- EMPTY Mssg -->
+                    <!-- <p v-if="filteredList.length == 0"
+                        class=" has-text-centered is-size-4 has-text-grey-light is-underline">
+                        <br>
+                        <span class="icon icon-btn"><i data-feather="slash"></i></span> Zero data matching query.
+                        <script> feather.replace()</script>
+                    </p> -->
+
+                </thead>
+
+
+                <!-- <thead>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Employee</th>
+                    <th>Performance</th>
+                </thead> -->
+                <tbody>
+                    <tr v-for="(row , index) in filteredRecordList " @dblclick="performanceModal(row.id)">
+                        <td>[[ formatedDate(row.fromdate) ]]</td>
+                        <td>[[ formatedDate(row.todate) ]]</td>
+                        <td>[[ row.employee[0].name ]]</td>
+                        <td>[[ row.net_score]] %</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="table-container animated fadeIn" style="overflow: visible;" v-if="showPerfTable">
             <table class="table is-fullwidth is-bordered">
                 <thead>
                     <th>Factor</th>
                     <th>Max. Score</th>
                     <th>Weight</th>
                     <th>Obtained Score</th>
-                    <th></th>
                 </thead>
 
                 <tfoot>
                     <tr>
                         <td colspan="5">
                             <div class="buttons">
-                                <button class="button" @click="addRow">
-                                    <span class="icon icon-btn">
-                                        <feather type="plus" size="1.3rem"></feather>
-                                    </span>
-                                    Add
-                                </button>
-                                <button class="button is-black">
+
+                                <button class="button is-black" @click="submitData" :disabled="submitting">
                                     <span class="icon icon-btn">
                                         <feather type="check" size="1.3rem"></feather>
                                     </span>
@@ -106,23 +229,16 @@
                     </tr>
                 </tfoot>
                 <tbody>
-                    <tr v-for="(row , index) in rows" :key="index">
+                    <tr v-for="(row , index) in factorList" :key="index">
                         <td>
-                            <b-autocomplete v-model="row.name" placeholder="e.g. Cleanliness" :keep-first='true'
-                                :open-on-focus='true' :data="filteredFactorObj(index)" field="name" @select="option => getSelectedFactor(option , index)" >
-                            </b-autocomplete>
+                            [[ row.name]]
                         </td>
                         <td v-html="row.score"></td>
                         <td v-html="row.weight"></td>
-                        <td> <input type="text" class="input" v-model="row.obt_score" placeholder="Enter Obtained Score">
+                        <td> <input type="text" class="input" v-model="row.obt_score"
+                                placeholder="Enter Obtained Score">
                         </td>
-                        <td>
-                            <button class="button is-danger" @click="removeElement(index);">
-                                <span class="icon ">
-                                    <feather type="x" size="1.3rem"></feather>
-                                </span>
-                            </button>
-                        </td>
+
                     </tr>
                 </tbody>
             </table>
