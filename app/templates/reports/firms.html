@@ -18,42 +18,43 @@
         </div>
         <br>
         <div class="columns">
-            <div class="column is-3">
+            <div class="column is-3 animated fadeIn" v-for="row in firms">
                 <div class="box">
-                    <p class="is-size-5 has-text-weight-semibold">Fabcraft</p>
+                    <p class="is-size-5 has-text-weight-semibold">[[ row.name ]]</p>
+                    <small class="is-uppercase has-text-weight-semibold has-text-grey">[[ row.location[0].name
+                        ]]</small>
+                    <br>
                     <br>
                     <table class="table is-bordered is-fullwidth">
                         <tbody>
                             <tr>
                                 <td>Employee</td>
-                                <td>86</td>
+                                <td>[[ row.total_emp ]]</td>
                             </tr>
                             <tr>
                                 <td>Net Salary</td>
-                                <td>₹ 1,50,000</td>
+                                <td>[[ formatedNumber   (row.total_pay) ]]</td>
                             </tr>
                             <tr>
                                 <td>Net Advances</td>
-                                <td>₹ 20,000</td>
+                                <td>-</td>
                             </tr>
                         </tbody>
                     </table>
-
-                    <small class="has-text-weight-semibold">PAYROLL UPCOMING - 1 Sept,2019</p>
-                        <br>
-                        <div class="notification">
-                            <small class="">
-                                <span class="icon icon-btn">
-                                    <feather type="bell" size="1rem"></feather>
-                                </span>
-                                UPDATES</small>
-                        </div>
-                        <button class="button is-black is-fullwidth">
+                    <br>
+                    <div class="notification">
+                        <small class="">
                             <span class="icon icon-btn">
-                                <feather type="activity" size="1.3rem"></feather>
+                                <feather type="bell" size="1rem"></feather>
                             </span>
-                            View Reports
-                        </button>
+                            UPDATES</small>
+                    </div>
+                    <button class="button is-black is-fullwidth">
+                        <span class="icon icon-btn">
+                            <feather type="activity" size="1.3rem"></feather>
+                        </span>
+                        View Reports
+                    </button>
 
                 </div>
             </div>
