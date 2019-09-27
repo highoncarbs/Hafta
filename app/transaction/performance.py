@@ -4,7 +4,7 @@ from flask_login import login_required
 from app.transaction import bp
 from app.employee.model import Employee, EmployeeAdvanceSchema
 from app.master.model import Company, Performance, PerformanceSchema
-from app.transaction.model_per import PerformanceItem, TransPerformance , TransPerformanceSchema
+from app.transaction.model_per import PerformanceItem, TransPerformance, TransPerformanceSchema
 from app import db, ma
 from datetime import datetime
 
@@ -43,37 +43,40 @@ def get_performance_factors_for_emp():
             int(temp_date[0]), int(temp_date[1]), int(temp_date[2]))
 
         data = TransPerformance.query.join(TransPerformance.employee).join(Employee.company).filter(
-            Company.id == int(payload['company']) , TransPerformance.fromdate >= fromdate , TransPerformance.todate <= todate  ).all()
+            Company.id == int(payload['company']), TransPerformance.fromdate >= fromdate, TransPerformance.todate <= todate).all()
 
         json_data = json.loads(data_schema.dumps(data))
         factors = Performance.query.all()
-    
+
         for item in json_data:
             item['net_score'] = float(0)
             max_score = float(0)
-            
+
             for prf_item in item['performance_items']:
 
                 for fac in factors:
-                    
+
                     if fac.id == prf_item['performance_id']:
                         max_score += float(fac.score)*float(fac.weight)
-                        item['net_score'] += float(prf_item['obt_score'])*float(fac.weight)
+                        item['net_score'] += float(prf_item['obt_score']
+                                                   )*float(fac.weight)
 
             item['net_score'] = float(item['net_score']/max_score)*100
-            item['net_score'] = "%.2f" % round(item['net_score'],2)
+            item['net_score'] = "%.2f" % round(item['net_score'], 2)
 
         json_data = json.dumps(json_data)
         print(json_data)
         return jsonify(json_data)
 
+
 @bp.route('/performance/get/employee/<id>', methods=['GET'])
 @login_required
 def get_performance_by_employee(id):
     data_schema = TransPerformanceSchema()
-    data = TransPerformance.query.filter_by(id = int(id)).first()
+    data = TransPerformance.query.filter_by(id=int(id)).first()
     json_data = data_schema.dumps(data)
     return jsonify(json_data)
+
 
 @bp.route('/performance/save', methods=['POST'])
 @login_required
@@ -120,3 +123,49 @@ def save_performance():
         else:
             return jsonify({'message': 'Empty data'})
     return jsonify({'message': 'Invalid HTTP Method. Use POST instead'})
+
+
+@bp.route('/performance/delete/<perf_id>', methods=['POST'])
+def delete_performance(perf_id):
+    data = TransPerformance.query.filter_by(id=int(perf_id))
+    if data.first() is None:
+        return jsonify({'message': 'Could not find advance transaction'})
+    else:
+        try:
+            data.employee = []
+            data.performance_items = []
+            data.delete()
+            db.session.commit()
+            return jsonify({'success': 'Performance transaction deleted'})
+        except Exception as e:
+            print(str(e))
+            return jsonify({'message': 'Something went wrong .'})
+
+
+@bp.route('/performance/update', methods=['POST'])
+def update_performance():
+    payload = request.json
+    if payload is not None:
+        data = TransPerformance.query.filter_by(id=int(payload['id'])).first()
+        if data is None:
+            return jsonify({'message': 'Could not find advance transaction'})
+        else:
+            try:
+                data.performance_items = []
+                db.session.commit()
+
+                # Updated the new Obt_score
+
+                for item in payload['performance_items']:
+                    factor = Performance.query.filter_by(
+                        id=int(item['performance_id'])).first()
+                    data.performance_items.append(
+                        PerformanceItem(factor, item['obt_score']))
+                
+                db.session.commit()
+                return jsonify({'success': 'Performance transaction updated'})
+            except Exception as e:
+                print(str(e))
+                return jsonify({'message': 'Something went wrong .'})
+    else:
+        return jsonify({'message': 'Invalid HTTP request .'})

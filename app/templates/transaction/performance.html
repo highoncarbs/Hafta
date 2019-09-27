@@ -127,6 +127,8 @@
             </div>
 
         </div>
+
+        <!-- View past records -->
         <div class="table-container animated fadeIn" style="overflow: visible;" v-if="viewPast">
             <div class="field is-grouped">
                 <div class="control is-expanded has-icons-left">
@@ -173,6 +175,7 @@
                                     :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
                             </span>
                         </th>
+                        <th></th>
                     </tr>
 
                     <!-- EMPTY Mssg -->
@@ -186,22 +189,32 @@
                 </thead>
 
 
-                <!-- <thead>
-                    <th>From</th>
-                    <th>To</th>
-                    <th>Employee</th>
-                    <th>Performance</th>
-                </thead> -->
                 <tbody>
                     <tr v-for="(row , index) in filteredRecordList " @dblclick="performanceModal(row.id)">
                         <td>[[ formatedDate(row.fromdate) ]]</td>
                         <td>[[ formatedDate(row.todate) ]]</td>
                         <td>[[ row.employee[0].name ]]</td>
                         <td>[[ row.net_score]] %</td>
+                        <td>
+                            <div class="buttons">
+                                <button class="button" @click="editPerformance(index)">
+                                    <span class=" icon">
+                                        <feather type="edit" size="1.3rem"></feather>
+                                    </span>
+                                </button>
+                                <button class="button is-danger" @click="deletePerformance(row.id , index)">
+                                    <span class="icon">
+                                        <feather type="x" size="1.3rem"></feather>
+                                    </span>
+                                </button>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
+        <!-- Entry  Performance Records -->
         <div class="table-container animated fadeIn" style="overflow: visible;" v-if="showPerfTable">
             <table class="table is-fullwidth is-bordered">
                 <thead>
@@ -243,7 +256,67 @@
                 </tbody>
             </table>
         </div>
-    </div>
+
+        <!-- Edit Modal -->
+        <div v-if="editPerfModal" :class="{ 'is-active' : editPerfModal }" class="modal  ">
+            <div class="modal-background animated fadeIn" @click="editPerfModal = !editPerfModal"></div>
+            <div class="modal-content animated fadeIn ">
+
+                <div class="box is-fullwidth ">
+                    <p class="is-size-5"> Edit Performance Details for - <span class="has-text-weight-semibold"> [[
+                            editFactorList.employee[0].name ]]</span> </p>
+                    <small class=" has-text-grey">DATE: <span class="has-text-weight-semibold">[[
+                            formatedDate(editFactorList.fromdate)]] - [[ formatedDate(editFactorList.todate)
+                            ]]</span>
+                    </small>
+                    <br>
+                    <br>
+                    <div class="table-container animated fadeIn" style="overflow: visible;">
+                        <table class="table is-fullwidth is-bordered">
+                            <thead>
+                                <th>Factor</th>
+                                <th>Max. Score</th>
+                                <th>Weight</th>
+                                <th>Obtained Score</th>
+                            </thead>
+
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="buttons">
+
+                                            <button class="button is-black" @click="updateData" :disabled="submitting">
+                                                <span class="icon icon-btn">
+                                                    <feather type="refresh-cw" size="1.3rem"></feather>
+                                                </span>
+                                                Update
+                                            </button>
+
+                                        </div>
+
+                                    </td>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                <tr v-for="(row , index) in editFactorList.performance_items" animation="spin ? submitting : false" :key="index">
+                                    <td>
+                                        [[ row.performance.name]]
+                                    </td>
+                                    <td v-html="row.performance.score"></td>
+                                    <td v-html="row.performance.weight"></td>
+                                    <td> <input type="text" class="input" v-model="row.obt_score"
+                                            placeholder="Enter Obtained Score">
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+            <button class="modal-close is-large" @click="editPerfModal = !editPerfModal"></button>
+        </div>
 </section>
 <script src="{{ url_for('static' ,filename='js/transaction/performance.js')}}"></script>
 {% endblock %}

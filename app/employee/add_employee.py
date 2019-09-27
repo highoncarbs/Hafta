@@ -28,12 +28,14 @@ def new():
     return render_template('employees/entry.html')
 
 
-@bp.route('/check', methods=['GET'])
+@bp.route('/edit/<id>', methods=['POST'])
 @login_required
-def check():
-    table_obj_members = Employee.__table__.columns
-    print(table_obj_members)
-    return 'HAHA'
+def edit_employee(id):
+    data = Employee.query.filter_by(id = int(id)).first()
+    if data is not None:
+        
+    pass
+    # return render_template('employees/entry.html')
 
 
 @bp.route('/new/add', methods=['POST'])

@@ -1,5 +1,6 @@
 // Reset all data when changing selection of select employee
 
+//  #TODO : Needs update  to Performance when edited , move Performace calculation to front - later 
 new Vue({
     el: "#performance_form",
     data() {
@@ -29,7 +30,10 @@ new Vue({
             searchQuery: '',
 
             attModal: false,
-            performanceDetail: null
+            performanceDetail: null,
+            editFactorList: null,
+            editPerfTable: null,
+            editPerfModal: false
         }
 
     },
@@ -353,6 +357,103 @@ new Vue({
                 .then(function (response) {
                     rawdata.performanceDetail = JSON.parse(response.data)
                 })
-        }
+        },
+        deletePerformance(id, index) {
+            let rawdata = this
+            axios.post('/transaction/performance/delete/' + String(id))
+                .then(function (response) {
+                    if (response.data.success) {
+                        rawdata.tempPastRecords.splice(index, 1)
+                        rawdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.success,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                    }
+                    else if (response.data.message) {
+                        rawdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.message,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                    }
+                })
+        },
+        editPerformance(id) {
+            this.editFactorList = this.tempPastRecords[id]
+            this.editPerfModal = !this.editPerfModal
+        },
+        updateData() {
+            this.submitting = true
+            let rawdata = this
+            let formdata = this.editFactorList
+            axios.post('/transaction/performance/update', formdata)
+                .then(function (response) {
+                    if (response.data.success) {
+                        // Run notificaiton 
+                        // Open selection for reports and printing
+                        rawdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.success,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                    }
+                    else if (response.data.message) {
+                        // Run message
+                        rawdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.message,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                        console.log(response.data.message)
+
+                    }
+
+                    this.submitting = false
+
+                })
+                .catch(function (error) {
+                    rawdata.$buefy.snackbar.open({
+                        duration: 4000,
+                        message: "Couldn't send request. Server Error.",
+                        type: 'is-light',
+                        position: 'is-top-right',
+                        actionText: 'Close',
+                        queue: true,
+                        onAction: () => {
+                            this.isActive = false;
+                        }
+                    })
+                    console.error(error)
+                    this.submitting = false
+
+                })
+            this.submitting = false
+
+        },
     }
 })
