@@ -1,0 +1,513 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+<script src="https://unpkg.com/buefy/dist/components/taginput"></script>
+<script src="https://unpkg.com/buefy/dist/components/autocomplete"></script>
+
+
+
+<section class="section">
+    <div class="container">
+
+        {% include 'component/custom-select.html'%}
+        <div class="columns">
+
+            <div class="column">
+
+
+                <div id="emp_entry">
+                    <div class="level">
+                        <div class="level-left">
+                            <p class="is-size-4 ">Employee - <span class="has-text-weight-semibold">[[ formdata.name
+                                    ]]</span> </p>
+                        </div>
+
+                    </div>
+                    <form v-on:submit="submitData" method="POST" novalidate=True>
+
+                        <!-- name -->
+                        <div class="field">
+                            <div class="control">
+                                <label for="" class="label">Name*</label>
+                                <input type="text" class="input" v-model="formdata.name" placeholder="Enter Name"
+                                    v-bind:class=" formdata.errors.name ? 'is-danger' : '' ">
+                                <small class="has-text-danger is-underline" v-if="formdata.errors.name">[[
+                                    formdata.errors.name ]]</small>
+                            </div>
+                        </div>
+
+                        <!-- DOB -->
+                        <div class="field ">
+                            <div class="control">
+                                <label for="" class="label">Date of Birth*</label>
+
+                                <input type="date" v-model="formdata.dob" class="input"
+                                    v-bind:class=" formdata.errors.dob ? 'is-danger' : '' ">
+                                <small class="has-text-danger is-underline" v-if="formdata.errors.dob">[[
+                                    formdata.errors.dob ]]</small>
+                            </div>
+                        </div>
+
+                        <!-- Spouse and Father -->
+                        <div class="field is-grouped is-fullwidth">
+
+                            <div class="control is-expanded">
+                                <label for="" class="label">Spouse Name</label>
+                                <input type="text" class="input is-fullwidth" v-model="formdata.spousename"
+                                    placeholder="Enter Spouse Name">
+                            </div>
+
+                            <div class="control is-expanded">
+                                <label for="" class="label">Father Name*</label>
+                                <input type="text" class="input is-fullwidth" v-model="formdata.fathername"
+                                    placeholder="Enter Father Name"
+                                    v-bind:class=" formdata.errors.fathername ? 'is-danger' : '' ">
+                                <small class="has-text-danger is-underline" v-if="formdata.errors.fathername">[[
+                                    formdata.errors.fathername ]]</small>
+                            </div>
+                        </div>
+
+                        <!-- Education -->
+                        <div class="field">
+                            <div class="control">
+                                <label for="" class="label">Education</label>
+                                <input type="text" class="input" v-model="formdata.education"
+                                    placeholder="Enter Education">
+                            </div>
+                        </div>
+
+                        <!-- Contact -->
+                        <div class="field">
+                            <div class="control">
+                                <label for="" class="label">Contact No.</label>
+                                <input type="text" class="input" v-model="formdata.contact"
+                                    placeholder="Enter Contact No.">
+                            </div>
+                        </div>
+
+                        <!-- Current City -->
+                        <div class="field">
+                            <div class="control">
+                                <label for="" class="label">Current Address</label>
+                                <input type="text" class="input" v-model="formdata.curr_address"
+                                    placeholder="Enter Address">
+                            </div>
+
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <label for="" class="label"> City</label>
+                                <custom-select v-model="formdata.curr_city" which="location">
+                                </custom-select>
+                            </div>
+                        </div>
+
+                        <!-- Permanent City -->
+                        <div class="box has-background-light">
+                            <div class="field">
+                                <div class="control">
+                                    <button class="button" @click="sameAddress"><span
+                                            class="icon icon-btn icon-btn-in"><i data-feather="copy"></i></span> Same as
+                                        Current</button>
+
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <label for="" class="label">Permanent Address</label>
+                                    <input type="text" class="input" v-model="formdata.perm_address"
+                                        placeholder="Enter Address">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <label for="" class="label"> City</label>
+                                    <custom-select v-model="formdata.perm_city" which="location"></custom-select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- PAN Details -->
+                        <div class="field is-grouped is-fullwidth">
+
+                            <div class="control is-expanded">
+                                <label for="" class="label">PAN No.</label>
+                                <input type="text" class="input is-fullwidth" v-model="formdata.pan"
+                                    placeholder="Enter PAN No.">
+                            </div>
+
+                            <div class="control is-expanded ">
+                                <label for="" class="label">Upload file</label>
+                                <div class="file has-name is-fullwidth"
+                                    v-bind:class=" formdata.errors.pan ? 'is-danger' : '' ">
+                                    <label class="file-label">
+                                        <input class="file-input" type="file" ref="panfile"
+                                            v-on:change="handleFileUpload('pan')">
+                                        <span class="file-cta">
+                                            <span class="file-icon">
+                                                <i data-feather="upload"></i>
+                                            </span>
+                                            <span class="file-label">
+                                                Choose a file…
+                                            </span>
+                                        </span>
+                                        <span class="file-name">
+                                            <p v-if="formfiles.panfile " v-html="formfiles.panfile.name">
+                                            </p>
+                                            <p v-if="formfiles.panfile == null ">PAN Card Copy</p>
+                                        </span>
+                                    </label>
+
+                                </div>
+                                <small class="has-text-danger is-underline" v-if="formdata.errors.pan">[[
+                                    formdata.errors.pan.error ]]</small>
+
+                            </div>
+
+                        </div>
+
+                        <!-- AADHAR -->
+                        <div class="field is-grouped is-fullwidth">
+
+                            <div class="control is-expanded">
+                                <label for="" class="label">Aadhar No.</label>
+                                <input type="text" class="input is-fullwidth" v-model="formdata.aadhar"
+                                    placeholder="Enter Aadhar No.">
+                            </div>
+
+                            <div class="control is-expanded ">
+                                <label for="" class="label">Upload file</label>
+                                <div class="file has-name is-fullwidth"
+                                    v-bind:class=" formdata.errors.aadhar ? 'is-danger' : '' ">
+                                    <label class="file-label">
+                                        <input class="file-input" type="file" ref="aadharfile"
+                                            v-on:change="handleFileUpload('aadhar')">
+                                        <span class="file-cta">
+                                            <span class="file-icon">
+                                                <i data-feather="upload"></i>
+                                            </span>
+                                            <span class="file-label">
+                                                Choose a file…
+                                            </span>
+                                        </span>
+                                        <span class="file-name">
+                                            <p v-if="formfiles.aadharfile " v-html="formfiles.aadharfile.name">
+                                            </p>
+                                            <p v-if="formfiles.aadharfile == null ">Aadhar Card Copy</p>
+                                        </span>
+                                    </label>
+
+                                </div>
+                                <small class="has-text-danger is-underline" v-if="formdata.errors.aadhar">[[
+                                    formdata.errors.aadhar.error ]]</small>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Extra Uploads - id , edu. cert -->
+                        <div class="field is-grouped  is-fullwidth">
+
+                            <div class="control is-expanded ">
+                                <label for="" class="label">Upload Extra I.D</label>
+                                <div class="file has-name is-fullwidth"
+                                    v-bind:class=" formdata.errors.extraidfile ? 'is-danger' : '' ">
+                                    <label class="file-label">
+                                        <input class="file-input" type="file" ref="extraidfile"
+                                            v-on:change="handleFileUpload('extraidfile')">
+                                        <span class="file-cta">
+                                            <span class="file-icon">
+                                                <i data-feather="upload"></i>
+                                            </span>
+                                            <span class="file-label">
+                                                Choose a file…
+                                            </span>
+                                        </span>
+                                        <span class="file-name">
+                                            <p v-if="formfiles.extraidfile " v-html="formfiles.extraidfile.name">
+                                            </p>
+                                            <p v-if="formfiles.extraidfile == null ">Extra ID Copy</p>
+                                        </span>
+                                    </label>
+
+                                </div>
+                                <small class="has-text-danger is-underline" v-if="formdata.errors.extraidfile">[[
+                                    formdata.errors.extraidfile.error ]]</small>
+
+                            </div>
+
+                            <div class="control is-expanded ">
+                                <label for="" class="label">Upload Education Cert.</label>
+                                <div class="file has-name is-fullwidth"
+                                    v-bind:class=" formdata.errors.educertfile ? 'is-danger' : '' ">
+                                    <label class="file-label">
+                                        <input class="file-input" type="file" ref="educertfile"
+                                            v-on:change="handleFileUpload('educertfile')">
+                                        <span class="file-cta">
+                                            <span class="file-icon">
+                                                <i data-feather="upload"></i>
+                                            </span>
+                                            <span class="file-label">
+                                                Choose a file…
+                                            </span>
+                                        </span>
+                                        <span class="file-name">
+                                            <p v-if="formfiles.educertfile " v-html="formfiles.educertfile.name">
+                                            </p>
+                                            <p v-if="formfiles.educertfile == null ">Edu. Cert. Copy</p>
+                                        </span>
+                                    </label>
+
+                                </div>
+                                <small class="has-text-danger is-underline" v-if="formdata.errors.educertfile">[[
+                                    formdata.errors.educertfile.error ]]</small>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Ref -->
+                        <div class="field is-grouped is-fullwidth">
+
+                            <div class="control is-expanded">
+                                <label for="" class="label">Reference</label>
+                                <input type="text" class="input is-fullwidth" v-model="formdata.reference"
+                                    placeholder="Enter Reference">
+                            </div>
+
+                            <div class="control is-expanded ">
+                                <label for="" class="label">Upload Resume</label>
+                                <div class="file has-name is-fullwidth"
+                                    v-bind:class=" formdata.errors.resumefile ? 'is-danger' : '' ">
+                                    <label class="file-label">
+                                        <input class="file-input" type="file" ref="resumefile"
+                                            v-on:change="handleFileUpload('resumefile')">
+                                        <span class="file-cta">
+                                            <span class="file-icon">
+                                                <i data-feather="upload"></i>
+                                            </span>
+                                            <span class="file-label">
+                                                Choose a file…
+                                            </span>
+                                        </span>
+                                        <span class="file-name">
+                                            <p v-if="formfiles.resumefile " v-html="formfiles.resumefile.name">
+                                            </p>
+                                            <p v-if="formfiles.resumefile == null ">Resume Copy</p>
+                                        </span>
+                                    </label>
+
+                                </div>
+                                <small class="has-text-danger is-underline" v-if="formdata.errors.resumefile">[[
+                                    formdata.errors.resumefile.error ]]</small>
+                            </div>
+
+                        </div>
+
+                        <hr>
+                        <!-- COmpnay INfo -->
+                        <div class="box has-background-light">
+                            <label for="" class="label">Date of Appointment</label>
+                            <div class="field is-grouped">
+                                <div class="field">
+                                    <div class="control">
+                                        <input type="date" v-model="formdata.dateofapp" class="input">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="field is-grouped is-fullwidth">
+
+                                <div class="control is-expanded">
+                                    <label for="" class="label">Appointment</label>
+                                    <custom-select v-model="formdata.appointment" which="appointment"></custom-select>
+                                </div>
+                                <div class="control is-expanded">
+                                    <label for="" class="label">Post</label>
+                                    <custom-select v-model="formdata.post" which="post"></custom-select>
+                                </div>
+                                <div class="control is-expanded">
+                                    <label for="" class="label">Department</label>
+                                    <custom-select v-model="formdata.department" which="department"></custom-select>
+                                </div>
+                                <div class="control is-expanded">
+                                    <label for="" class="label">Company</label>
+                                    <custom-select v-model="formdata.company" which="company">
+                                    </custom-select>
+                                </div>
+
+
+                            </div>
+                            <div class="field is-grouped is-fullwidth">
+
+                                <div class="control is-expanded">
+
+                                    <label class="label">Enter Benefits</label>
+                                    <b-taginput v-model="formdata.benefits" :data="filteredBenefits" field="name"
+                                        size="is-normal" autocomplete type="is-black" placeholder="Add a benefit"
+                                        @typing="getFilteredTags">
+                                        <template slot-scope="props">
+
+
+                                            [[props.option.name]]
+                                        </template>
+                                        <template slot="empty">
+                                            There are no items
+                                        </template>
+                                    </b-taginput>
+
+                                </div>
+                            </div>
+                            <hr class="has-background-grey-light" style="height:1px;">
+                            <p for="" class="is-size-5">Salary Structure</p>
+                            <br>
+                            <label for="" class="label">Effective Date
+                                <br>
+                                <p class="has-text-weight-normal">When changing/updating salary , update the date.</p>
+
+                            </label>
+                            <div class="field is-grouped">
+                                <div class="field">
+                                    <div class="control">
+                                        <input type="date" v-model="formdata.dateeff" class="input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field is-grouped box is-white">
+                                <div class="control">
+                                    <label class="label ">Select payment model: </label>
+
+                                </div>
+                                <div class="control ">
+                                    <label class="radio">
+                                        <input type="radio" value="month" v-model="formdata.salary_structure">
+                                        Month
+                                    </label>
+                                    <label class="radio">
+                                        <input type="radio" value="year" v-model="formdata.salary_structure" checked>
+                                        Year
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="field is-grouped is-fullwidth">
+
+                                <div class="control is-expanded">
+                                    <label for="" class="label">Basic</label>
+                                    <input type="text" class="input is-fullwidth" v-model="formdata.basicpay"
+                                        placeholder="Enter Basic Pay">
+                                </div>
+
+                                <div class="control is-expanded ">
+                                    <label for="" class="label">P.F</label>
+                                    <div class="control ">
+                                        <label class="radio">
+                                            <input type="radio" value="yes" v-model="formdata.pf">
+                                            Yes
+                                        </label>
+                                        <label class="radio">
+                                            <input type="radio" value="no" v-model="formdata.pf" checked>
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="control is-expanded">
+                                    <label for="" class="label">ESI</label>
+                                    <div class="control ">
+                                        <label class="radio">
+                                            <input type="radio" value="yes" v-model="formdata.esi">
+                                            Yes
+                                        </label>
+                                        <label class="radio">
+                                            <input type="radio" value="no" v-model="formdata.esi" checked>
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <br>
+                            <div class="box is-white">
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <label class="label ">Salary Advance </label>
+
+                                    </div>
+                                    <div class="control ">
+                                        <label class="radio">
+                                            <input type="radio" value="allowed" v-model="formdata.advance">
+                                            Allowed
+                                        </label>
+                                        <label class="radio">
+                                            <input type="radio" value="not" v-model="formdata.advance">
+                                            Not Allowed
+                                        </label>
+                                    </div>
+
+                                </div>
+                                <div class="field is-grouped is-multiline">
+                                    <div class="control">
+                                        <label for="" class="label">Max. Advance</label>
+                                        <input type="text" v-model="formdata.advancevalue"
+                                            placeholder="Enter Max. advance" class="input"
+                                            :disabled="formdata.advance == 'not' ? true : false">
+
+                                    </div>
+                                    <div class="control">
+                                        <label for="" class="label">Number of Advances </label>
+                                        <input type="text" v-model="formdata.advancenum"
+                                            placeholder="Enter Advances Allowed" class="input"
+                                            :disabled="formdata.advance == 'not' ? true : false">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <label for="" class="label">Paid Leaves ( in a year )</label>
+                                    <input type="text" class="input" v-model="formdata.paidleave"
+                                        placeholder="Enter Paid Leaves">
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <label for="" class="label">Increment Period ( in months )</label>
+                                    <input type="text" class="input" v-model="formdata.incrementpr"
+                                        placeholder="Enter period">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="field is-grouped">
+
+                            <div class="control">
+
+                                <input type="submit" class="button is-black" @click="submitData" :disabled="submitting"
+                                    :value="value">
+                            </div>
+                            <div class="control">
+
+                                <button class="button">
+                                    <span class="icon icon-btn icon-btn-in"><i data-feather="x"></i></span> Clear
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+<script src="{{ url_for('static' , filename='js/emp/edit.js')}}"></script>
+
+{% endblock %}

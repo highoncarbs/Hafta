@@ -2,8 +2,8 @@ from flask import Blueprint
 from flask import render_template, redirect, url_for, request, session, jsonify
 from flask_login import login_required
 from app.employee import bp
-from app.employee.model import Employee
-from app.master.model import Location, Post, Company, Department, Benefit , Appointment
+from app.employee.model import Employee, EmployeeSchema
+from app.master.model import Location, Post, Company, Department, Benefit, Appointment
 from app import db
 from werkzeug import secure_filename
 import json
@@ -28,14 +28,21 @@ def new():
     return render_template('employees/entry.html')
 
 
-@bp.route('/edit/<id>', methods=['POST'])
+@bp.route('/edit/view/', methods=['GET', 'POST'])
+@login_required
+def show_edit_employee():
+    return render_template('employees/edit.html')
+
+
+@bp.route('/edit/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_employee(id):
-    data = Employee.query.filter_by(id = int(id)).first()
-    if data is not None:
-        
-    pass
-    # return render_template('employees/entry.html')
+    data = Employee.query.filter_by(id=int(id)).first()
+    data_schema = EmployeeSchema()
+    json_data = data_schema.dumps(data)
+    print(json_data)
+    return jsonify(json_data)
+    # return render_template('employees/edit.html')
 
 
 @bp.route('/new/add', methods=['POST'])
@@ -186,7 +193,8 @@ def add_emp():
                             return jsonify({'message': 'Please select company.'})
                     if temp == 'appointment' and (val is not None):
                         if val is not '-1':
-                            data = Appointment.query.filter_by(id=int(val)).first()
+                            data = Appointment.query.filter_by(
+                                id=int(val)).first()
                             new_data.appointment.append(data)
                             continue
                         else:
