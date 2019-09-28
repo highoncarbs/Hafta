@@ -1,0 +1,71 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+<script src="https://unpkg.com/buefy/dist/components/autocomplete"></script>
+
+{% include 'component/custom-select.html'%}
+
+<section class="section">
+
+    <div class="container" id="quickinput_form">
+
+        <!-- Heading Title -->
+        <div class="level">
+            <div class="level-left">
+                <p class="is-size-4 has-text-weight-semibold">Quick Input</p>
+            </div>
+
+        </div>
+        <br>
+        <!-- Advacne Company and Date selection -->
+        <div class="field is-grouped is-grouped-multiline animated fadeIn">
+            <div class="control">
+                <label for="" class="label">Date</label>
+                <input type="date" class="input" v-model="date" :class="{ 'is-danger' :  errors.date == true }">
+            </div>
+            <div class="control">
+                <label for="" class="label">Select Employee</label>
+                <b-autocomplete v-model="employee" placeholder="e.g. Jitender" :keep-first='true' :open-on-focus='true'
+                    :data="filteredDataObj" field="name" @select="option => selected = option.id"
+                    :class="{ 'is-danger' :  errors.selected == true }">
+
+                    <template slot-scope="props">
+                        <div class="media">
+                            <div class="media-content">
+                                [[ props.option.name ]]
+                                <br>
+                                <small>
+                                    Company <b
+                                        v-html="props.option.company[0]? props.option.company[0].name : 'None'"></b>,
+                                    Location <b
+                                        v-html="props.option.company[0]?props.option.company[0].location[0].name : 'None'"></b>
+                                </small>
+                            </div>
+                        </div>
+                    </template>
+                </b-autocomplete>
+            </div>
+
+        </div>
+        <br>
+        <div v-if="selected != null && employee != ''" class="animated fadeIn">
+
+            <label for="" class="label">Qucik Report for [[ employee ]]</label>
+            <textarea :class="{ 'is-danger' :  errors.report == true }" name="" class="input" v-model="report" id=""
+                style="width: 500px ;  height:200px" cols="30" rows="10"
+                placeholder="Enter Incident report .. "></textarea>
+            <br>
+            <br>
+            <button class="button is-black" @click="submitData" :disabled="submitting">
+                <span class="icon icon-btn">
+                    <feather type="check" size="1.3rem"></feather>
+                </span>
+                Submit
+            </button>
+            <small v-if="Object.keys(errors).length != 0" class="is-underline has-text-danger"> Please fix the errors</small>
+        </div>
+    </div>
+</section>
+<script src="{{ url_for('static' ,filename='js/transaction/quickinput.js')}}"></script>
+
+{% endblock %}
