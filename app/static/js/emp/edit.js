@@ -7,6 +7,7 @@ new Vue({
             submitting: false,
             value: 'Update',
             formdatasaved: null,
+            emp_id : null,
             formdata: {
                 name: null,
                 dob: null,
@@ -100,8 +101,11 @@ new Vue({
             'benefits'
         ]
 
+        this.emp_id = window.location.href.split('/').slice(-1)[0]
+        
         select_fields = ['post', 'appointment', 'company', 'department']
-        axios.post('/employee/edit/79')
+        
+        axios.post('/employee/edit/'+String(data.emp_id))
             .then(function (response) {
                 data.formdatasaved = JSON.parse(response.data)
 
@@ -110,15 +114,15 @@ new Vue({
                         if (key == subkey) {
                             data.$set(data.formdata, key, data.formdatasaved[subkey])
                         }
-                        if( key == 'dateofapp'){
+                        if (key == 'dateofapp') {
                             tempdate = String(data.formdatasaved[key].split('T')[0])
                             data.$set(data.formdata, key, tempdate)
                         }
-                        if( key == 'dateeff'){
+                        if (key == 'dateeff') {
                             tempdate = String(data.formdatasaved[key].split('T')[0])
                             data.$set(data.formdata, key, tempdate)
                         }
-                        if( key == 'dob'){
+                        if (key == 'dob') {
                             tempdate = String(data.formdatasaved[key].split('T')[0])
                             data.$set(data.formdata, key, tempdate)
                         }
@@ -324,3 +328,5 @@ new Vue({
         }
     }
 })
+
+Vue.use('route')

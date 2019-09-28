@@ -28,11 +28,18 @@ def new():
     return render_template('employees/entry.html')
 
 
-@bp.route('/edit/view/', methods=['GET', 'POST'])
+@bp.route('/view/<id>', methods=['GET', 'POST'])
 @login_required
-def show_edit_employee():
+def view_employee(id):
     return render_template('employees/edit.html')
 
+@bp.route('/update', methods=['POST'])
+@login_required
+def update_employee():
+    payload = request.json
+    if payload is not None:
+        pass    
+    pass
 
 @bp.route('/edit/<id>', methods=['GET', 'POST'])
 @login_required
