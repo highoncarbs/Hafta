@@ -10,6 +10,7 @@ from app.employee.model import Employee, EmployeeAdvanceSchema
 from app.master.model import Company, AttendenceRules
 from app.transaction.model_att import Attendence, AttendenceSchema
 from app.transaction.model_adv import Advance, AdvanceSchema
+from app.transaction.model_sal import SalarySheet
 
 from app import db, ma
 from datetime import datetime
@@ -18,6 +19,65 @@ import json
 @bp.route('/salary_sheet/', methods=['GET'])
 def show_sheet():
     return render_template('transaction/salary_sheet.html')
+
+
+@bp.route('/salary_sheet/process', methods=['POST'])
+def process_sheet():
+    payload = request.json
+    if payload is not None:
+        json_data = payload['data']
+        payload_company = Company.query.filter_by(
+            id=int(payload['company'])).first()
+        payload_date = payload['date'].split('-')
+        print(payload_date)
+        payload_date = datetime(
+            int(payload_date[0]), int(payload_date[1]), int(1))
+
+        net_paid = float(0)
+        net_advance_deduction = float(0)
+        net_attendence = {}
+
+        check_data = SalarySheet.query.filter(SalarySheet.company.any(Company.id == int(payload['company'])),
+                                              SalarySheet.month == payload_date)
+        if check_data.first() is None:
+            for item in json_data:
+                # Debit advance
+                print(item['employee'][0]['id'])
+                try:
+                    emp = Employee.query.filter_by(
+                        id=int(item['employee'][0]['id'])).first()
+                    print('check 1' , emp)
+                    new_data = Advance(advanceamt=float(
+                        item['net_adv_deduction']), trans="debit", date=payload_date , deduction_period="debit")
+                    print('check 2')
+                    new_data.employee.append(emp)
+                    db.session.add(new_data)
+                    db.session.commit()
+                    net_paid += float(item['net_payable'])
+                    net_advance_deduction += float(item['net_adv_deduction'])
+                # Attendece Percentage later
+                except Exception as e:
+                    print(str(e))
+                    return jsonify({'message': 'Something went wrong. -'+str(e)})
+
+            try:
+
+                salary = SalarySheet(
+                    payload_date, net_advance_deduction, net_paid, json.dumps(net_attendence))
+                salary.company.append(payload_company)
+                db.session.add(salary)
+                db.session.commit()
+                return jsonify({'success': 'Payroll processed.'})
+
+            except Exception as e:
+                print(str(e))
+                return jsonify({'message': 'Something went wrong. -'+str(e)})
+        else:
+            return jsonify({'message': 'Salary Sheet already processed fo this month.'})
+
+        # Save payroll info - paid out , advances paid out ,deductions & attendence
+    else:
+        return jsonify({'message': 'Empty data recieved.'})
 
 
 @bp.route('/salary_sheet/generate', methods=['POST'])
@@ -57,12 +117,16 @@ def generate_sheet():
                 att_item['advance'] = []
                 att_item['deductions'] = {}
                 att_item['deductions']['month'] = []
-                att_item['days_payable_late'] = late_comin_ratio *  att_item['latecomin']
-                att_item['days_payable_early'] = early_going_ratio * att_item['earlygoing']
-                
-                att_item['days_payable'] = round(att_item['daysatt'] - ( att_item['days_payable_late'] + att_item['days_payable_early']) , 2)
+                att_item['days_payable_late'] = late_comin_ratio * \
+                    att_item['latecomin']
+                att_item['days_payable_early'] = early_going_ratio * \
+                    att_item['earlygoing']
 
-                att_item['pay_1'] = float(att_item['days_payable'])* (float(att_item['employee'][0]['basicpay']) / 30)  
+                att_item['days_payable'] = round(
+                    att_item['daysatt'] - (att_item['days_payable_late'] + att_item['days_payable_early']), 2)
+
+                att_item['pay_1'] = float(
+                    att_item['days_payable']) * (float(att_item['employee'][0]['basicpay']) / 30)
 
                 att_item['deductions']['year'] = []
 
@@ -113,8 +177,9 @@ def generate_sheet():
                 if float(net_advance_year) is float(0):
                     att_item['deductions']['year'] = 0
                     att_item['deductions']['year'] = 0
-                
-                print(net_deduction_month , att_item['esi'] , att_item['pf'] , att_item['tds'] , att_item['other_deduction'])
+
+                print(net_deduction_month, att_item['esi'], att_item['pf'],
+                      att_item['tds'], att_item['other_deduction'])
                 if att_item['other_deduction'] is None:
                     att_item['other_deduction'] = float(0)
                 if att_item['esi'] is None:
@@ -123,8 +188,13 @@ def generate_sheet():
                     att_item['pf'] = float(0)
                 if att_item['tds'] is None:
                     att_item['tds'] = float(0)
-                
-                att_item['total_deductions'] = float(net_deduction_month) + float(att_item['esi']) +float(att_item['pf']) +float(att_item['tds'])+float(att_item['other_deduction'])
-                att_item['net_payable'] =  float(att_item['pay_1'] - att_item['total_deductions'])
+                att_item['net_deduction_month'] = float(net_deduction_month)
+                att_item['net_deduction_year'] = float(net_deduction_year)
+                att_item['net_adv_deduction'] = float(
+                    net_deduction_month) + float(net_deduction_year)
+                att_item['total_deductions'] = float(net_deduction_month) + float(att_item['esi']) + float(att_item['pf']) + float(
+                    att_item['tds'])+float(att_item['other_deduction']) + float(att_item['net_deduction_year'])
+                att_item['net_payable'] = float(
+                    att_item['pay_1'] - att_item['total_deductions'])
 
         return jsonify(json_att_data)

@@ -11,6 +11,19 @@ new Vue({
         }
     },
     delimiters: ['[[', ']]'],
+    computed: {
+        salarySheetEdit(){
+            if (this.salarySheet != null) {
+                this.salarySheet.forEach(function (row) {
+                    row.total_deductions = parseFloat(row.net_adv_deduction) + parseFloat(row.esi) + parseFloat(row.pf) + parseFloat(row.tds) + parseFloat(row.other_deduction) + parseFloat(0)
+                    const tempPay = row.pay_1
+                    row.net_payable = parseFloat(tempPay) - parseFloat(row.total_deductions)
+                })
+            }
+
+            return this.salarySheet
+        }
+    },
     methods: {
         generateSalarySheet() {
             console.log("DAD")
@@ -41,10 +54,7 @@ new Vue({
 
                     })
             }
-            else {
 
-
-            }
 
         },
         formatedNumber(val) {
@@ -65,6 +75,39 @@ new Vue({
             else {
                 return false
             }
+        },
+        processSalary(){
+            let rawdata = this
+            let formdata = {'company': this.company , 'date': this.month , 'data' : this.salarySheet }
+            axios.post('/transaction/salary_sheet/process' , formdata)
+            .then(function(response){
+                if(response.data.success){
+                    rawdata.$buefy.snackbar.open({
+                        duration: 4000,
+                        message: response.data.success,
+                        type: 'is-light',
+                        position: 'is-top-right',
+                        actionText: 'Close',
+                        queue: true,
+                        onAction: () => {
+                            this.isActive = false;
+                        }
+                    })
+                }
+                else if(response.data.message){
+                    rawdata.$buefy.snackbar.open({
+                        duration: 4000,
+                        message: response.data.message,
+                        type: 'is-light',
+                        position: 'is-top-right',
+                        actionText: 'Close',
+                        queue: true,
+                        onAction: () => {
+                            this.isActive = false;
+                        }
+                    })
+                }
+            })
         }
     }
 

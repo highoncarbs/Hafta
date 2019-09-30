@@ -90,18 +90,21 @@
                     <tfoot>
                         <tr>
                             <td colspan="16">
-                                <button class="button is-black">
+                                <button class="button is-black" @click="processSalary">
                                     <span class="icon icon-btn">
                                         <feather type="refresh-cw" size="1.3rem"></feather>
                                     </span>
                                     Process
 
                                 </button>
+                                <span class="is-underline button is-text"   >
+                                    Processing debits advances of employees. 
+                                </span>
                             </td>
                         </tr>
                     </tfoot>
                     <tbody>
-                        <template v-for="row in salarySheet">
+                        <template v-for="(row , index) in salarySheetEdit" :bind="index">
                             <tr>
                                 <td>[[ row.employee[0].name]]</td>
                                 <td>[[ row.employee[0].department[0].name]]</td>
@@ -118,6 +121,9 @@
                                     <ul v-for="dec in row.deductions.month ">
                                         <li>[[ formatedNumber(dec) ]]</li>
                                     </ul>
+                                    
+                                    <input style="margin-top:0.5rem;" type="text" v-model="row.net_adv_deduction" value="row.net_adv_deduction  " class="input" placeholder="Deduct">
+                                    
                                 </td>
                                 <td>[[ row.esi ]]</td>
                                 <td>[[ row.pf ]]</td>
