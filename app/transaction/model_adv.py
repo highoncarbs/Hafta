@@ -26,6 +26,8 @@ class Advance(TimestampMixin,  db.Model):
     security = db.Column(db.String(250), default=None)
     cheque_no = db.Column(db.String(250), default=None)
     letter = db.Column(db.String(10), default=None)
+    trans = db.Column(db.String(10), default=None , nullable=False)
+
     # __table_args__ = (db.UniqueConstraint(
     #     'employee.id', 'date', name='att_id'), )
 
@@ -62,6 +64,6 @@ class AdvanceSchema(ma.ModelSchema):
     deduction_period = field_for(Advance, 'deduction_period', dump_only=True)
     employee = ma.Nested(EmployeeMainSchema, many=True)
     company = ma.Nested(CompanySchema, many=True)
-
+    trans = field_for(Advance, 'trans', dump_only=True)
     class meta:
         model = Advance

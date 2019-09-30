@@ -132,7 +132,12 @@ new Vue({
             if (this.empAdvanceList != null) {
                 this.empAdvanceList.forEach(function (item) {
                     console.log(item)
-                    outstandingamt += Number(item.advanceamt)
+                    if (item.trans != 'debit') {
+                        outstandingamt += Number(item.advanceamt)
+                    }
+                    else if(item.trans == 'debit'){
+                        outstandingamt -= Number(item.advanceamt)
+                    }
                 })
             }
             this.advanceForm.totalAdvance = Number(outstandingamt)
@@ -261,12 +266,12 @@ new Vue({
                 return false;
             }
         },
-        deleteAdvance(id , index) {
+        deleteAdvance(id, index) {
             let rawdata = this
             axios.post('/transaction/advance/delete/' + String(id))
                 .then(function (response) {
                     if (response.data.success) {
-                        rawdata.empAdvanceList.splice(index ,1)
+                        rawdata.empAdvanceList.splice(index, 1)
                         rawdata.$buefy.snackbar.open({
                             duration: 4000,
                             message: response.data.success,

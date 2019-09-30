@@ -29,7 +29,7 @@ def get_advance_for_emp(id):
 def get_advance(emp_id):
     # GEt Advacne history of employee
     if request.method == "POST":
-    
+
         today = datetime.today()
         year_start = datetime(today.year, 1, 1)
         year_end = datetime(today.year+1, 1, 1)
@@ -70,24 +70,24 @@ def save_advance():
             try:
 
                 # Need Update cehck inside
-                    new_data = Advance()
-                    emp = Employee.query.filter_by(
-                        id=int(payload['emp_id'])).first()
+                new_data = Advance()
+                emp = Employee.query.filter_by(
+                    id=int(payload['emp_id'])).first()
 
-                    new_data.employee.append(emp)
-                    for field in table_columns:
-                        val = payload_data[field]
-                        print(val, field)
+                new_data.employee.append(emp)
+                for field in table_columns:
+                    val = payload_data[field]
+                    print(val, field)
 
-                        if val == '' or val is None:
-                            continue
+                    if val == '' or val is None:
+                        continue
 
-                        setattr(new_data, field, val)
-                    setattr(new_data, 'date', payload_date)
+                    setattr(new_data, field, val)
+                setattr(new_data, 'date', payload_date)
 
-                    db.session.add(new_data)
-                    db.session.commit()
-                    return jsonify({'success': 'Data Added'})
+                db.session.add(new_data)
+                db.session.commit()
+                return jsonify({'success': 'Data Added'})
 
             except Exception as e:
                 print(str(e))
@@ -154,8 +154,8 @@ def update_advance():
 
 
 @bp.route('/advance/delete/<adv_id>', methods=['POST'])
-def delete_advance(adv_id): 
-    advance = Advance.query.filter_by(id = int(adv_id))
+def delete_advance(adv_id):
+    advance = Advance.query.filter_by(id=int(adv_id))
     if advance.first() is None:
         return jsonify({'message': 'Could not find advance transaction'})
     else:
