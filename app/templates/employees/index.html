@@ -299,14 +299,14 @@
                                             <small class="has-text-weight-semibold"> APPOINTMENT</small>
 
                                             <p
-                                                v-html=" empDetail.appointment != undefined ? empDetail.appointment : 'None'">
+                                                v-html=" empDetail.appointment.length != 0? empDetail.appointment[0].name : 'None'">
                                             </p>
 
                                         </td>
                                         <td colspan="1">
 
                                             <small class="has-text-weight-semibold">POST</small>
-                                            <p v-html=" empDetail.post != undefined ? empDetail.post : 'None'">
+                                            <p v-html=" empDetail.post.length != 0 ? empDetail.post[0].name : 'None'">
                                             </p>
                                         </td>
 
@@ -314,14 +314,14 @@
                                             <small class="has-text-weight-semibold"> DEPARTMENT</small>
 
                                             <p
-                                                v-html=" empDetail.department != undefined ? empDetail.department : 'None'">
+                                                v-html=" empDetail.department.length != 0? empDetail.department[0].name : 'None'">
                                             </p>
 
                                         </td>
                                         <td colspan="1">
                                             <small class="has-text-weight-semibold"> COMPANY</small>
 
-                                            <p v-html=" empDetail.company != undefined ? empDetail.company : 'None'">
+                                            <p v-html=" empDetail.company.length != 0 ? empDetail.company[0].name : 'None'">
                                             </p>
 
                                         </td>
@@ -329,8 +329,12 @@
                                     <tr>
                                         <td colspan="4">
                                             <small class="has-text-weight-semibold"> BENEFITS</small>
-
-                                            <p v-html=" empDetail.company != undefined ? empDetail.company : 'None'">
+                                            <br>
+                                            <span v-if=" empDetail.benefits.length != 0" v-for="ben in empDetail.benefits">
+                                            <span >[[ ben.name ]] . </span>
+                                            </span>
+                                            <p v-if=" empDetail.benefits.length == 0">
+                                            <span>None</span>
                                             </p>
 
                                         </td>
