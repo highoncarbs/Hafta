@@ -8,7 +8,7 @@ new Vue({
             isGenerating: null,
             errors: {},
             salarySheet: null,
-            selectedRow: null
+            selectedRow: []
         }
     },
     delimiters: ['[[', ']]'],
@@ -27,7 +27,6 @@ new Vue({
     },
     methods: {
         generateSalarySheet() {
-            console.log("DAD")
             if (this.checkData()) {
                 this.isGenerating = true
                 let rawdata = this
@@ -86,6 +85,36 @@ new Vue({
                     console.log(response)
                     const win = window.open('/transaction/salary_sheet/print/all', '_blank', [], true);
                 })
+        },
+        pushRow(index) {
+            console.log(index)
+            let raw = this
+            if (this.selectedRow.includes(index)) {
+                this.selectedRow.filter(function (item) {
+                    if (item == index) {
+                        console.log(item, index, raw.selectedRow)
+                        raw.selectedRow.splice((raw.selectedRow.indexOf(item)), 1)
+                    }
+                })
+
+            }
+            else {
+                this.selectedRow.push(index);
+            }
+        },
+        printSelected() {
+            let rawdata = this
+            let selectedData = []
+            this.selectedRow.forEach(function (index) {
+                selectedData.push(rawdata.salarySheet[rawdata.selectedRow.indexOf(index)])
+            })
+            let formdata = { 'company': this.company, 'date': this.month, 'data': selectedData }
+            localStorage.setItem('selecteddata', JSON.stringify(formdata))
+            axios.post('/transaction/salary_sheet/print/selected', formdata)
+            .then(function (response) {
+                console.log(response)
+                const win = window.open('/transaction/salary_sheet/print/selected', '_blank', [], true);
+            })
         },
         processSalary() {
             let rawdata = this

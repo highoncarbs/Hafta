@@ -74,7 +74,7 @@
                     Print
 
                 </button>
-                <button class="button" :disabled=" selectedRow == null || selectedRow.length == 0">
+                <button @click="printSelected" class="button" :disabled=" selectedRow == null || selectedRow.length == 0">
                     <span class="icon icon-btn">
                         <feather type="paperclip" size="1.3rem"></feather>
                     </span>
@@ -123,7 +123,7 @@
                     </tfoot>
                     <tbody>
                         <template v-for="(row , index) in salarySheetEdit" :bind="index">
-                            <tr>
+                            <tr @click="pushRow(row.id)" :class="{'has-background-light' : selectedRow.includes(row.id)} ">
                                 <td>[[ row.employee[0].name]]</td>
                                 <td>[[ row.employee[0].department[0].name]]</td>
                                 <td>[[ row.employee[0].post[0].name]]</td>
