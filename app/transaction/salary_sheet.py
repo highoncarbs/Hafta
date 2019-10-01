@@ -23,6 +23,10 @@ def show_sheet():
 @bp.route('/salary_sheet/print/all' , methods=['GET' , 'POST'])
 def print_salatry_sheet_company():
     return render_template('reports/print_sheet.html')
+    
+@bp.route('/salary_sheet/print/selected' , methods=['GET' , 'POST'])
+def print_salatry_sheet_selected():
+    return render_template('reports/print_sheet_selected.html')
 
 @bp.route('/salary_sheet/process', methods=['POST'])
 def process_sheet():
