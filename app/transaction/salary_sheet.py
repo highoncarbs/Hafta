@@ -20,6 +20,9 @@ import json
 def show_sheet():
     return render_template('transaction/salary_sheet.html')
 
+@bp.route('/salary_sheet/print/all' , methods=['GET' , 'POST'])
+def print_salatry_sheet_company():
+    return render_template('reports/print_sheet.html')
 
 @bp.route('/salary_sheet/process', methods=['POST'])
 def process_sheet():
@@ -160,20 +163,25 @@ def generate_sheet():
                             att_item['deductions']['year'].append(
                                 adv_item['deduction'])
 
+                
+                
                 if net_advance_month > net_deduction_month:
                     pass
                 elif net_advance_month <= net_deduction_month:
                     att_item['deductions']['month'] = net_advance_month
 
-                if float(net_advance_month) is float(0):
-                    att_item['deductions']['month'] = 0
-                    att_item['deductions']['month'] = 0
 
                 if net_advance_year > net_deduction_year:
                     pass
                 elif net_advance_year <= net_deduction_year:
                     att_item['deductions']['year'] = net_advance_year
 
+
+                # Setting to 0 if balance is 0
+
+                if float(net_advance_month) is float(0):
+                    att_item['deductions']['month'] = 0
+                    att_item['deductions']['month'] = 0
                 if float(net_advance_year) is float(0):
                     att_item['deductions']['year'] = 0
                     att_item['deductions']['year'] = 0

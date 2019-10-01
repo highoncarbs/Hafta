@@ -61,10 +61,28 @@
             <div class="box has-text-centered has-text-weight-bold has-text-grey animated fadeIn">
                 <feather type="info" size="1.3rem"></feather>
                 <p>Attendence has not been added for this month. <br>
-                Please add them before processing salary sheet for the month.</p>
+                    Please add them before processing salary sheet for the month.</p>
             </div>
         </div>
         <div v-if="salarySheet != null && salarySheet.length != 0" class="animated fadeInn ">
+
+            <div class="buttons">
+                <button class="button" @click="printAll">
+                    <span class="icon icon-btn">
+                        <feather type="printer" size="1.3rem"></feather>
+                    </span>
+                    Print
+
+                </button>
+                <button class="button" :disabled=" selectedRow == null || selectedRow.length == 0">
+                    <span class="icon icon-btn">
+                        <feather type="paperclip" size="1.3rem"></feather>
+                    </span>
+                    Print Selected
+
+                </button>
+            </div>
+
             <div class="table-container">
                 <table class="table is-fullwidth is-bordered">
                     <thead>
@@ -97,8 +115,8 @@
                                     Process
 
                                 </button>
-                                <span class="is-underline button is-text"   >
-                                    Processing debits advances of employees. 
+                                <span class="is-underline button is-text">
+                                    Processing debits advances of employees.
                                 </span>
                             </td>
                         </tr>
@@ -121,9 +139,10 @@
                                     <ul v-for="dec in row.deductions.month ">
                                         <li>[[ formatedNumber(dec) ]]</li>
                                     </ul>
-                                    
-                                    <input style="margin-top:0.5rem;" type="text" v-model="row.net_adv_deduction" value="row.net_adv_deduction  " class="input" placeholder="Deduct">
-                                    
+
+                                    <input style="margin-top:0.5rem;" type="text" v-model="row.net_adv_deduction"
+                                        value="row.net_adv_deduction  " class="input" placeholder="Deduct">
+
                                 </td>
                                 <td>[[ row.esi ]]</td>
                                 <td>[[ row.pf ]]</td>
