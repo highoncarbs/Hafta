@@ -10,8 +10,8 @@ new Vue({
             selected: null,
             submitting: false,
             report: null,
+            feedback: null,
             errors: {
-
             }
         }
     },
@@ -30,18 +30,18 @@ new Vue({
     },
     methods: {
 
-        checkData(){
-            if(!this.selected){
-                this.$set(this.errors , 'selected' , true)
+        checkData() {
+            if (!this.selected) {
+                this.$set(this.errors, 'selected', true)
             }
-            if(!this.date){
-                this.$set(this.errors , 'date' , true)
+            if (!this.date) {
+                this.$set(this.errors, 'date', true)
             }
-            if(!this.report){
-                this.$set(this.errors , 'report' , true)
+            if (!this.report) {
+                this.$set(this.errors, 'report', true)
             }
 
-            if(Object.keys(this.errors).length == 0){
+            if (Object.keys(this.errors).length == 0) {
                 return true
             }
 
@@ -51,7 +51,7 @@ new Vue({
             if (this.checkData()) {
                 this.submitting = true
                 let raw = this
-                let formdata = { 'emp_id': this.selected, 'date': this.date, 'report': "this.report" }
+                let formdata = { 'emp_id': this.selected, 'date': this.date, 'report': this.report, 'feedback': this.feedback }
                 axios.post('/transaction/quick/add', formdata)
                     .then(function (response) {
                         if (response.data.success) {
@@ -91,7 +91,7 @@ new Vue({
                         raw.submitting = false
                     })
             }
-           
+
         }
     },
     mounted() {

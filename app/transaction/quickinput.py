@@ -19,6 +19,31 @@ def show_quick():
     return render_template('transaction/quickinput.html')
 
 
+@bp.route('/quick/get', methods=['POST'])
+@login_required
+def get_quick_emp():
+    payload = request.json
+    if payload is not None:
+        data_schema = QuickInputSchema(many=True)
+        fromdate = str(payload['fromdate']).split('-')
+        fromdate = datetime(
+            int(fromdate[0]), int(fromdate[1]), int(fromdate[2]))
+        todate = str(payload['todate']).split('-')
+        todate = datetime(
+            int(todate[0]), int(todate[1]), int(todate[2]))
+        data = QuickInput.query.filter(
+            QuickInput.employee.any(Employee.id == int(payload['emp_id'])),
+            QuickInput.date >= fromdate, QuickInput.date <= todate).all()
+        print(data)
+
+        json_data = data_schema.dumps(data)
+        print(json_data)
+        return jsonify(json_data)
+
+    else:
+        return jsonify({'message': 'Empty data recieved'})
+
+
 @bp.route('/quick/add', methods=['POST'])
 @login_required
 def add_quick():
@@ -26,12 +51,13 @@ def add_quick():
     if payload is not None:
         emp = Employee.query.filter_by(id=int(payload['emp_id'])).first()
         report = str(payload['report'])
+        feedback = str(payload['feedback'])
         payload_date = str(payload['date']).split('-')
         payload_date = datetime(
             int(payload_date[0]), int(payload_date[1]), int(payload_date[2]))
 
         try:
-            data = QuickInput(payload_date, report)
+            data = QuickInput(payload_date, report, feedback)
             data.employee.append(emp)
 
             db.session.add(data)

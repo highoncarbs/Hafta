@@ -12,7 +12,7 @@
         <!-- Heading Title -->
         <div class="level">
             <div class="level-left">
-                <p class="is-size-4 has-text-weight-semibold">Quick Input</p>
+                <p class="is-size-4 has-text-weight-semibold">Quick Report</p>
             </div>
 
         </div>
@@ -50,7 +50,28 @@
         <br>
         <div v-if="selected != null && employee != ''" class="animated fadeIn">
 
-            <label for="" class="label">Qucik Report for [[ employee ]]</label>
+            <label for="" class="label">Quick Report for [[ employee ]]</label>
+            <br>
+            <div class="field is-grouped ">
+                <div class="field box">
+                    <div class="control">
+                        <label class="label ">Select Feedback </label>
+
+                    </div>
+                    <div class="control ">
+                        <label class="radio">
+                            <input type="radio" value="positive" v-model="feedback" checked>
+                            Positive
+                        </label>
+                        <label class="radio">
+                            <input type="radio" value="negative" v-model="feedback">
+                            Negative
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+            <br>
             <textarea :class="{ 'is-danger' :  errors.report == true }" name="" class="input" v-model="report" id=""
                 style="width: 500px ;  height:200px" cols="30" rows="10"
                 placeholder="Enter Incident report .. "></textarea>
@@ -62,7 +83,8 @@
                 </span>
                 Submit
             </button>
-            <small v-if="Object.keys(errors).length != 0" class="is-underline has-text-danger"> Please fix the errors</small>
+            <small v-if="Object.keys(errors).length != 0" class="is-underline has-text-danger"> Please fix the
+                errors</small>
         </div>
     </div>
 </section>
