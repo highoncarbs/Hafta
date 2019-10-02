@@ -5,7 +5,7 @@
 
 {% include 'component/custom-select.html'%}
 
-<meta>
+<!-- TODO : Date ranges inclusion for submitting data in performance -->
 <section class="section">
 
     <div class="container" id="performance_form">
@@ -214,8 +214,64 @@
             </table>
         </div>
 
+
+        <!-- Quick Reports modal View -->
+        <div v-if="quickPerfModal" :class="{ 'is-active' : quickPerfModal }" class="modal  ">
+            <div class="modal-background animated fadeIn" @click="quickPerfModal = !quickPerfModal"></div>
+            <div class="modal-content animated fadeIn ">
+
+                <div class="box is-fullwidth ">
+                    <p class="is-size-5"> Reports for - <span class="has-text-weight-semibold">
+                            [[ employee ]]
+                        </span> </p>
+                    
+                    <small class=" has-text-grey">DATE RANGE: <span class="has-text-weight-semibold">[[
+                            formatedDate(fromdate)]] - [[ formatedDate(todate)
+                            ]]</span>
+                    </small>
+                    <br>
+                    <br>
+                    <div class="table-container animated fadeIn" style="overflow: visible;">
+                        <table class="table is-fullwidth is-bordered">
+                            <thead>
+                                <th>Date</th>
+                                <th>Feedback</th>
+                                <th>Report</th>
+                            </thead>
+
+
+                            <tbody>
+                                <tr v-for="(row , index) in quickReports" :key="index">
+                                    <td>
+                                        [[ formatedDate(row.date) ]]
+                                    </td>
+                                    <td class="has-text-weight-semibold"
+                                        :class="{'is-danger is-underline has-text-white': row.feedback == 'negative' , 'is-light': row.feedback == 'positive' }">
+                                        [[ row.feedback ]]</td>
+                                    <td>[[ row.report ]]</td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+            <button class="modal-close is-large" @click="quickPerfModal = !quickPerfModal"></button>
+        </div>
+
         <!-- Entry  Performance Records -->
         <div class="table-container animated fadeIn" style="overflow: visible;" v-if="showPerfTable">
+            <div class="field">
+                <div class="control">
+                    <button class="button" @click="quickPerfModal = !quickPerfModal">
+                        <span class="icon icon-btn">
+                            <feather type="message-square" size="1.3rem"></feather>
+                        </span>
+                        View Reports
+                    </button>
+                </div>
+            </div>
             <table class="table is-fullwidth is-bordered">
                 <thead>
                     <th>Factor</th>
@@ -298,7 +354,8 @@
                                 </tr>
                             </tfoot>
                             <tbody>
-                                <tr v-for="(row , index) in editFactorList.performance_items" animation="spin ? submitting : false" :key="index">
+                                <tr v-for="(row , index) in editFactorList.performance_items"
+                                    animation="spin ? submitting : false" :key="index">
                                     <td>
                                         [[ row.performance.name]]
                                     </td>
@@ -317,6 +374,8 @@
             </div>
             <button class="modal-close is-large" @click="editPerfModal = !editPerfModal"></button>
         </div>
+
+
 </section>
 <script src="{{ url_for('static' ,filename='js/transaction/performance.js')}}"></script>
 {% endblock %}

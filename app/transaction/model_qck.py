@@ -18,11 +18,13 @@ class QuickInput(TimestampMixin, db.Model):
                                backref='qck_emp', cascade='all ,delete', lazy='joined')
 
     date = db.Column(db.DateTime, default=None, nullable=False)
-    report = db.Column(db.String(500) , default= None)
+    report = db.Column(db.String(500), default=None)
+    feedback = db.Column(db.String(20) , default=None , nullable = False)
 
-    def __init__(self , date  , report):
+    def __init__(self , date  , report , feedback):
         self.date = date
         self.report = report 
+        self.feedback = feedback
 
 db.Table('qck_emp',
          db.Column('emp_id', db.Integer, db.ForeignKey('employee.id', ondelete='SET NULL')),
@@ -36,6 +38,7 @@ class QuickInputSchema(ma.ModelSchema):
     id = field_for(QuickInput , 'id' , dump_only = True)
     date = field_for(QuickInput , 'date' , dump_only = True)
     report =  field_for(QuickInput , 'report' , dump_only = True)
+    feedback=  field_for(QuickInput , 'feedback' , dump_only = True)
     employee = ma.Nested(EmployeeMainSchema, many=True)
 
     class meta:

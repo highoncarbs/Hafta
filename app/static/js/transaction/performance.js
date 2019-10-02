@@ -33,7 +33,9 @@ new Vue({
             performanceDetail: null,
             editFactorList: null,
             editPerfTable: null,
-            editPerfModal: false
+            editPerfModal: false,
+            quickReports: null,
+            quickPerfModal: false
         }
 
     },
@@ -132,9 +134,15 @@ new Vue({
             this.viewPast = false;
             this.showEmpSelect = true;
             this.showPerfTable = true;
-
+            this.quickReports = null
+            let reportdata = {'emp_id' : this.emp_id , 'fromdate' : this.fromdate , 'todate' : this.todate}
             this.factorList = []
             if (this.emp_id) {
+                
+                axios.post('/transaction/quick/get', reportdata)
+                    .then(function (response) {
+                        rawdata.quickReports = JSON.parse(response.data)
+                    })
                 axios.get('/transaction/get/performance')
                     .then(function (response) {
                         rawdata.showPerfTable = true
