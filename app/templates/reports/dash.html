@@ -1,7 +1,9 @@
 {% extends 'base/base.html' %}
 {% block content %}
+
+{% include 'component/heatmap.html'%}
 <section class="section">
-    <div class="container">
+    <div class="container" id="dash_template">
 
         <div class="level">
             <div class="level-left">
@@ -9,6 +11,62 @@
             </div>
 
         </div>
+
+        <div class="columns">
+            <div class="column">
+                <div class="box">
+                    <p class="has-text-weight-semibold is-size-5">
+                        <span class="icon icon-btn">
+                            <feather type="bell" size="1.3rem"></feather>
+                        </span>
+                        Updates</p>
+                    <br>
+                    <br>
+                    <heatmap :datalist=" [20,25,21,22,30,30,25,21,15,10,30,26]"></heatmap>
+
+                </div>
+            </div>
+            <div class="column">
+                <div class="box">
+
+                    <p class="has-text-weight-semibold is-size-5">
+                        <span class="icon icon-btn">
+                            <feather type="star" size="1.3rem"></feather>
+                        </span>Top Performer</p>
+                    <br>
+                    <br>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="columns">
+            <div class="column">
+                <div class="box">
+                    <p class="has-text-weight-semibold is-size-5">
+                        <span class="icon icon-btn">
+                            <feather type="coffee" size="1.3rem"></feather>
+                        </span>Late Comers</p>
+                    <br>
+                    <br>
+                </div>
+
+            </div>
+            <div class="column ">
+                <div class="box">
+                    <p class="has-text-weight-semibold is-size-5">
+                        <span class="icon icon-btn">
+                            <feather type="clock" size="1.3rem"></feather>
+                        </span>Attendence</p>
+                    <br>
+                    <br>
+
+                </div>
+
+            </div>
+        </div>
     </div>
 </section>
+<script src="{{ url_for('static' ,filename='js/reports/dash.js')}}"></script>
+
 {% endblock %}

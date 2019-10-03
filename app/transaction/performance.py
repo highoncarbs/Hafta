@@ -27,6 +27,46 @@ def get_performance_factors():
     return jsonify(json_data)
 
 
+@bp.route('/performance/all', methods=['POST'])
+@login_required
+def get_performance_all():
+
+        data_schema = TransPerformanceSchema(many=True)
+        # payload = request.json
+        # temp_date = payload['fromdate'].split('-')
+        # fromdate = datetime(
+        #     int(temp_date[0]), int(temp_date[1]), int(temp_date[2]))
+
+        # temp_date = payload['todate'].split('-')
+        # todate = datetime(
+        #     int(temp_date[0]), int(temp_date[1]), int(temp_date[2]))
+
+        data = TransPerformance.query.all()
+
+        json_data = json.loads(data_schema.dumps(data))
+        factors = Performance.query.all()
+
+        for item in json_data:
+            item['net_score'] = float(0)
+            max_score = float(0)
+
+            for prf_item in item['performance_items']:
+
+                for fac in factors:
+
+                    if fac.id == prf_item['performance_id']:
+                        max_score += float(fac.score)*float(fac.weight)
+                        item['net_score'] += float(prf_item['obt_score']
+                                                   )*float(fac.weight)
+
+            item['net_score'] = float(item['net_score']/max_score)*100
+            item['net_score'] = "%.2f" % round(item['net_score'], 2)
+
+        json_data = json.dumps(json_data)
+        print(json_data)
+        return jsonify(json_data)
+
+
 @bp.route('/performance/company', methods=['POST'])
 @login_required
 def get_performance_factors_for_emp():
@@ -161,7 +201,7 @@ def update_performance():
                         id=int(item['performance_id'])).first()
                     data.performance_items.append(
                         PerformanceItem(factor, item['obt_score']))
-                
+
                 db.session.commit()
                 return jsonify({'success': 'Performance transaction updated'})
             except Exception as e:
