@@ -57,6 +57,7 @@ class Employee(TimestampMixin, db.Model):
     advancenum = db.Column(db.Integer, default=None)
     paidleave = db.Column(db.Integer, default=None)
     incrementpr = db.Column(db.Integer, default=None)
+    flag = db.Column(db.Integer , default = 0 , nullable = False)
     __table_args__ = (db.UniqueConstraint(
         'name', 'dob', 'fathername', name='emp_id'), )
 

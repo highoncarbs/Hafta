@@ -28,11 +28,28 @@ def get_detail(id):
 def get_basic():
     if request.method == 'GET':
         data_schema = EmployeeBasicSchema(many=True)
-        data = Employee.query.all()
+        data = Employee.query.filter(Employee.flag != int(1)).all()
         # print(data_schema)
         json_data = data_schema.dumps(data)
         print(json_data)
         return jsonify(json_data)
+
+@bp.route('/delete/<emp_id>', methods=['POST'])
+def delete_employee(emp_id):
+
+
+    # Need Employee delete checks
+    # Adavaces
+    if request.method == 'POST':
+        emp = Employee.query.filter_by(id= int(emp_id)).first()
+        if(emp) is not None:
+            emp.flag = 1
+            db.session.commit()
+            return jsonify({'success' : 'Employee deleted'})
+        else:
+            return jsonify({'message' : 'Employee not found'})
+    else:
+        return jsonify({'message' : 'Invalid HTTP method'})
 
 
 @bp.route('/get/by/company/<companyid>', methods=['GET'])
