@@ -91,9 +91,10 @@ i {
     font-weight: 600 !important;
 }
 
-.box .table-container {
-    overflow-x: scroll;
+/* .box .table-container {
+    overflow-x: scroll; */
 }
+
 
 .is-underline {
     text-decoration: underline;
@@ -126,17 +127,16 @@ i {
     bottom: 0;
     top: auto;
     position: fixed;
-    padding:2rem 0;
-    border-top:1px solid #0a0a0a;
+    padding: 2rem 0;
+    border-top: 1px solid #0a0a0a;
 }
 
-.tag{
+.tag {
     border-radius: 0 !important;
     border: 0.5px solid #000;
 }
+
 /* Autocomplete from Buefy */
-
-
 
 .autocomplete .dropdown-menu {
     display: block;
@@ -156,6 +156,7 @@ i {
     max-height: 200px;
     z-index: 500 !important
 } */
+
 /* 
 .autocomplete .dropdown-item, .autocomplete .dropdown .dropdown-menu .has-link a, .dropdown .dropdown-menu .has-link .autocomplete a {
     white-space: nowrap;
@@ -253,6 +254,9 @@ i {
     min-height: 3em;
 }
 
+.has-background-info{
+    background-color: #c2dbff7c !important;
+}
 .notices .snackbar .text {
     padding: .5em 1em;
 }
