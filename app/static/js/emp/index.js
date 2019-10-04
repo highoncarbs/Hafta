@@ -9,7 +9,8 @@ new Vue({
             currentSort: 'name',
             currentSortDir: 'asc',
             detailModal: false,
-            empDetail: null
+            empDetail: null,
+            confirmModal: { 'close': false, 'data': null },
 
 
         }
@@ -55,7 +56,7 @@ new Vue({
             if (this.currentSort == 'salary') {
                 if (this.currentSortDir == 'asc') {
 
-                this.dataList.sort(function (a, b) { if (a.basicpay != undefined && b.basicpay != undefined) return a.basicpay - b.basicpay })
+                    this.dataList.sort(function (a, b) { if (a.basicpay != undefined && b.basicpay != undefined) return a.basicpay - b.basicpay })
                 }
                 else if (this.currentSortDir == 'desc') {
                     this.dataList.sort(function (a, b) { if (a.basicpay != undefined && b.basicpay != undefined) return a.basicpay - b.basicpay }).reverse()
@@ -69,10 +70,10 @@ new Vue({
 
                     this.dataList.sort(function (a, b) { if (a.company.length != 0 && b.company.length != 0) return ('' + a.company[0].name).localeCompare(b.company[0].name) })
                 }
-                    else if (this.currentSortDir == 'desc') {
-                        this.dataList.sort(function (a, b) { if (a.company.length != 0 && b.company.length != 0) return ('' + a.company[0].name).localeCompare(b.company[0].name) }).reverse()
-    
-                    }
+                else if (this.currentSortDir == 'desc') {
+                    this.dataList.sort(function (a, b) { if (a.company.length != 0 && b.company.length != 0) return ('' + a.company[0].name).localeCompare(b.company[0].name) }).reverse()
+
+                }
             }
 
 
@@ -93,9 +94,9 @@ new Vue({
             console.log(test)
             return test
         },
-        formatedDate(val){
+        formatedDate(val) {
             var date = new Date(val)
-            return( date.getDate() + '/' + (date.getMonth()+1)   + '/' +  date.getFullYear());
+            return (date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear());
 
 
         },
@@ -111,13 +112,51 @@ new Vue({
 
 
         },
-        employeeDetail(id){
-            this.detailModal = ! this.detailModal
+        employeeDetail(id) {
+            this.detailModal = !this.detailModal
             let rawdata = this
-            axios.post('/employee/get/detail/'+String(id))
-            .then(function(response){
-                rawdata.empDetail = JSON.parse(response.data) 
-            })
+            axios.post('/employee/get/detail/' + String(id))
+                .then(function (response) {
+                    rawdata.empDetail = JSON.parse(response.data)
+                })
+        },
+        setConfirm(index) {
+            this.confirmModal.data = dataList[index]
+            this.confirmModal.close = !this.confirmModal.close
+
+        },
+        employeeDelete(id) {
+            this.confirmModal.close = !this.confirmModal.close
+            let rawdata = this
+            let emp_id = id 
+            // console.log(id , emp_index)
+            axios.post('/employee/delete/' + String(id))
+                .then(function (response) {
+                    if (response.data.success) {
+                        rawdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.success,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                      
+                        // Check how it works , not working
+                        // rawdata.data = rawdata.data.filter(function (item) {
+
+                        //     if (Number(item.id) == Number(emp_id)) {
+                        //         console.log(emp_id , item.id , rawdata.data.indexOf(item))
+                        //         rawdata.filteredList.splice(rawdata.filteredList.indexOf(item), 1)
+                        //         console.log('-------DAATA-----------'+rawdata.data)
+                        //     }
+                        // })
+                    }
+
+                })
         }
 
 

@@ -9,6 +9,8 @@
             </div>
 
         </div>
+
+
         <div class="table-container" id="emp_show">
             <table class="table is-bordered is-fullwidth is-hoverable">
                 <div class="field is-grouped">
@@ -133,7 +135,7 @@
 
                                                 <a class="dropdown-item">
                                                     <div class="buttons ">
-                                                        <div class="button is-danger is-small" @click="">Delete</div>
+                                                        <div class="button is-danger is-small" @click="employeeDelete(row.id)">Delete</div>
                                                     </div>
                                                 </a>
                                             </div>
@@ -147,6 +149,20 @@
                 </tbody>
             </table>
 
+            <!-- Confirm Delete Modal
+            <div v-show="confirmModal.close" class="modal" :class="{'is-active': confirmModal.close}">
+                <div class="modal-background animated fadeIn" @click="confirmModal.close = !confirmModal.close"></div>
+                <div class="modal-content animated fadeIn ">
+
+                    <div class="box">
+                    </div>
+                </div>
+                <button class="modal-close is-large" @click="confirmModal.close = !confirmModal.close"></button>
+
+            </div>
+ -->
+
+            <!-- EMployee Detial Modal -->
             <div v-show="detailModal" class="modal" :class="{'is-active': detailModal}">
                 <div class="modal-background animated fadeIn" @click="detailModal = !detailModal"></div>
                 <div class="modal-content animated fadeIn ">
@@ -321,7 +337,8 @@
                                         <td colspan="1">
                                             <small class="has-text-weight-semibold"> COMPANY</small>
 
-                                            <p v-html=" empDetail.company.length != 0 ? empDetail.company[0].name : 'None'">
+                                            <p
+                                                v-html=" empDetail.company.length != 0 ? empDetail.company[0].name : 'None'">
                                             </p>
 
                                         </td>
@@ -330,11 +347,12 @@
                                         <td colspan="4">
                                             <small class="has-text-weight-semibold"> BENEFITS</small>
                                             <br>
-                                            <span v-if=" empDetail.benefits.length != 0" v-for="ben in empDetail.benefits">
-                                            <span >[[ ben.name ]] . </span>
+                                            <span v-if=" empDetail.benefits.length != 0"
+                                                v-for="ben in empDetail.benefits">
+                                                <span>[[ ben.name ]] . </span>
                                             </span>
                                             <p v-if=" empDetail.benefits.length == 0">
-                                            <span>None</span>
+                                                <span>None</span>
                                             </p>
 
                                         </td>
