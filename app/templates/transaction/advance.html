@@ -136,18 +136,18 @@
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Amount</th>
                             <th>Cheque No.</th>
                             <th>Letter</th>
                             <th>Deduction</th>
                             <th>Deduction Period </th>
+                            <th>Amount</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
 
                         <tr v-for="(adv , index) in empAdvanceList"
-                            :class="  adv.trans == 'debit'? 'has-background-primary' : ''">
+                            :class="  adv.trans == 'debit'? 'has-background-info' : ''">
 
                             <td>[[ formatedDate(adv.date)]]</td>
                             <td v-html="adv.trans != 'debit'?  adv.cheque_no : '--' "> </td>

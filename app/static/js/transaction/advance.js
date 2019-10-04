@@ -156,7 +156,7 @@ new Vue({
                         console.log(response.data);
                         rawdata.dataName = []
                         rawdata.dataList = JSON.parse(response.data)
-                        rawdata.showEmpSelect = !rawdata.showEmpSelect
+                        rawdata.showEmpSelect =true
                         rawdata.dataList.forEach((item) => rawdata.dataName.push(item))
 
                     })
