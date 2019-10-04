@@ -224,7 +224,7 @@
                     <p class="is-size-5"> Reports for - <span class="has-text-weight-semibold">
                             [[ employee ]]
                         </span> </p>
-                    
+
                     <small class=" has-text-grey">DATE RANGE: <span class="has-text-weight-semibold">[[
                             formatedDate(fromdate)]] - [[ formatedDate(todate)
                             ]]</span>
@@ -261,57 +261,60 @@
         </div>
 
         <!-- Entry  Performance Records -->
-        <div class="table-container animated fadeIn" style="overflow: visible;" v-if="showPerfTable">
-            <div class="field">
-                <div class="control">
-                    <button class="button" @click="quickPerfModal = !quickPerfModal">
-                        <span class="icon icon-btn">
-                            <feather type="message-square" size="1.3rem"></feather>
-                        </span>
-                        View Reports
-                    </button>
+        <div v-show="showPerfTable && employee != ''" >
+            <div class="table-container animated fadeIn" style="overflow: visible;">
+                <div class="field">
+                    <div class="control">
+                        <button class="button" @click="quickPerfModal = !quickPerfModal">
+                            <span class="icon icon-btn">
+                                <feather type="message-square" size="1.3rem"></feather>
+                            </span>
+                            View Reports
+                        </button>
+                    </div>
                 </div>
+                <table class="table is-fullwidth is-bordered">
+                    <thead>
+                        <th>Factor</th>
+                        <th>Max. Score</th>
+                        <th>Weight</th>
+                        <th>Obtained Score</th>
+                    </thead>
+
+                    <tfoot>
+                        <tr>
+                            <td colspan="5">
+                                <div class="buttons">
+
+                                    <button class="button is-black" @click="submitData" :disabled="submitting">
+                                        <span class="icon icon-btn">
+                                            <feather type="check" size="1.3rem"></feather>
+                                        </span>
+                                        Save
+                                    </button>
+
+                                </div>
+
+                            </td>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        <tr v-for="(row , index) in factorList" :key="index">
+                            <td>
+                                [[ row.name]]
+                            </td>
+                            <td v-html="row.score"></td>
+                            <td v-html="row.weight"></td>
+                            <td> <input type="text" class="input" v-model="row.obt_score"
+                                    placeholder="Enter Obtained Score">
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <table class="table is-fullwidth is-bordered">
-                <thead>
-                    <th>Factor</th>
-                    <th>Max. Score</th>
-                    <th>Weight</th>
-                    <th>Obtained Score</th>
-                </thead>
-
-                <tfoot>
-                    <tr>
-                        <td colspan="5">
-                            <div class="buttons">
-
-                                <button class="button is-black" @click="submitData" :disabled="submitting">
-                                    <span class="icon icon-btn">
-                                        <feather type="check" size="1.3rem"></feather>
-                                    </span>
-                                    Save
-                                </button>
-
-                            </div>
-
-                        </td>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    <tr v-for="(row , index) in factorList" :key="index">
-                        <td>
-                            [[ row.name]]
-                        </td>
-                        <td v-html="row.score"></td>
-                        <td v-html="row.weight"></td>
-                        <td> <input type="text" class="input" v-model="row.obt_score"
-                                placeholder="Enter Obtained Score">
-                        </td>
-
-                    </tr>
-                </tbody>
-            </table>
         </div>
+
 
         <!-- Edit Modal -->
         <div v-if="editPerfModal" :class="{ 'is-active' : editPerfModal }" class="modal  ">

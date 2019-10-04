@@ -103,7 +103,13 @@ new Vue({
         },
     },
 
-
+    watch: {
+        employee: function (val) {
+            if(val == "") {
+                this.showPerfTable = false
+            }
+        }  
+    },
 
     methods: {
 
@@ -135,10 +141,10 @@ new Vue({
             this.showEmpSelect = true;
             this.showPerfTable = true;
             this.quickReports = null
-            let reportdata = {'emp_id' : this.emp_id , 'fromdate' : this.fromdate , 'todate' : this.todate}
+            let reportdata = { 'emp_id': this.emp_id, 'fromdate': this.fromdate, 'todate': this.todate }
             this.factorList = []
             if (this.emp_id) {
-                
+
                 axios.post('/transaction/quick/get', reportdata)
                     .then(function (response) {
                         rawdata.quickReports = JSON.parse(response.data)
@@ -271,6 +277,13 @@ new Vue({
                                 this.isActive = false;
                             }
                         })
+
+                        rawdata.showPerfTable = false
+                        rawdata.emp_id = null
+                        rawdata.employee = ''
+
+
+
                     }
                     else if (response.data.message) {
                         // Run message
@@ -423,6 +436,9 @@ new Vue({
                                 this.isActive = false;
                             }
                         })
+                        rawdata.editPerfModal = !rawdata.editPerfModal
+                        rawdata.viewPastRecords()
+
                     }
                     else if (response.data.message) {
                         // Run message
