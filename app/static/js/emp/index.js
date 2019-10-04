@@ -17,14 +17,7 @@ new Vue({
     },
     mounted() {
         feather.replace();
-        let rawdata = this
-        axios.get('/employee/get/basic')
-            .then(function (response) {
-                rawdata.data = JSON.parse(response.data)
-                rawdata.dataList = JSON.parse(response.data)
-
-                console.log(response.data)
-            })
+        this.getEmployees();
     },
     computed: {
 
@@ -89,6 +82,14 @@ new Vue({
     },
     delimiters: ['[[', ']]'],
     methods: {
+        getEmployees() {
+            let rawdata = this
+            axios.get('/employee/get/basic')
+                .then(function (response) {
+                    rawdata.data = JSON.parse(response.data)
+                    rawdata.dataList = JSON.parse(response.data)
+                })
+        },
         formatedNumber(val) {
             let test = Number(val).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
             console.log(test)
@@ -128,7 +129,7 @@ new Vue({
         employeeDelete(id) {
             this.confirmModal.close = !this.confirmModal.close
             let rawdata = this
-            let emp_id = id 
+            let emp_id = id
             // console.log(id , emp_index)
             axios.post('/employee/delete/' + String(id))
                 .then(function (response) {
@@ -144,16 +145,15 @@ new Vue({
                                 this.isActive = false;
                             }
                         })
-                      
-                        // Check how it works , not working
-                        // rawdata.data = rawdata.data.filter(function (item) {
 
-                        //     if (Number(item.id) == Number(emp_id)) {
-                        //         console.log(emp_id , item.id , rawdata.data.indexOf(item))
-                        //         rawdata.filteredList.splice(rawdata.filteredList.indexOf(item), 1)
-                        //         console.log('-------DAATA-----------'+rawdata.data)
-                        //     }
-                        // })
+                        rawdata.data.filter(function (item) {
+
+                            if (Number(item.id) == Number(emp_id)) {
+                                console.log(emp_id , item.id , rawdata.data.indexOf(item))
+                                rawdata.data.splice(rawdata.data.indexOf(item), 1)
+                                console.log('-------DAATA-----------'+rawdata.data)
+                            }
+                        })
                     }
 
                 })
