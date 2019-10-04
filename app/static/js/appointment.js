@@ -24,7 +24,7 @@ const AppointmentForm =
                 <br>
                 <div class="field is-grouped">
                     <p class="control">
-                        <a class="button is-black" @click="saveEditData"><span class="icon icon-btn icon-btn-in"><i
+                        <a class="button isv-black" @click="saveEditData"><span class="icon icon-btn icon-btn-in"><i
                                     data-feather="plus"></i></span>Save
                         </a>
                     </p>
