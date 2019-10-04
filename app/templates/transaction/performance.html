@@ -261,7 +261,7 @@
         </div>
 
         <!-- Entry  Performance Records -->
-        <div v-show="showPerfTable && employee != ''" >
+        <div v-show="showPerfTable && employee != ''">
             <div class="table-container animated fadeIn" style="overflow: visible;">
                 <div class="field">
                     <div class="control">
@@ -292,7 +292,8 @@
                                         </span>
                                         Save
                                     </button>
-
+                                    <span v-if="Object.keys(errors).length != 0"
+                                        class="has-text-danger is-underline">Please fix the errors.</span>
                                 </div>
 
                             </td>
@@ -306,7 +307,8 @@
                             <td v-html="row.score"></td>
                             <td v-html="row.weight"></td>
                             <td> <input type="text" class="input" v-model="row.obt_score"
-                                    placeholder="Enter Obtained Score">
+                                    placeholder="Enter Obtained Score"
+                                    :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].obt_score == true }">
                             </td>
 
                         </tr>
@@ -350,6 +352,10 @@
                                                 </span>
                                                 Update
                                             </button>
+                                            <span v-if="Object.keys(editerrors).length != 0"
+                                                class="has-text-danger is-underline">Please fix the
+                                                errors.</span>
+
 
                                         </div>
 
@@ -365,7 +371,8 @@
                                     <td v-html="row.performance.score"></td>
                                     <td v-html="row.performance.weight"></td>
                                     <td> <input type="text" class="input" v-model="row.obt_score"
-                                            placeholder="Enter Obtained Score">
+                                            placeholder="Enter Obtained Score"
+                                            :class="{ 'is-danger' : editerrors[row.id] != undefined && editerrors[row.id].obt_score == true }">
                                     </td>
 
                                 </tr>
@@ -376,6 +383,7 @@
                 </div>
             </div>
             <button class="modal-close is-large" @click="editPerfModal = !editPerfModal"></button>
+
         </div>
 
 

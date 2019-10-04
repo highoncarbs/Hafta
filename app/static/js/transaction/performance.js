@@ -8,6 +8,7 @@ new Vue({
         return {
             company: null,
             errors: {},
+            editerrors: {},
             employee: '',
             emp_id: null,
 
@@ -105,10 +106,10 @@ new Vue({
 
     watch: {
         employee: function (val) {
-            if(val == "") {
+            if (val == "") {
                 this.showPerfTable = false
             }
-        }  
+        }
     },
 
     methods: {
@@ -216,41 +217,37 @@ new Vue({
         //     });
         //     e.preventDefault();
         // },
-        checkData(e) {
+        checkData() {
             this.errors = {}
             let raw = this
             let rawError = this.errors
-            this.rows.forEach(function (item) {
-                if (item.name == "") {
-                    if (rawError[item.id]) {
-                        raw.$set(rawError[item.id], 'name', true)
-
-                    }
-                    else {
-                        raw.$set(rawError, item.id, {})
-                        raw.$set(rawError[item.id], 'name', true)
-
-                    }
-
+            this.factorList.forEach(function (item) {
+                if (item.obt_score == undefined) {
+                    raw.$set(rawError, item.id, {})
+                    raw.$set(rawError[item.id], 'obt_score', true)
                 }
-                if (item.obt_score == "") {
 
-                    if (rawError[item.id]) {
-                        raw.$set(rawError[item.id], 'obt_score', true)
+            })
 
-                    }
-                    else {
-                        raw.$set(rawError, item.id, {})
-                        raw.$set(rawError[item.id], 'obt_score', true)
-
-                    }
-
-
+            if (Object.keys(this.errors).length == 0) {
+                return true
+            }
+            else {
+                return false;
+            }
+        },
+        checkEditData() {
+            this.editerrors = {}
+            let raw = this
+            let rawError = this.editerrors
+            this.editFactorList.performance_items.forEach(function (item) {
+                if (item.obt_score == "" || item.obt_score == undefined) {
+                    raw.$set(rawError, item.id, {})
+                    raw.$set(rawError[item.id], 'obt_score', true)
                 }
             })
 
-            e.preventDefault();
-            if (Object.keys(this.errors).length == 0) {
+            if (Object.keys(this.editerrors).length == 0) {
                 return true
             }
             else {
@@ -261,66 +258,68 @@ new Vue({
             this.submitting = true
             let rawdata = this
             let formdata = { 'emp_id': this.emp_id, 'fromdate': this.fromdate, 'todate': this.todate, 'data': this.factorList }
-            axios.post('/transaction/performance/save', formdata)
-                .then(function (response) {
-                    if (response.data.success) {
-                        // Run notificaiton 
-                        // Open selection for reports and printing
-                        rawdata.$buefy.snackbar.open({
-                            duration: 4000,
-                            message: response.data.success,
-                            type: 'is-light',
-                            position: 'is-top-right',
-                            actionText: 'Close',
-                            queue: true,
-                            onAction: () => {
-                                this.isActive = false;
-                            }
-                        })
+            if (this.checkData()) {
+                axios.post('/transaction/performance/save', formdata)
+                    .then(function (response) {
+                        if (response.data.success) {
+                            // Run notificaiton 
+                            // Open selection for reports and printing
+                            rawdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.success,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
 
-                        rawdata.showPerfTable = false
-                        rawdata.emp_id = null
-                        rawdata.employee = ''
+                            rawdata.showPerfTable = false
+                            rawdata.employee = ''
 
 
 
-                    }
-                    else if (response.data.message) {
-                        // Run message
-                        rawdata.$buefy.snackbar.open({
-                            duration: 4000,
-                            message: response.data.message,
-                            type: 'is-light',
-                            position: 'is-top-right',
-                            actionText: 'Close',
-                            queue: true,
-                            onAction: () => {
-                                this.isActive = false;
-                            }
-                        })
-                        console.log(response.data.message)
-
-                    }
-
-                    this.submitting = false
-
-                })
-                .catch(function (error) {
-                    rawdata.$buefy.snackbar.open({
-                        duration: 4000,
-                        message: "Couldn't send request. Server Error.",
-                        type: 'is-light',
-                        position: 'is-top-right',
-                        actionText: 'Close',
-                        queue: true,
-                        onAction: () => {
-                            this.isActive = false;
                         }
-                    })
-                    console.error(error)
-                    this.submitting = false
+                        else if (response.data.message) {
+                            // Run message
+                            rawdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.message,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
+                            console.log(response.data.message)
 
-                })
+                        }
+
+                        this.submitting = false
+
+                    })
+                    .catch(function (error) {
+                        rawdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: "Couldn't send request. Server Error.",
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                        console.error(error)
+                        this.submitting = false
+
+                    })
+            }
+
             this.submitting = false
 
         },
@@ -420,62 +419,66 @@ new Vue({
             this.submitting = true
             let rawdata = this
             let formdata = this.editFactorList
-            axios.post('/transaction/performance/update', formdata)
-                .then(function (response) {
-                    if (response.data.success) {
-                        // Run notificaiton 
-                        // Open selection for reports and printing
-                        rawdata.$buefy.snackbar.open({
-                            duration: 4000,
-                            message: response.data.success,
-                            type: 'is-light',
-                            position: 'is-top-right',
-                            actionText: 'Close',
-                            queue: true,
-                            onAction: () => {
-                                this.isActive = false;
-                            }
-                        })
-                        rawdata.editPerfModal = !rawdata.editPerfModal
-                        rawdata.viewPastRecords()
+            if (this.checkEditData()) {
 
-                    }
-                    else if (response.data.message) {
-                        // Run message
-                        rawdata.$buefy.snackbar.open({
-                            duration: 4000,
-                            message: response.data.message,
-                            type: 'is-light',
-                            position: 'is-top-right',
-                            actionText: 'Close',
-                            queue: true,
-                            onAction: () => {
-                                this.isActive = false;
-                            }
-                        })
-                        console.log(response.data.message)
+                axios.post('/transaction/performance/update', formdata)
+                    .then(function (response) {
+                        if (response.data.success) {
+                            // Run notificaiton 
+                            // Open selection for reports and printing
+                            rawdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.success,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
+                            rawdata.editPerfModal = !rawdata.editPerfModal
+                            rawdata.viewPastRecords()
 
-                    }
-
-                    this.submitting = false
-
-                })
-                .catch(function (error) {
-                    rawdata.$buefy.snackbar.open({
-                        duration: 4000,
-                        message: "Couldn't send request. Server Error.",
-                        type: 'is-light',
-                        position: 'is-top-right',
-                        actionText: 'Close',
-                        queue: true,
-                        onAction: () => {
-                            this.isActive = false;
                         }
-                    })
-                    console.error(error)
-                    this.submitting = false
+                        else if (response.data.message) {
+                            // Run message
+                            rawdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.message,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
+                            console.log(response.data.message)
 
-                })
+                        }
+
+                        this.submitting = false
+
+                    })
+                    .catch(function (error) {
+                        rawdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: "Couldn't send request. Server Error.",
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                        console.error(error)
+                        this.submitting = false
+
+                    })
+
+            }
             this.submitting = false
 
         },
