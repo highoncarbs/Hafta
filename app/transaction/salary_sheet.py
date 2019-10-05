@@ -124,6 +124,7 @@ def generate_sheet():
                 att_item['advance'] = []
                 att_item['deductions'] = {}
                 att_item['deductions']['month'] = []
+
                 att_item['days_payable_late'] = late_comin_ratio * \
                     att_item['latecomin']
                 att_item['days_payable_early'] = early_going_ratio * \
@@ -145,6 +146,20 @@ def generate_sheet():
                 net_advance_year = 0
                 net_deduction_month = 0
                 net_deduction_year = 0
+                
+                outstanding_advance = float(0)
+
+                for item in adv_data:
+                    if (item.trans == 'credit'):
+                        print('Advane aamount - '+ str(item.advanceamt))
+                        outstanding_advance += float(item.advanceamt)
+                    
+                    elif (item.trans == 'debit'):
+                        print('Debit aamount - '+ str(item.advanceamt))
+
+                        outstanding_advance -= float(item.advanceamt)
+                    
+
                 for adv_item in json_adv_data:
                     if payload_date.month is not 12:
                         if adv_item['deduction_period'] == 'month':
@@ -190,8 +205,9 @@ def generate_sheet():
                     att_item['deductions']['year'] = 0
                     att_item['deductions']['year'] = 0
 
-                print(net_deduction_month, att_item['esi'], att_item['pf'],
-                      att_item['tds'], att_item['other_deduction'])
+                # print(net_deduction_month, att_item['esi'], att_item['pf'],
+                #       att_item['tds'], att_item['other_deduction'])
+
                 if att_item['other_deduction'] is None:
                     att_item['other_deduction'] = float(0)
                 if att_item['esi'] is None:
@@ -200,10 +216,19 @@ def generate_sheet():
                     att_item['pf'] = float(0)
                 if att_item['tds'] is None:
                     att_item['tds'] = float(0)
+
                 att_item['net_deduction_month'] = float(net_deduction_month)
                 att_item['net_deduction_year'] = float(net_deduction_year)
-                att_item['net_adv_deduction'] = float(
+                
+                net_deduction_advance = float(
                     net_deduction_month) + float(net_deduction_year)
+                print(outstanding_advance, net_deduction_advance)
+                
+                if outstanding_advance <= net_deduction_advance:
+                    att_item['net_adv_deduction'] =outstanding_advance
+                else:
+                    att_item['net_adv_deduction'] = net_deduction_advance
+                    
                 att_item['total_deductions'] = float(net_deduction_month) + float(att_item['esi']) + float(att_item['pf']) + float(
                     att_item['tds'])+float(att_item['other_deduction']) + float(att_item['net_deduction_year'])
                 att_item['net_payable'] = float(
