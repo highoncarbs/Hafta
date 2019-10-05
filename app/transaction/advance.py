@@ -84,6 +84,7 @@ def save_advance():
 
                     setattr(new_data, field, val)
                 setattr(new_data, 'date', payload_date)
+                setattr(new_data, 'trans', 'credit')
 
                 db.session.add(new_data)
                 db.session.commit()

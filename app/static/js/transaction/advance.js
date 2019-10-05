@@ -32,10 +32,18 @@ new Vue({
             submitting: false,
             value: 'Save',
             showEmpSelect: false,
-            more: true
+            more: true,
+            showAdvList: false
         }
     },
     mounted() {
+    },
+    watch: {
+        employee: function (val) {
+            if (val == "") {
+                this.showAdvList = false
+            }
+        }
     },
     computed: {
         filteredDataObj() {
@@ -87,6 +95,7 @@ new Vue({
                         console.log(response.data);
                         rawdata.empAdvanceDetail = JSON.parse(response.data)
                         rawdata.getAdvanceList();
+                        rawdata.showAdvList = true;
 
 
 
@@ -157,6 +166,8 @@ new Vue({
                         rawdata.dataName = []
                         rawdata.dataList = JSON.parse(response.data)
                         rawdata.showEmpSelect =true
+                        rawdata.employee= ""
+                        rawdata.showAdvList= false
                         rawdata.dataList.forEach((item) => rawdata.dataName.push(item))
 
                     })
@@ -173,7 +184,7 @@ new Vue({
             let rawdata = this
             if (this.checkData()) {
                 console.log(this.advanceForm.errors.length)
-                if (this.advanceForm.errors.length == 0) {
+                if (Object.keys(this.advanceForm.errors).length == 0) {
 
                     this.submitting = true
                     this.value = 'Saving'
@@ -229,6 +240,10 @@ new Vue({
             }
 
             e.preventDefault();
+        },
+        viewAdvances() {
+            this.advEdit = !this.advEdit
+
         },
         checkData() {
             this.advanceForm.errors = {}
