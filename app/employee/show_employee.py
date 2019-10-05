@@ -51,6 +51,14 @@ def delete_employee(emp_id):
     else:
         return jsonify({'message' : 'Invalid HTTP method'})
 
+@bp.route('/view/detail/<emp_id>', methods=['GET' , 'POST'])
+def view_employee_detail(emp_id):
+
+
+    # Need Employee delete checks
+    # Adavaces
+    return render_template('employees/employee.html')
+
 
 @bp.route('/get/by/company/<companyid>', methods=['GET'])
 def get_by_company(companyid):

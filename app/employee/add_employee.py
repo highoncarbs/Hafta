@@ -28,9 +28,9 @@ def new():
     return render_template('employees/entry.html')
 
 
-@bp.route('/view/<id>', methods=['GET', 'POST'])
+@bp.route('/edit/view/<id>', methods=['GET', 'POST'])
 @login_required
-def view_employee(id):
+def edit_view_employee(id):
     return render_template('employees/edit.html')
 
 @bp.route('/update', methods=['POST'])

@@ -1,0 +1,31 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+<!-- Need work -->
+<section class="section">
+    <div class="container" id="emp_detail">
+
+        <div class="level">
+            <div class="level-left">
+                <p class="is-size-4 has-text-weight-semibold">Padam Sethia</p>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column">
+                <p class="is-size-5 has-text-weight-medium">Attendence</p>
+                <br>
+                <p>Heat map for Attendence , late and early going</p> <br>
+                <p class="is-size-5">Outstanding Advance</p>
+                <br>
+                <p>Table of all advances</p>
+                <br>
+                <p class="is-size-5">Performance</p>
+                <br>
+                <p>Performance total in fiscal year - percentage and points and remarks</p>
+                <br>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="{{ url_for('static' , filename='js/emp/view.js')}}"></script>
+{% endblock %}
