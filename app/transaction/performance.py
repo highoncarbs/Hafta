@@ -115,8 +115,8 @@ def get_performance_factors_for_emp():
 @bp.route('/performance/get/employee/<id>', methods=['GET'])
 @login_required
 def get_performance_by_employee(id):
-    data_schema = TransPerformanceSchema()
-    data = TransPerformance.query.filter_by(id=int(id)).first()
+    data_schema = TransPerformanceSchema(many=True)
+    data = TransPerformance.query.filter_by(emp_id=int(id)).all()
     json_data = data_schema.dumps(data)
     return jsonify(json_data)
 
