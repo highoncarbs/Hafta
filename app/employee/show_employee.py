@@ -16,11 +16,11 @@ def show_employee():
 @bp.route('/get/detail/<id>', methods=['POST'])
 def get_detail(id):
     if request.method == 'POST':
+        # Gets all ifo of employee
         data_schema = EmployeeSchema()
         data = Employee.query.filter_by(id=int(id)).first()
         # print(data_schema)
         json_data = data_schema.dumps(data)
-        print(json_data)
         return jsonify(json_data)
 
 
@@ -31,7 +31,6 @@ def get_basic():
         data = Employee.query.filter(Employee.flag != int(1)).all()
         # print(data_schema)
         json_data = data_schema.dumps(data)
-        print(json_data)
         return jsonify(json_data)
 
 @bp.route('/delete/<emp_id>', methods=['POST'])

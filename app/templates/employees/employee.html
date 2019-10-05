@@ -1,31 +1,190 @@
 {% extends 'base/base.html' %}
 {% block content %}
 
+{% include "component/heatmap.html"%}
+{% include "component/columnchart.html"%}
 <!-- Need work -->
 <section class="section">
     <div class="container" id="emp_detail">
 
-        <div class="level">
-            <div class="level-left">
-                <p class="is-size-4 has-text-weight-semibold">Padam Sethia</p>
-            </div>
-        </div>
+        <table class="table is-fullwidth is-bordered">
+            <thead>
+                <tr>
+                    <th colspan="2">
+                        <small class="has-text-grey has-text-weight-semibold">NAME</small>
+                        <p class="is-size-5 is-size-6-mobile has-text-weight-normal-mobile is-capitalized">[[
+                            empDetail.name ]]</p>
+
+                    </th>
+                    <th colspan="2"> <small class="has-text-grey has-text-weight-semibold">COMPANY</small>
+                        <p class="is-size-5 is-size-6-mobile has-text-weight-normal-mobile">[[ empDetail.company[0].name
+                            ]] , [[ empDetail.company[0].location[0].name
+                            ]]</p>
+                    </th>
+                    <th colspan="2">
+                        <small class="has-text-grey has-text-weight-semibold">BASIC PAY</small>
+                        <p class="is-size-5 is-size-6-mobile has-text-weight-normal-mobile">[[
+                            formatedNumber(empDetail.basicpay) ]]</p>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="1">
+                        <small class="has-text-weight-semibold has-text-grey"> APPOINTMENT</small>
+
+                        <p class="has-text-black has-text-weight-semibold"
+                            v-html=" empDetail.appointment.length != 0? empDetail.appointment[0].name : 'None'">
+                        </p>
+
+                    </td>
+                    <td colspan="1">
+
+                        <small class="has-text-weight-semibold has-text-grey">POST</small>
+                        <p class="has-text-black has-text-weight-semibold"
+                            v-html=" empDetail.post.length != 0 ? empDetail.post[0].name : 'None'">
+                        </p>
+                    </td>
+
+                    <td colspan="1">
+                        <small class="has-text-weight-semibold has-text-grey"> DEPARTMENT</small>
+
+                        <p class="has-text-black has-text-weight-semibold"
+                            v-html=" empDetail.department.length != 0? empDetail.department[0].name : 'None'">
+                        </p>
+
+                    </td>
+                    <td colspan="1">
+                        <small class="has-text-weight-semibold has-text-grey"> ADVANCE AMOUNT</small>
+
+                        <p class="has-text-black has-text-weight-semibold"
+                            v-html=" empDetail.advancevalue? formatedNumber(empDetail.advancevalue) : 'None'">
+                        </p>
+
+                    </td>
+                    <td colspan="1">
+                        <small class="has-text-weight-semibold has-text-grey"> NUMBER of ADVANCES</small>
+
+                        <p class="has-text-black has-text-weight-semibold"
+                            v-html=" empDetail.advancenum?  empDetail.advancenum : 'None'">
+                        </p>
+
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
         <div class="columns">
             <div class="column">
-                <p class="is-size-5 has-text-weight-medium">Attendence</p>
-                <br>
-                <p>Heat map for Attendence , late and early going</p> <br>
-                <p class="is-size-5">Outstanding Advance</p>
-                <br>
-                <p>Table of all advances</p>
-                <br>
-                <p class="is-size-5">Performance</p>
-                <br>
-                <p>Performance total in fiscal year - percentage and points and remarks</p>
-                <br>
+                <div class="box">
+
+                    <p class="is-size-5 has-text-weight-semibold">Attendence</p>
+                    <p>View <span class="has-text-weight-semibold"> [[empDetail.name ]]'s</span> attendence below.
+                        <br>
+                        Hover on color block for more info.</p>
+                    <br>
+
+                    <div class="columns">
+                        <div class="column">
+                            <small class="has-text-grey has-text-weight-semibold">LATE COMIN</small>
+
+                            <heatmap :datalist="[10,20,25,10,13,30,25,27,29,30]"></heatmap>
+                            <br>
+                            <small class="has-text-grey has-text-weight-semibold">EARLY GOING</small>
+
+                            <heatmap :datalist="[10,20,25,10,13,30,25,27,29,30]"></heatmap>
+                            <br>
+                            <small class="has-text-grey has-text-weight-semibold">DAYS ATTENDED</small>
+
+                            <heatmap :datalist="[10,20,25,10,13,30,25,27,29,30]"></heatmap>
+                        </div>
+                        <div class="column">
+                                <small class="has-text-grey has-text-weight-semibold is-uppercase">Total Late Comins</small>
+                                <p class="has-text-black is-size-5 has-text-weight-semibold">45 Days</p>
+                                <br>
+                                <small class="has-text-grey has-text-weight-semibold is-uppercase">Total Early Going</small>
+                                <p class="has-text-black is-size-5 has-text-weight-semibold">45 Days</p>
+                                <br>
+                                <small class="has-text-grey has-text-weight-semibold is-uppercase">Total Days Attended</small>
+                                <p class="has-text-black is-size-5 has-text-weight-semibold">45 Days</p>
+                            </div>
+                    </div>
+
+                   
+                </div>
+            </div>
+            <div class="column">
+                <div class="box">
+                    <p class="is-size-5 has-text-weight-semibold">Performance</p>
+                    <br>
+                    <div v-if="perfDetail != null" v-for="row in perfDetail">
+                        <small class="has-text-grey has-text-weight-semibold">DATE</small>
+                        <p class="has-text-semibold has-text-black has-text-weight-medium">
+                            [[ formatedDate(row.fromdate)]] - [[ formatedDate(row.todate)]]
+                        </p>
+                        <columnchart></columnchart>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 </section>
+<style>
+    @media screen and (max-width: 600px) {
+        table {
+            border: 0;
+        }
+
+
+        table tr {
+            border-bottom: 3px solid #ddd;
+            display: block;
+            margin-bottom: .625em;
+        }
+
+        table td {
+            border-bottom: 1px solid #ddd;
+            display: block;
+
+        }
+
+        table th {
+            border-bottom: 1px solid #ddd;
+            display: block;
+        }
+
+        table td::before {
+            /*
+    * aria-label has no advantage, it won't be read inside a table
+    content: attr(aria-label);
+    */
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        table td:last-child {
+            border-bottom: 0;
+        }
+
+        table th::before {
+            /*
+    * aria-label has no advantage, it won't be read inside a table
+    content: attr(aria-label);
+    */
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        table th:last-child {
+            border-bottom: 0;
+        }
+    }
+</style>
 <script src="{{ url_for('static' , filename='js/emp/view.js')}}"></script>
 {% endblock %}
