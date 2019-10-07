@@ -322,19 +322,33 @@
 
                                 <div class="control is-expanded">
                                     <label for="" class="label">Appointment</label>
-                                    <custom-select v-model="formdata.appointment" which="appointment"></custom-select>
+
+                                    <custom-select v-model="formdata.appointment" which="appointment"
+                                        v-if="formdatasaved.appointment.length == 0"></custom-select>
+                                    <custom-select v-model="formdata.appointment" which="appointment"
+                                        v-if="formdatasaved.appointment.length != 0"
+                                        :preselect="formdatasaved.appointment"></custom-select>
                                 </div>
                                 <div class="control is-expanded">
                                     <label for="" class="label">Post</label>
-                                    <custom-select v-model="formdata.post" which="post"></custom-select>
+                                    <custom-select v-model="formdata.post" which="post"
+                                        v-if="formdatasaved.post.length == 0"></custom-select>
+                                    <custom-select v-model="formdata.post" which="post" :preselect="formdatasaved.post">
+                                    </custom-select>
                                 </div>
                                 <div class="control is-expanded">
                                     <label for="" class="label">Department</label>
-                                    <custom-select v-model="formdata.department" which="department"></custom-select>
+                                    <custom-select v-model="formdata.department" which="department"
+                                        v-if="formdatasaved.department.length == 0"></custom-select>
+                                    <custom-select v-model="formdata.department" which="department"
+                                        :preselect="formdatasaved.department"></custom-select>
                                 </div>
                                 <div class="control is-expanded">
                                     <label for="" class="label">Company</label>
-                                    <custom-select v-model="formdata.company" which="company">
+                                    <custom-select v-model="formdata.company" which="company"
+                                        v-if="formdatasaved.company.length == 0"></custom-select>
+                                    <custom-select v-model="formdata.company" which="company"
+                                        :preselect="formdatasaved.company">
                                     </custom-select>
                                 </div>
 
