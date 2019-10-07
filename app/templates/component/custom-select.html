@@ -4,7 +4,9 @@
         <div class="select is-fullwidth" v-bind:class="[selected == '' ? 'is-danger' : '']">
             <select @change="change">
                 <option value="-1" selected> Select [[ which ]]</option>
-                <option v-for="opt in options" v-bind:value="opt.id">[[opt.name]]</option>
+                <option v-for="opt in options" :selected="preselect[0].id == opt.id ? 'selected' : ''"
+                    v-bind:value="opt.id">
+                    [[opt.name]]</option>
             </select>
         </div>
         <p v-if="error" class="is-underline has-text-danger is-small">[[error]]</p>
@@ -18,8 +20,15 @@
 <script>
 
     Vue.component('custom-select', {
-        props: ['which'],
+        props: {
+            'which': "", 'preselect': {
+                default: [{
+                    'id': -1
+                }]
+            }
+        },
         template: '#custom-select',
+
 
         data() {
             return {
@@ -31,11 +40,15 @@
         delimiters: ["[[", "]]"],
         mounted() {
 
+
             const data = this;
             axios.get('/master/get/' + data.which)
                 .then(function (response) {
                     if (response.data) {
                         data.options = response.data;
+                        if (data.preselect) {
+                            data.selected = data.preselect
+                        }
                     }
 
                     else {
