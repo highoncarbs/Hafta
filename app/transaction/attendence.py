@@ -44,9 +44,6 @@ def emp_attendence(emp_id):
         year = datetime(datetime.now().year,  1, 1)
         data = Attendence.query.filter(
             Attendence.employee.any(Employee.id == int(emp_id)), Attendence.date >= year).all()
-        today = datetime.now()
-        # new_data = db.session.extract('date', data) == today.year
-        print(data[0].date)
         day_att = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         early_att = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         late_att = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -58,7 +55,6 @@ def emp_attendence(emp_id):
             late_att[index] = item.latecomin
         json_data = json.dumps(
             {'day_att': day_att, 'early_att': early_att, 'late_att': late_att})
-        print(json_data)
         return jsonify(json_data)
     else:
         return jsonify({'message': 'Invalid HTTP request method.'})
