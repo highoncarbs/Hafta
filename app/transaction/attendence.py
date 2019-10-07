@@ -26,7 +26,7 @@ def get_attendence():
                 int(payload_date[0]), int(payload_date[1]), int(1))
             company = payload['company']
             data = Attendence.query.filter(
-                Attendence.company.any(Company.id == int(company)) , Attendence.date == payload_date ).all()
+                Attendence.company.any(Company.id == int(company)), Attendence.date == payload_date).all()
             data_schema = AttendenceSchema(many=True)
             json_data = data_schema.dumps(data)
             print(json_data)
@@ -36,6 +36,45 @@ def get_attendence():
 
     else:
         return jsonify({'message': 'Invalid HTTP Request , use POST.'})
+
+
+@bp.route('/attendence/employee/<emp_id>', methods=['GET'])
+def emp_attendence(emp_id):
+    if request.method == "GET":
+        year = datetime(datetime.now().year,  1, 1)
+        data = Attendence.query.filter(
+            Attendence.employee.any(Employee.id == int(emp_id)), Attendence.date >= year).all()
+        today = datetime.now()
+        # new_data = db.session.extract('date', data) == today.year
+        print(data[0].date)
+        day_att = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        early_att = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        late_att = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        for item in data:
+            index = int(datetime.strptime(
+                str(item.date).split(" ")[0], "%Y-%m-%d").month)-1
+            day_att[index] = item.daysatt
+            early_att[index] = item.earlygoing
+            late_att[index] = item.latecomin
+        json_data = json.dumps(
+            {'day_att': day_att, 'early_att': early_att, 'late_att': late_att})
+        print(json_data)
+        return jsonify(json_data)
+    else:
+        return jsonify({'message': 'Invalid HTTP request method.'})
+
+
+@bp.route('/attendence/employee/data/<emp_id>', methods=['POST'])
+def emp_attendence_data(emp_id):
+    if request.method == "POST":
+        data = Attendence.query.filter(
+            Attendence.employee.any(Employee.id == int(emp_id))).all()
+        # data_schema = AttendenceSchema(many=True)
+        today = datetime.now()
+        today.year()
+        return jsonify(json_data)
+    else:
+        return jsonify({'message': 'Invalid HTTP request method.'})
 
 
 @bp.route('/attendence/save', methods=['POST'])
@@ -120,7 +159,8 @@ def update_attendence():
 
                 # Need Update check inside
                 for item in payload:
-                    saved_att = db.session.query(Attendence).filter_by(id = int(item['id'])).first()
+                    saved_att = db.session.query(Attendence).filter_by(
+                        id=int(item['id'])).first()
                     for field in table_columns:
                         val = item[field]
                         if val == '' or val is None:
@@ -145,7 +185,6 @@ def update_attendence():
                             continue
                         setattr(saved_att, 'pf', item['pfval'])
 
-                   
                 # db.session.add(new_data)
                 db.session.commit()
                 return jsonify({'success': 'Data Added'})

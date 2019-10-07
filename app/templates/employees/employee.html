@@ -89,36 +89,47 @@
                         <div class="column">
                             <small class="has-text-grey has-text-weight-semibold">LATE COMIN</small>
 
-                            <heatmap :datalist="[10,20,25,10,13,30,25,27,29,30]"></heatmap>
+                            <heatmap :datalist="attDetail.late_att"></heatmap>
                             <br>
                             <small class="has-text-grey has-text-weight-semibold">EARLY GOING</small>
 
-                            <heatmap :datalist="[10,20,25,10,13,30,25,27,29,30]"></heatmap>
+                            <heatmap :datalist="attDetail.early_att"></heatmap>
                             <br>
                             <small class="has-text-grey has-text-weight-semibold">DAYS ATTENDED</small>
 
-                            <heatmap :datalist="[10,20,25,10,13,30,25,27,29,30]"></heatmap>
+                            <heatmap :datalist="attDetail.day_att"></heatmap>
                         </div>
                         <div class="column">
-                                <small class="has-text-grey has-text-weight-semibold is-uppercase">Total Late Comins</small>
-                                <p class="has-text-black is-size-5 has-text-weight-semibold">45 Days</p>
-                                <br>
-                                <small class="has-text-grey has-text-weight-semibold is-uppercase">Total Early Going</small>
-                                <p class="has-text-black is-size-5 has-text-weight-semibold">45 Days</p>
-                                <br>
-                                <small class="has-text-grey has-text-weight-semibold is-uppercase">Total Days Attended</small>
-                                <p class="has-text-black is-size-5 has-text-weight-semibold">45 Days</p>
-                            </div>
+                            <small class="has-text-grey has-text-weight-semibold is-uppercase">Total Late Comins</small>
+                            <p class="has-text-black is-size-5 has-text-weight-semibold">[[total.late]] Days</p>
+                            <br>
+                            <small class="has-text-grey has-text-weight-semibold is-uppercase">Total Early Going</small>
+                            <p class="has-text-black is-size-5 has-text-weight-semibold">[[total.early]] Days</p>
+                            <br>
+                            <small class="has-text-grey has-text-weight-semibold is-uppercase">Total Days
+                                Attended</small>
+                            <p class="has-text-black is-size-5 has-text-weight-semibold">[[total.days]] Days</p>
+                        </div>
                     </div>
 
-                   
+
+                </div>
+                <div class="box">
+                    <p class="is-size-5 has-text-weight-semibold">Salary Slips </p>
                 </div>
             </div>
             <div class="column">
                 <div class="box">
                     <p class="is-size-5 has-text-weight-semibold">Performance</p>
                     <br>
-                    <div v-if="perfDetail != null" v-for="row in perfDetail">
+                    <div v-if="perfDetail.length == 0" class="notification has-text-centered">
+                        <span class="icon">
+                            <feather type="info" size="1.3rem"></feather>
+                        </span>
+                        <p>Performances has not been added for <span class="has-text-weight-semibold"> [[ empDetail.name
+                                ]]</span> .</p>
+                    </div>
+                    <div v-if="perfDetail != null && perfDetail.length != 0" v-for="row in perfDetail">
                         <small class="has-text-grey has-text-weight-semibold">DATE</small>
                         <p class="has-text-semibold has-text-black has-text-weight-medium">
                             [[ formatedDate(row.fromdate)]] - [[ formatedDate(row.todate)]]
@@ -126,8 +137,12 @@
                         <columnchart></columnchart>
                     </div>
                 </div>
+                <div class="box">
+                    <p class="is-size-5 has-text-weight-semibold">Advances</p>
+                </div>
 
             </div>
+
         </div>
     </div>
 </section>

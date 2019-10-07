@@ -82,6 +82,9 @@ new Vue({
     },
     delimiters: ['[[', ']]'],
     methods: {
+        showEmpDetail() {
+            window.location.href = "/employee/view/detail/"+String(this.empDetail.id)  
+          },
         getEmployees() {
             let rawdata = this
             axios.get('/employee/get/basic')
