@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask import render_template, redirect, url_for, request, session, jsonify
 from flask_login import login_user, logout_user, current_user
 from app.master import bp
-from app.master.model import Company, Location, LocationSchema , CompanySchema , EmployeeCategory , EmployeeCatSchema
+from app.master.model import Company, Location, LocationSchema, CompanySchema, EmployeeCategory, EmployeeCatSchema
 from app import db, ma
 
 
@@ -18,6 +18,7 @@ def view_company():
         json_data = data_schema.dump(data)
         print(json_data)
         return jsonify(data_schema.dump(data))
+
 
 @bp.route('/add/company', methods=['POST'])
 def add_company():
@@ -56,12 +57,12 @@ def edit_company():
         payload = request.json
         if payload['name'] and payload['location'] is not None:
             location = Location.query.filter_by(
-                        id=payload['location']).first()
+                id=payload['location']).first()
             data_schema = LocationSchema()
             json_data = data_schema.dump(location)
             check_data = Company.query.filter_by(id=payload['id'])
             if check_data.first():
-                
+
                 try:
                     new_data = Company.query.filter_by(
                         id=payload['id']).first()
@@ -70,8 +71,8 @@ def edit_company():
                     new_data.location.append(location)
 
                     db.session.commit()
-                    
-                    return jsonify({'success': 'Data Updated' , 'payload' : json_data})
+
+                    return jsonify({'success': 'Data Updated', 'payload': json_data})
 
                 except Exception as e:
                     db.session.rollback()
@@ -93,9 +94,13 @@ def delete_company():
         check_data = Company.query.filter_by(name=payload['name'])
         if check_data.first():
             try:
-                check_data.delete()
-                db.session.commit()
-                return jsonify({'success': 'Data deleted'})
+
+                if(len(check_data.first().emp_company) != 0):
+                    return jsonify({'message': 'Cannot delete , data being used. '})
+                else:
+                    check_data.delete()
+                    db.session.commit()
+                    return jsonify({'success': 'Data deleted'})
             except Exception as e:
                 db.session.rollback()
                 db.session.close()
@@ -291,4 +296,3 @@ def delete_cat():
 
     else:
         return jsonify({'message': 'Invalid HTTP method . Use POST instead.'})
-

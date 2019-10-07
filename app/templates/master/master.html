@@ -1,5 +1,11 @@
 {% extends 'base/base.html' %}
 {% block content %}
+
+{% include 'master/attendence_rules.html' %}
+{% include 'master/performance.html' %}
+{% include 'master/company.html' %}
+{% include 'master/location.html' %}
+
 <script src="{{ url_for('static' , filename ='js/company.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/location.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/empcat.js' )}}"></script>
@@ -11,12 +17,8 @@
 <script src="{{ url_for('static' , filename ='js/pay.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/performance.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/attendence_rules.js' )}}"></script>
-
-{% include 'master/attendence_rules.html' %}
-{% include 'master/performance.html' %}
-
 <div class="container">
-
+    
     <section class="section">
         <div id="master">
             <div class="tabs">
