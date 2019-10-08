@@ -17,7 +17,8 @@
 
                     </th>
                     <th colspan="2"> <small class="has-text-grey has-text-weight-semibold">COMPANY</small>
-                        <p class="is-size-5 is-size-6-mobile has-text-weight-normal-mobile">[[ empDetail.company[0].name
+                        <p class="is-size-5 is-size-6-mobile has-text-weight-normal-mobile" v-if="!empDetail.company.length ">None</p>
+                        <p class="is-size-5 is-size-6-mobile has-text-weight-normal-mobile" v-if="empDetail.company.length ">[[ empDetail.company[0].name
                             ]] , [[ empDetail.company[0].location[0].name
                             ]]</p>
                     </th>
@@ -34,7 +35,7 @@
                         <small class="has-text-weight-semibold has-text-grey"> APPOINTMENT</small>
 
                         <p class="has-text-black has-text-weight-semibold"
-                            v-html=" empDetail.appointment.length != 0? empDetail.appointment[0].name : 'None'">
+                            v-html=" empDetail.appointment.length? empDetail.appointment[0].name : 'None'">
                         </p>
 
                     </td>
@@ -42,7 +43,7 @@
 
                         <small class="has-text-weight-semibold has-text-grey">POST</small>
                         <p class="has-text-black has-text-weight-semibold"
-                            v-html=" empDetail.post.length != 0 ? empDetail.post[0].name : 'None'">
+                            v-html=" empDetail.post.length? empDetail.post[0].name : 'None'">
                         </p>
                     </td>
 
@@ -50,7 +51,7 @@
                         <small class="has-text-weight-semibold has-text-grey"> DEPARTMENT</small>
 
                         <p class="has-text-black has-text-weight-semibold"
-                            v-html=" empDetail.department.length != 0? empDetail.department[0].name : 'None'">
+                            v-html=" empDetail.department.length ? empDetail.department[0].name : 'None' ">
                         </p>
 
                     </td>
@@ -71,10 +72,61 @@
 
                     </td>
                 </tr>
+                <tr class="has-background-light">
+                    <td> <small class="has-text-weight-semibold has-text-grey"> PAN</small>
+                        <br>
+                        <button class="button" @click="isPdf.pan ? viewPDF('panfile') : showUpload('panfile') " :disabled="empDetail.panfile == null ">
+                            <span class="icon icon-btn">
+                                <feather type="eye" size="1.3rem"></feather>
+                            </span>
+                            View</button>
+                    </td>
+                    <td><small class="has-text-weight-semibold has-text-grey"> AADHAR</small> <br>
+                        <button class="button" @click="isPdf.pan ? viewPDF('panfile') :showUpload('aadharfile') " :disabled="empDetail.aadharfile == null">
+                            <span class="icon icon-btn">
+                                <feather type="eye" size="1.3rem"></feather>
+                            </span>
+                            View</button>
+                    </td>
+                    <td><small class="has-text-weight-semibold has-text-grey"> EXTRA ID</small> <br>
+                        <button class="button" @click="isPdf.pan ? viewPDF('panfile') :showUpload('extraidfile') " :disabled="empDetail.extraidfile == null">
+                            <span class="icon icon-btn">
+                                <feather type="eye" size="1.3rem"></feather>
+                            </span>
+                            View</button>
+                    </td>
+                    <td><small class="has-text-weight-semibold has-text-grey"> EDUCATION CERT.</small> <br>
+                        <button class="button" @click="isPdf.pan ? viewPDF('panfile') :showUpload('educertfile') " :disabled="empDetail.educertfile == null">
+                            <span class="icon icon-btn">
+                                <feather type="eye" size="1.3rem"></feather>
+                            </span>
+                            View</button>
+                    </td>
+                    <td><small class="has-text-weight-semibold has-text-grey"> RESUME</small> <br>
+                        <button class="button" @click="isPdf.pan ? viewPDF('panfile') :showUpload('resumefile') " :disabled="empDetail.resumefile == null">
+                            <span class="icon icon-btn">
+                                <feather type="eye" size="1.3rem"></feather>
+                            </span>
+                            View</button>
+                    </td>
+                </tr>
 
             </tbody>
         </table>
 
+        <!-- Image Viewer -->
+        <div class="modal animated is-active fadeIn" v-show="viewUpload">
+            <div class="modal-background" @click="viewUpload = !viewUpload"></div>
+            <div class="modal-content">
+                <figure class="image">
+                    <img :src="fileSrc" alt="">
+                </figure>
+                <button class="modal-close is-large" aria-label="close" @click="viewUpload = !viewUpload"></button>
+
+            </div>
+
+        </div>
+        <!-- End Image Modal -->
         <div class="columns">
             <div class="column">
                 <div class="box">
