@@ -1,15 +1,15 @@
 .brand {
-    font-family: 'Inter UI', serif;
+    font-family: 'Inter', serif;
     font-weight: 700;
     letter-spacing: -4px;
 }
 
 body, html {
-    font-family: 'Inter UI', 'Roboto', sans-serif !important;
+    font-family: 'Inter', 'Roboto', sans-serif !important;
 }
 
 .input {
-    font-family: 'Inter UI', 'Roboto', sans-serif !important;
+    font-family: 'Inter', 'Roboto', sans-serif !important;
     border-radius: 0 !important;
     box-shadow: none !important;
 }

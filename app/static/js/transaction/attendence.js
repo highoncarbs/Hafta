@@ -165,9 +165,10 @@ new Vue({
         },
         submitData(e) {
             let rawdata = this
-            this.submitting = true;
-            this.value = 'Saving';
+
             if (this.checkData(e)) {
+                this.submitting = true;
+                this.value = 'Saving';
                 if (this.errors.length == 0) {
 
                     let formdata = { 'company': this.company, 'date': this.month, 'data': this.filteredList }
@@ -217,7 +218,8 @@ new Vue({
                         })
                 }
             }
-
+            this.submitting = true;
+            this.value = 'Save';
             e.preventDefault();
         },
         checkData(e) {
