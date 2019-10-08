@@ -257,7 +257,7 @@
                                                 v-html=" empDetail.curr_address != undefined ? empDetail.curr_address : 'None'">
                                             </p>
                                             <p
-                                                v-html=" empDetail.curr_city != undefined ? empDetail.curr_city : 'None'">
+                                                v-html=" empDetail.curr_city != undefined ? empDetail.curr_city[0].name : 'None'">
                                             </p>
                                         </td>
                                         <td colspan="2">
@@ -267,7 +267,7 @@
                                                 v-html=" empDetail.perm_address != undefined ? empDetail.perm_address : 'None'">
                                             </p>
                                             <p
-                                                v-html=" empDetail.perm_city != undefined ? empDetail.perm_city : 'None'">
+                                                v-html=" empDetail.perm_city != undefined ? empDetail.perm_city[0].name : 'None'">
                                             </p>
 
                                         </td>
