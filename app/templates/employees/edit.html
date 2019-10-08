@@ -18,7 +18,8 @@
                 <div id="emp_entry">
                     <div class="level">
                         <div class="level-left">
-                            <p class="is-size-4 ">Employee - <span class="has-text-weight-semibold">[[ formdata.name
+                            <p class="is-size-4 ">Employee - <span class="has-text-weight-semibold is-capitalized">[[
+                                    formdata.name
                                     ]]</span> </p>
                         </div>
 
@@ -97,7 +98,11 @@
                         <div class="field">
                             <div class="control">
                                 <label for="" class="label"> City</label>
-                                <custom-select v-model="formdata.curr_city" which="location">
+
+                                <custom-select v-model="formdata.curr_city" which="location"
+                                    v-if="formdatasaved.curr_city.length == 0"></custom-select>
+                                <custom-select v-model="formdata.curr_city" which="location"
+                                    v-if="formdatasaved.curr_city.length != 0" :preselect="formdatasaved.curr_city">
                                 </custom-select>
                             </div>
                         </div>
@@ -122,7 +127,11 @@
                             <div class="field">
                                 <div class="control">
                                     <label for="" class="label"> City</label>
-                                    <custom-select v-model="formdata.perm_city" which="location"></custom-select>
+                                    <custom-select v-model="formdata.perm_city" which="location"
+                                        v-if="formdatasaved.perm_city.length == 0"></custom-select>
+                                    <custom-select v-model="formdata.perm_city" which="location"
+                                        v-if="formdatasaved.perm_city.length != 0" :preselect="formdatasaved.perm_city">
+                                    </custom-select>
                                 </div>
                             </div>
 
