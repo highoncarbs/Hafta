@@ -59,7 +59,7 @@ class Employee(TimestampMixin, db.Model):
     incrementpr = db.Column(db.Integer, default=None)
     flag = db.Column(db.Integer , default = 0 , nullable = False)
     __table_args__ = (db.UniqueConstraint(
-        'name', 'dob', 'fathername', name='emp_id'), )
+        'name', 'dob', 'fathername','flag', name='emp_id'), )
 
 
 db.Table('emp_curr_location',
@@ -130,9 +130,10 @@ class EmployeeSchema(ma.ModelSchema):
     education = field_for(Employee, 'education', dump_only=True)
     contact = field_for(Employee, 'contact', dump_only=True)
     curr_address = field_for(Employee, 'curr_address', dump_only=True)
-    # curr_city =  field_for(Employee, 'curr_city', dump_only=True)
+    curr_city = ma.Nested(LocationSchema, many=True)
+
     perm_address = field_for(Employee, 'perm_address', dump_only=True)
-    # perm_city =  field_for(Employee, 'perm_city', dump_only=True)
+    perm_city = ma.Nested(LocationSchema, many=True)
     pan = field_for(Employee, 'pan', dump_only=True)
     panfile = field_for(Employee, 'panfile', dump_only=True)
     aadhar = field_for(Employee, 'aadhar', dump_only=True)
