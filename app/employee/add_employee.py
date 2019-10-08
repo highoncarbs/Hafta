@@ -55,6 +55,8 @@ def edit_employee(id):
 @bp.route('/new/add', methods=['POST'])
 @login_required
 def add_emp():
+    # Needs reformating , and handling of Filename with vals
+    
     if request.method == 'POST':
         payload = json.loads(request.form['data'])
         emp_fields = ('name', 'dob',
@@ -105,72 +107,74 @@ def add_emp():
                 val = payload[str(temp)]
                 if val is not None:
 
-                    if temp == 'pan' and val is not None:
+                    # if temp == 'pan':
 
-                        if hasattr(request.files, 'panfile'):
-                            if val is "":
-                                try:
-                                    file = request.files['panfile']
-                                    if file and allowed_file(file.filename):
-                                        filename = secure_filename(
-                                            file.filename)
-                                        foldertemp = os.path.join(
-                                            UPLOAD_FOLDER, tempfolder, 'pan')
+                    #     if hasattr(request.files, 'panfile'):
+                    #         if val is not "" and val is not None:
+                    #             try:
+                    #                 file = request.files['panfile']
+                    #                 print(val , file.filename)
+                    #                 if file and allowed_file(file.filename):
+                    #                     filename = secure_filename(
+                    #                         file.filename)
+                    #                     foldertemp = os.path.join(
+                    #                         UPLOAD_FOLDER, tempfolder, 'pan')
+                    #                     print(foldertemp)
+                    #                     if not os.path.exists(foldertemp):
+                    #                         os.makedirs(foldertemp)
+                    #                     else:
+                    #                         shutil.rmtree(foldertemp)
+                    #                         os.makedirs(foldertemp)
 
-                                        if not os.path.exists(foldertemp):
-                                            os.makedirs(foldertemp)
-                                        else:
-                                            shutil.rmtree(foldertemp)
-                                            os.makedirs(foldertemp)
+                    #                         filetemp = os.path.join(
+                    #                             foldertemp, filename)
+                    #                         file.save(filetemp)
+                    #                         print(filetemp)
+                    #                         setattr(
+                    #                             new_data, 'panfile', filetemp)
+                    #                         setattr(
+                    #                             new_data, 'pan', val)
+                    #                         continue
+                    #                 else:
+                    #                     return jsonify({'message': 'Please check filetype of Pan Card.'})
+                    #             except KeyError:
+                    #                 return jsonify({'message': 'Please upload <b>Pancard</b>.'})
 
-                                            filetemp = os.path.join(
-                                                foldertemp, filename)
-                                            file.save(filetemp)
-                                            setattr(
-                                                new_data, 'panfile', filetemp)
-                                            setattr(
-                                                new_data, 'pan', val)
-                                            continue
-                                    else:
-                                        return jsonify({'message': 'Please check filetype of Pan Card.'})
-                                except KeyError:
-                                    return jsonify({'message': 'Please upload <b>Pancard</b>.'})
+                    #         else:
+                    #             return jsonify({'message': 'Please enter <b>Pan Card Number</b>.'})
 
-                            else:
-                                return jsonify({'message': 'Please enter <b>Pan Card Number</b>.'})
+                    # if temp == 'aadhar' :
+                    #     if hasattr(request.files, 'aadharfile'):
+                    #         if val is not "" and val is not None:
+                    #             try:
+                    #                 file = request.files['aadharfile']
+                    #                 if file and allowed_file(file.filename):
+                    #                     filename = secure_filename(
+                    #                         file.filename)
+                    #                     foldertemp = os.path.join(
+                    #                         UPLOAD_FOLDER, tempfolder, 'aadhar')
 
-                    if temp == 'aadhar' and (val is not None):
-                        if hasattr(request.files, 'panfile'):
-                            if val is "":
-                                try:
-                                    file = request.files['aadharfile']
-                                    if file and allowed_file(file.filename):
-                                        filename = secure_filename(
-                                            file.filename)
-                                        foldertemp = os.path.join(
-                                            UPLOAD_FOLDER, tempfolder, 'aadhar')
+                    #                     if not os.path.exists(foldertemp):
+                    #                         os.makedirs(foldertemp)
+                    #                     else:
+                    #                         shutil.rmtree(foldertemp)
+                    #                         os.makedirs(foldertemp)
 
-                                        if not os.path.exists(foldertemp):
-                                            os.makedirs(foldertemp)
-                                        else:
-                                            shutil.rmtree(foldertemp)
-                                            os.makedirs(foldertemp)
+                    #                         filetemp = os.path.join(
+                    #                             foldertemp, filename)
+                    #                         file.save(filetemp)
+                    #                         setattr(
+                    #                             new_data, 'aadharfile', filetemp)
+                    #                         setattr(
+                    #                             new_data, 'aadhar', val)
+                    #                         continue
+                    #                 else:
+                    #                     return jsonify({'message': 'Please check filetype of Aadhar Card.'})
 
-                                            filetemp = os.path.join(
-                                                foldertemp, filename)
-                                            file.save(filetemp)
-                                            setattr(
-                                                new_data, 'aadharfile', filetemp)
-                                            setattr(
-                                                new_data, 'aadhar', val)
-                                            continue
-                                    else:
-                                        return jsonify({'message': 'Please check filetype of Aadhar Card.'})
-
-                                except KeyError:
-                                    return jsonify({'message': 'Please upload <b>Aadhar card</b>.'})
-                            else:
-                                return jsonify({'message': 'Please enter <b>Aadhar Card Number</b>.'})
+                    #             except KeyError:
+                    #                 return jsonify({'message': 'Please upload <b>Aadhar card</b>.'})
+                    #         else:
+                    #             return jsonify({'message': 'Please enter <b>Aadhar Card Number</b>.'})
 
                     if temp == 'post' and (val is not None):
                         print('inside post')
@@ -242,16 +246,74 @@ def add_emp():
                             new_data.benefits.append(data)
                         continue
 
-                    if val is not '' and temp != 'benefits':
+                    if val is not '' and val is not None and temp != 'benefits':
                         print(temp, val)
                         setattr(new_data, str(temp), val)
 
                 # else:
                 #     pass
 
-            # Code to add extra files with no name , just keys in request.files()
-            # Extra ID
+            # Code for Key in request.files 
+            # PAN
+            try:
+                file = request.files['panfile']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    foldertemp = os.path.join(
+                        UPLOAD_FOLDER, tempfolder, 'pan')
 
+                    if not os.path.exists(foldertemp):
+                        os.makedirs(foldertemp)
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'panfile', filetemp)
+                    else:
+                        shutil.rmtree(foldertemp)
+                        os.makedirs(foldertemp)
+
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'panfile', filetemp)
+                else:
+                    return jsonify({'message': 'Please check filetype of PAN.'})
+
+            except KeyError:
+                pass
+
+            except Exception as e:
+                print(str(e))
+                pass
+            # AADHAR
+            try:
+                file = request.files['aadharfile']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    foldertemp = os.path.join(
+                        UPLOAD_FOLDER, tempfolder, 'aadhar')
+
+                    if not os.path.exists(foldertemp):
+                        os.makedirs(foldertemp)
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'aadharfile', filetemp)
+                    else:
+                        shutil.rmtree(foldertemp)
+                        os.makedirs(foldertemp)
+
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'aadharfile', filetemp)
+                else:
+                    return jsonify({'message': 'Please check filetype of Aadhar.'})
+
+            except KeyError:
+                pass
+
+            except Exception as e:
+                print(str(e))
+                pass
+
+            # Extra ID
             try:
                 file = request.files['extraidfile']
                 if file and allowed_file(file.filename):
@@ -352,3 +414,9 @@ def add_emp():
             errorInfo = e.orig.args
 
             return jsonify({'message': ''+str(errorInfo[1])})
+        except Exception as e:
+            db.session.rollback()
+            errorInfo = e.orig.args
+
+            return jsonify({'message': ''+str(errorInfo[1])})
+
