@@ -246,7 +246,7 @@ new Vue({
         },
         fileUploadType(type, field) {
             let allowedTypes = ['pdf', 'jpg', 'peg', 'png']
-            type = type.split('.')[1]
+            type = type.split('.')[ type.length - 1]
             if (allowedTypes.includes(type.toLowerCase())) {
                 this.$set(this.formdata.errors, field, null)
                 return true;
