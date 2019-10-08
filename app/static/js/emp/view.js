@@ -5,11 +5,21 @@ new Vue({
             empDetail: null,
             emp_id: null,
             perfDetail: null,
-            attDetail:[],
+            attDetail: [],
+            viewUpload: false,
             total: {
                 days: 0,
                 late: 0,
                 early: 0,
+            },
+            viewFile: null,
+            fileSrc: null,
+            isPdf: {
+                pan: false,
+                aadhar: false,
+                extraid: false,
+                educert: false,
+                resume: false,
             }
         }
 
@@ -22,6 +32,36 @@ new Vue({
             axios.post('/employee/get/detail/' + String(this.emp_id))
                 .then(function (response) {
                     raw.empDetail = JSON.parse(response.data)
+                    if (raw.empDetail.panfile) {
+                        // console.log(raw.empDetail.panfile.split('.')[raw.empDetail.panfile.length -1])
+                        temp = raw.empDetail.panfile.split('.')
+                        if (temp[temp.length - 1] == 'pdf')
+                            raw.isPdf.pan = true
+                    }
+                    if (raw.empDetail.aadharfile) {
+                        // console.log(raw.empDetail.panfile.split('.')[raw.empDetail.panfile.length -1])
+                        temp = raw.empDetail.aadharfile.split('.')
+                        if (temp[temp.length - 1] == 'pdf')
+                            raw.isPdf.aadhar = true
+                    }
+                    if (raw.empDetail.educertfile) {
+                        // console.log(raw.empDetail.panfile.split('.')[raw.empDetail.panfile.length -1])
+                        temp = raw.empDetail.educertfile.split('.')
+                        if (temp[temp.length - 1] == 'pdf')
+                            raw.isPdf.educert = true
+                    }
+                    if (raw.empDetail.extraidfile) {
+                        // console.log(raw.empDetail.panfile.split('.')[raw.empDetail.panfile.length -1])
+                        temp = raw.empDetail.extraidfile.split('.')
+                        if (temp[temp.length - 1] == 'pdf')
+                            raw.isPdf.extraid = true
+                    }
+                    if (raw.empDetail.resumefile) {
+                        // console.log(raw.empDetail.panfile.split('.')[raw.empDetail.panfile.length -1])
+                        temp = raw.empDetail.resumefile.split('.')
+                        if (temp[temp.length - 1] == 'pdf')
+                            raw.isPdf.resume = true
+                    }
                 })
 
             axios.get('/transaction/performance/get/employee/' + String(this.emp_id))
@@ -32,7 +72,7 @@ new Vue({
                 .then(function (response) {
                     raw.attDetail = JSON.parse(response.data)
 
-                                    })
+                })
         }
 
 
@@ -60,6 +100,21 @@ new Vue({
 
 
         },
+        showUpload(filetype) {
+            this.viewFile = filetype
+            if (this.viewFile != null) {
+                this.viewUpload = !this.viewUpload
+                this.fileSrc = String('\\static') + String(this.empDetail[this.viewFile]).split('\static')[1]
+            }
+        },
+        viewPDF(filetype) {
+            this.viewFile = filetype
+            if (this.viewFile != null) {
+                
+                this.fileSrc = String('\\static') + String(this.empDetail[this.viewFile]).split('\static')[1]
+                window.open(this.fileSrc , '_blank')
+            }
+        }
         // getTotalDays() {
         //     this.total.days = this.attDetail.day_att.reduce(function (total, num) { return total + num }, 0);
         //     return this.total.days
