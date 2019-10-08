@@ -7,7 +7,7 @@ new Vue({
             submitting: false,
             value: 'Update',
             formdatasaved: null,
-            emp_id : null,
+            emp_id: null,
             formdata: {
                 name: null,
                 dob: null,
@@ -73,6 +73,8 @@ new Vue({
                 return "You have attempted to leave this page.  If you have made any changes to the fields without clicking the Save button, your changes will be lost.  Are you sure you want to exit this page?";
             }
         }
+        feather.replace()
+
 
     },
     mounted() {
@@ -102,10 +104,10 @@ new Vue({
         ]
 
         this.emp_id = window.location.href.split('/').slice(-1)[0]
-        
+
         select_fields = ['post', 'appointment', 'company', 'department']
-        
-        axios.post('/employee/edit/'+String(data.emp_id))
+
+        axios.post('/employee/edit/' + String(data.emp_id))
             .then(function (response) {
                 data.formdatasaved = JSON.parse(response.data)
 
