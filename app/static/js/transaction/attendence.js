@@ -18,7 +18,8 @@ new Vue({
             showEditTable: false,
             value: 'Save',
             submitting: false,
-            showEmpSelect: false
+            showEmpSelect: false,
+            isLoading: false
 
 
 
@@ -108,12 +109,15 @@ new Vue({
             this.attModal = false
             this.showEditTable = false
             if (this.company && this.month) {
+                this.isLoading = true
                 axios.get('/employee/get/by/company/' + String(this.company))
                     .then(function (response) {
                         console.log(response.data);
                         // rawdata.data = JSON.parse(response.data)
                         rawdata.dataList = JSON.parse(response.data)
                         rawdata.getAttendence();
+                        rawdata.isLoading = false
+
 
 
                     })

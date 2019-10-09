@@ -98,18 +98,7 @@
                                 </span>
                             </div>
 
-                            <div class="control">
-                                <div class="buttons">
-                                    <div class="button"><span class="icon icon-btn icon-btn-in">
-                                            <feather type="filter" size="1.3rem"></feather>
-                                        </span>Filters
-                                    </div>
 
-                                    <a class="button"><span class="icon icon-btn icon-btn-in">
-                                            <feather type="more-vertical" size="1.3rem"></feather>
-                                        </span>More</a>
-                                </div>
-                            </div>
 
 
                         </div>
@@ -237,7 +226,8 @@
 
                                 </td>
                                 <td>
-                                    <input type="text" class="input" v-model="row.other_deduction" placeholder="Other Deduction">
+                                    <input type="text" class="input" v-model="row.other_deduction"
+                                        placeholder="Other Deduction">
 
                                 </td>
                             </tr>
@@ -247,7 +237,13 @@
                 </div>
             </div>
         </div>
-
+        <p v-if="isLoading "
+            class=" has-text-centered is-size-4 has-text-grey-light">
+            <br>
+            <span class="icon icon-btn">
+                <feather type="rotate-cw" animation="spin"></feather>
+            </span> Loading
+        </p>
         <table class="table is-bordered is-fullwidth is-hoverable " v-if="data && data.length != 0 && !showEditTable">
 
 
@@ -262,18 +258,7 @@
                     </span>
                 </div>
 
-                <div class="control">
-                    <div class="buttons">
-                        <div class="button"><span class="icon icon-btn icon-btn-in">
-                                <feather type="filter" size="1.3rem"></feather>
-                            </span>Filters
-                        </div>
 
-                        <a class="button"><span class="icon icon-btn icon-btn-in">
-                                <feather type="more-vertical" size="1.3rem"></feather>
-                            </span>More</a>
-                    </div>
-                </div>
 
 
             </div>
@@ -341,7 +326,8 @@
                 <tr>
                     <th colspan="11" style="padding:1rem;">
 
-                        <input type="submit" class="button is-black" @click="submitData" :value="value" :disabled="submitting">
+                        <input type="submit" class="button is-black" @click="submitData" :value="value"
+                            :disabled="submitting">
                         <span class="is-underline has-text-danger has-text-weight-normal" style="padding-left:1rem;"
                             v-if="errors.length != 0"> Please fix the errors.</span>
                     </th>
