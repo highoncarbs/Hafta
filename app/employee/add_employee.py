@@ -33,13 +33,312 @@ def new():
 def edit_view_employee(id):
     return render_template('employees/edit.html')
 
+
 @bp.route('/update', methods=['POST'])
 @login_required
 def update_employee():
-    payload = request.json
-    if payload is not None:
-        pass    
-    pass
+    if request.method == 'POST':
+        payload = json.loads(request.form['data'])
+        emp_fields = ('name', 'dob',
+                      'spousename',
+                      'fathername',
+                      'education',
+                      'contact',
+                      'curr_address',
+                      'curr_city',
+                      'perm_address',
+                      'perm_city',
+                      'pan',
+                      'aadhar',
+                      'reference',
+                      'dateofapp',
+                      'appointment',
+                      'post',
+                      'department',
+                      'company',
+                      'benefits',
+                      'dateeff',
+                      'salary_structure',
+                      'basicpay',
+                      'pf',
+                      'esi',
+                      'advance',
+                      'advancevalue',
+                      'advancenum',
+                      'paidleave',
+                      'incrementpr'
+                      )
+
+        # init for Employee data
+        new_data = Employee.query.filter_by(id=payload['emp_id']).first()
+        payload = payload['formdata']
+        # TEMP folder name for employee
+        tempfolder = str(payload['name']+'-' +
+                         payload['dob']+'-'+payload['fathername'])
+
+        try:
+            # Adding data to table
+            for fields in emp_fields:
+
+                # Gets the str type of field from employee.name -> str(name)
+                temp = str(fields)
+                # print(temp)
+                # if(temp in emp_fields):
+                val = payload[str(temp)]
+                if val is not None:
+
+                    if temp == 'post' and (val is not None):
+
+                        if val is not '-1':
+                            data = Post.query.filter_by(id=int(val)).first()
+                            new_data.post = []
+                            new_data.post.append(data)
+                            continue
+                        else:
+                            return jsonify({'message': 'Please select post.'})
+
+                    if temp == 'department' and (val is not None):
+                        if val is not '-1':
+                            data = Department.query.filter_by(
+                                id=int(val)).first()
+                            new_data.department = []
+                            new_data.department.append(data)
+                            continue
+                        else:
+                            return jsonify({'message': 'Please select current city.'})
+
+                    if temp == 'company' and (val is not None):
+                        if val is not '-1':
+                            data = Company.query.filter_by(id=int(val)).first()
+
+                            new_data.company = []
+                            new_data.company.append(data)
+                            continue
+                        else:
+                            return jsonify({'message': 'Please select company.'})
+                    if temp == 'appointment' and (val is not None):
+                        if val is not '-1':
+                            data = Appointment.query.filter_by(
+                                id=int(val)).first()
+                            new_data.appointment = []
+                            new_data.appointment.append(data)
+                            continue
+                        else:
+                            return jsonify({'message': 'Please select appointment.'})
+
+                    if temp == 'curr_city' and (val is not None):
+                        print(val)
+                        if payload['curr_address'] is not None:
+
+                            if val is not -1:
+                                data = Location.query.filter_by(
+                                    id=int(val)).first()
+                                new_data.curr_city = []
+                                new_data.curr_city.append(data)
+                                continue
+                            else:
+                                return jsonify({'message': 'Please select current city.'})
+                        else:
+                            continue
+
+                    if temp == 'perm_city' and (val is not None):
+                        print(val)
+                        if payload['perm_address'] is not None:
+                            if val is not -1:
+
+                                data = Location.query.filter_by(
+                                    id=int(val)).first()
+                                new_data.perm_city = []
+                                new_data.perm_city.append(data)
+                                continue
+                            else:
+                                return jsonify({'message': 'Please select permanent city.'})
+                        else:
+                            continue
+
+                    if temp == 'benefits' and (len(val) is not 0):
+                        new_data.benefits = []
+
+                        for item in val:
+                            data = Benefit.query.filter_by(
+                                id=item['id']).first()
+                            new_data.benefits.append(data)
+                        continue
+
+                    if val is not '' and val is not None and temp != 'benefits':
+                        print(temp, val)
+                        setattr(new_data, str(temp), val)
+
+                # else:
+                #     pass
+
+            # Code for Key in request.files
+            # PAN
+            try:
+                file = request.files['panfile']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    foldertemp = os.path.join(
+                        UPLOAD_FOLDER, tempfolder, 'pan')
+
+                    if not os.path.exists(foldertemp):
+                        os.makedirs(foldertemp)
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'panfile', filetemp)
+                    else:
+                        shutil.rmtree(foldertemp)
+                        os.makedirs(foldertemp)
+
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'panfile', filetemp)
+                else:
+                    return jsonify({'message': 'Please check filetype of PAN.'})
+
+            except KeyError:
+                pass
+
+            except Exception as e:
+                print(str(e))
+                pass
+            # AADHAR
+            try:
+                file = request.files['aadharfile']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    foldertemp = os.path.join(
+                        UPLOAD_FOLDER, tempfolder, 'aadhar')
+
+                    if not os.path.exists(foldertemp):
+                        os.makedirs(foldertemp)
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'aadharfile', filetemp)
+                    else:
+                        shutil.rmtree(foldertemp)
+                        os.makedirs(foldertemp)
+
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'aadharfile', filetemp)
+                else:
+                    return jsonify({'message': 'Please check filetype of Aadhar.'})
+
+            except KeyError:
+                pass
+
+            except Exception as e:
+                print(str(e))
+                pass
+
+            # Extra ID
+            try:
+                file = request.files['extraidfile']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    foldertemp = os.path.join(
+                        UPLOAD_FOLDER, tempfolder, 'extraid')
+
+                    if not os.path.exists(foldertemp):
+                        os.makedirs(foldertemp)
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'extraidfile', filetemp)
+                    else:
+                        shutil.rmtree(foldertemp)
+                        os.makedirs(foldertemp)
+
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'extraidfile', filetemp)
+                else:
+                    return jsonify({'message': 'Please check filetype of Extra ID.'})
+
+            except KeyError:
+                pass
+
+            except Exception as e:
+                print(str(e))
+                pass
+
+            # Edu Cert ID
+
+            try:
+                file = request.files['educertfile']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    foldertemp = os.path.join(
+                        UPLOAD_FOLDER, tempfolder, 'educert')
+
+                    if not os.path.exists(foldertemp):
+                        os.makedirs(foldertemp)
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'educertfile', filetemp)
+                    else:
+                        shutil.rmtree(foldertemp)
+                        os.makedirs(foldertemp)
+
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'educertfile', filetemp)
+                else:
+                    return jsonify({'message': 'Please check filetype of Edu Cert.'})
+
+            except KeyError:
+                pass
+
+            except Exception as e:
+                print(str(e))
+                pass
+
+            # Resume ID
+
+            try:
+                file = request.files['resumefile']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    foldertemp = os.path.join(
+                        UPLOAD_FOLDER, tempfolder, 'resume')
+
+                    if not os.path.exists(foldertemp):
+                        os.makedirs(foldertemp)
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'educertfile', filetemp)
+                    else:
+                        shutil.rmtree(foldertemp)
+                        os.makedirs(foldertemp)
+
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'resumefile', filetemp)
+                else:
+                    return jsonify({'message': 'Please check filetype of Resume.'})
+
+            except KeyError:
+                pass
+
+            except Exception as e:
+                print(str(e))
+                pass
+
+            db.session.add(new_data)
+            db.session.commit()
+            return jsonify({'success': 'Employee updated'})
+
+        except IntegrityError as e:
+            db.session.rollback()
+            errorInfo = e.orig.args
+
+            return jsonify({'message': ''+str(errorInfo[1])})
+        except Exception as e:
+            db.session.rollback()
+            errorInfo = e.orig.args
+
+            return jsonify({'message': ''+str(errorInfo[1])})
+
 
 @bp.route('/edit/<id>', methods=['GET', 'POST'])
 @login_required
@@ -56,7 +355,7 @@ def edit_employee(id):
 @login_required
 def add_emp():
     # Needs reformating , and handling of Filename with vals
-    
+
     if request.method == 'POST':
         payload = json.loads(request.form['data'])
         emp_fields = ('name', 'dob',
@@ -253,7 +552,7 @@ def add_emp():
                 # else:
                 #     pass
 
-            # Code for Key in request.files 
+            # Code for Key in request.files
             # PAN
             try:
                 file = request.files['panfile']
@@ -419,4 +718,3 @@ def add_emp():
             errorInfo = e.orig.args
 
             return jsonify({'message': ''+str(errorInfo[1])})
-

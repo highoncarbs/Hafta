@@ -16,9 +16,9 @@ new Vue({
                 education: null,
                 contact: null,
                 curr_address: null,
-                curr_city: -1,
+                curr_city: null,
                 perm_address: null,
-                perm_city: -1,
+                perm_city: null,
                 pan: null,
 
                 aadhar: null,
@@ -150,10 +150,11 @@ new Vue({
                 let formData = new FormData()
 
                 this.submitting = true;
-                this.value = 'Saving';
+                this.value = 'Updating';
 
                 let rawdata = this
-                formData.append('data', JSON.stringify(rawdata.formdata))
+                let formdata = {'emp_id' : this.emp_id , 'formdata': this.formdata}
+                formData.append('data', JSON.stringify(formdata))
 
                 if (this.formfiles.panfile) {
                     formData.append('panfile', this.formfiles.panfile, this.formfiles.panfile.name)
@@ -174,7 +175,7 @@ new Vue({
 
                     formData.append('resumefile', this.formfiles.resumefile, this.formfiles.resumefile.name)
                 }
-                axios.post('/employee/new/add', formData, {
+                axios.post('/employee/update', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -211,7 +212,7 @@ new Vue({
                         }
 
                         rawdata.submitting = false;
-                        rawdata.value = 'Save';
+                        rawdata.value = 'Update';
                     })
 
                     .catch(function (error) {

@@ -129,6 +129,9 @@ new Vue({
             this.confirmModal.close = !this.confirmModal.close
 
         },
+        editEmployee(index){
+            window.location.href= "/employee/edit/view/"+String(index)
+        },
         employeeDelete(id) {
             this.confirmModal.close = !this.confirmModal.close
             let rawdata = this

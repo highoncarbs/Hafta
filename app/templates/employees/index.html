@@ -109,7 +109,7 @@
                                         <feather type="eye" size="1.3rem"> </feather>
                                     </span>
                                 </div>
-                                <div class="button" @click="">
+                                <div class="button" @click="editEmployee(row.id)">
                                     <span class="icon">
                                         <feather type="edit" size="1.3rem"></feather>
                                     </span>
@@ -183,9 +183,9 @@
                                 </div>
                                 <div class="level-right">
                                     <div class="level-item">
-                                        <a href="" class="button"><span class="icon icon-btn">
+                                        <button class="button" @click="editEmployee(row.id)"><span class="icon icon-btn">
                                                 <feather type="edit" size="1.3rem"></feather>
-                                            </span> Edit</a>
+                                            </span> Edit</button>
                                     </div>
                                     <div class="level-item">
                                         <a @click="showEmpDetail" class="button is-black"><span class="icon icon-btn">
@@ -257,7 +257,7 @@
                                                 v-html=" empDetail.curr_address != undefined ? empDetail.curr_address : 'None'">
                                             </p>
                                             <p
-                                                v-html=" empDetail.curr_city != undefined ? empDetail.curr_city[0].name : 'None'">
+                                                v-html="empDetail.curr_city.length  !=0 ? empDetail.curr_city[0].name : 'None'">
                                             </p>
                                         </td>
                                         <td colspan="2">
@@ -267,7 +267,7 @@
                                                 v-html=" empDetail.perm_address != undefined ? empDetail.perm_address : 'None'">
                                             </p>
                                             <p
-                                                v-html=" empDetail.perm_city != undefined ? empDetail.perm_city[0].name : 'None'">
+                                                v-html="empDetail.perm_city.length != 0 ? empDetail.perm_city[0].name : 'None'">
                                             </p>
 
                                         </td>
