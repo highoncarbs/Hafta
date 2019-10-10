@@ -167,66 +167,63 @@ new Vue({
 
             e.preventDefault();
         },
-        submitData(e) {
+        submitData() {
             let rawdata = this
+            
+            if (this.checkData()) {
 
-            if (this.checkData(e)) {
+
                 this.submitting = true;
                 this.value = 'Saving';
-                if (this.errors.length == 0) {
+                let formdata = { 'company': this.company, 'date': this.month, 'data': this.filteredList }
+                console.log(formdata)
+                axios.post('/transaction/attendence/save', formdata)
+                    .then(function (response) {
+                        if (response.data.success) {
+                            // Run notificaiton 
+                            // Open selection for reports and printing
+                            rawdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.success,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
 
-                    let formdata = { 'company': this.company, 'date': this.month, 'data': this.filteredList }
-                    console.log(formdata)
-                    axios.post('/transaction/attendence/save', formdata)
-                        .then(function (response) {
-                            if (response.data.success) {
-                                // Run notificaiton 
-                                // Open selection for reports and printing
-                                rawdata.$buefy.snackbar.open({
-                                    duration: 4000,
-                                    message: response.data.success,
-                                    type: 'is-light',
-                                    position: 'is-top-right',
-                                    actionText: 'Close',
-                                    queue: true,
-                                    onAction: () => {
-                                        this.isActive = false;
-                                    }
-                                })
+                            rawdata.getAttendence();
+                        }
+                        else if (response.data.message) {
+                            rawdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.message,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
 
-                                rawdata.getAttendence();
-                            }
-                            else if (response.data.message) {
-                                rawdata.$buefy.snackbar.open({
-                                    duration: 4000,
-                                    message: response.data.message,
-                                    type: 'is-light',
-                                    position: 'is-top-right',
-                                    actionText: 'Close',
-                                    queue: true,
-                                    onAction: () => {
-                                        this.isActive = false;
-                                    }
-                                })
+                        }
 
-                            }
 
-                            rawdata.submitting = false;
-                            rawdata.value = 'Save';
-                        })
-                        .catch(function (error) {
-                            // RUn error 
-                            console.error(error);
-                            rawdata.submitting = false;
-                            rawdata.value = 'Save';
-                        })
-                }
+                    })
+                    .catch(function (error) {
+                        // RUn error 
+                        console.error(error);
+
+                    })
+
             }
-            this.submitting = true;
+            this.submitting = false;
             this.value = 'Save';
-            e.preventDefault();
         },
-        checkData(e) {
+        checkData() {
             this.errors = []
             let raw = this
             let rawError = this.errors
@@ -284,8 +281,7 @@ new Vue({
 
             })
 
-            e.preventDefault();
-            if (this.errors.length == 0) {
+            if (Object.keys(this.errors).length == 0) {
                 return true
             }
             else {

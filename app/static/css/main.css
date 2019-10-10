@@ -5,7 +5,7 @@
 }
 
 body, html {
-    font-family: 'Inter', 'Roboto', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
 }
 
 .input {
@@ -90,8 +90,6 @@ i {
 .label {
     font-weight: 600 !important;
 }
-
-
 
 .is-underline {
     text-decoration: underline;
@@ -251,9 +249,10 @@ i {
     min-height: 3em;
 }
 
-.has-background-info{
+.has-background-info {
     background-color: #c2dbff7c !important;
 }
+
 .notices .snackbar .text {
     padding: .5em 1em;
 }

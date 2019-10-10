@@ -94,7 +94,6 @@ def save_attendence():
 
                 # Need Update cehck inside
                 for item in payload_data:
-                    print(item)
                     new_data = Attendence()
                     emp = Employee.query.filter_by(
                         id=int(item['id'])).first()
@@ -104,18 +103,23 @@ def save_attendence():
                     new_data.employee.append(emp)
                     for field in table_columns:
                         val = item[field]
-                        print(val, field)
                         if val == '' or val is None:
                             continue
                         setattr(new_data, field, val)
                     setattr(new_data, 'date', payload_date)
 
                     if 'tdsval' in item.keys():
-                        setattr(new_data, 'tds', item['tdsval'])
+                        if item['tdsval'] != "":
+                            setattr(new_data, 'tds', item['tdsval'])
+
                     if 'esival' in item.keys():
-                        setattr(new_data, 'esi', item['esival'])
+                        if item['esival'] != "":
+
+                            setattr(new_data, 'esi', item['esival'])
+
                     if 'pfval' in item.keys():
-                        setattr(new_data, 'pf', item['pfval'])
+                        if item['pfval'] != "":
+                            setattr(new_data, 'pf', item['pfval'])
 
                 db.session.add(new_data)
                 db.session.commit()

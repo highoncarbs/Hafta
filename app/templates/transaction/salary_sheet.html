@@ -72,7 +72,8 @@
                     Print
 
                 </button>
-                <button @click="printSelected" class="button" :disabled=" selectedRow == null || selectedRow.length == 0">
+                <button @click="printSelected" class="button"
+                    :disabled=" selectedRow == null || selectedRow.length == 0">
                     <span class="icon icon-btn">
                         <feather type="paperclip" size="1.3rem"></feather>
                     </span>
@@ -80,7 +81,7 @@
 
                 </button>
             </div>
-
+            <!-- Sheet Entry -->
             <div class="table-container">
                 <table class="table is-fullwidth is-bordered">
                     <thead>
@@ -121,7 +122,8 @@
                     </tfoot>
                     <tbody>
                         <template v-for="(row , index) in salarySheetEdit" :bind="index">
-                            <tr @click="pushRow(row.id)" :class="{'has-background-info' : selectedRow.includes(row.id)} ">
+                            <tr @click="pushRow(row.id)"
+                                :class="{'has-background-info' : selectedRow.includes(row.id)} ">
                                 <td>[[ row.employee[0].name]]</td>
                                 <td>[[ row.employee[0].department[0].name]]</td>
                                 <td>[[ row.employee[0].post[0].name]]</td>
@@ -153,6 +155,83 @@
                     </tbody>
                 </table>
             </div>
+            <!-- End sheet -->
+
+            <!-- Saved Sheets -->
+            <div class="table-container">
+                <table class="table is-fullwidth is-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Dept.</th>
+                            <th>Post</th>
+                            <th>Days Attn.</th>
+                            <th>Late Comin <br><span class="has-text-grey">No.</span></th>
+                            <th>Early Going <br><span class="has-text-grey">No.</span></th>
+                            <th>Salary</th>
+                            <th>Days Payable</th>
+                            <th>Pay #1</th>
+                            <th>Adv. Ded.</th>
+                            <th>ESI</th>
+                            <th>PF</th>
+                            <th>TDS</th>
+                            <th>Other Ded.</th>
+                            <th>Total Ded. #2</th>
+                            <th>Net Payable ( #1 - #2)</th>
+                        </tr>
+                    </thead>
+                    <!-- <tfoot>
+                        <tr>
+                            <td colspan="16">
+                                <button class="button is-black" @click="processSalary">
+                                    <span class="icon icon-btn">
+                                        <feather type="refresh-cw" size="1.3rem"></feather>
+                                    </span>
+                                    Process
+
+                                </button>
+                                <span class="is-underline button is-text">
+                                    Processing debits advances of employees.
+                                </span>
+                            </td>
+                        </tr>
+                    </tfoot> -->
+                    <tbody>
+                        <template v-for="(row , index) in salarySheetView" :bind="index">
+                            <tr @click="pushRow(row.id)"
+                                :class="{'has-background-info' : selectedRow.includes(row.id)} ">
+                                <td>[[ row.employee[0].name]]</td>
+                                <td>[[ row.employee[0].department[0].name]]</td>
+                                <td>[[ row.employee[0].post[0].name]]</td>
+                                <td> [[ row.daysatt ]]</td>
+                                <td> [[ row.latecomin ]]</td>
+                                <td> [[ row.earlygoing ]]</td>
+                                <td>[[ formatedNumber(row.employee[0].basicpay) ]]</td>
+                                <td>[[ formatedNumber(row.days_payable) ]]</td>
+                                <td>[[ formatedNumber(row.pay_1) ]]</td>
+                                <td>
+                                    <small class="has-text-grey">MONTHLY</small>
+
+                                    <ul v-for="dec in row.deductions.month ">
+                                        <li>[[ formatedNumber(dec) ]]</li>
+                                    </ul>
+
+                                    <input style="margin-top:0.5rem;" type="text" v-model="row.net_adv_deduction"
+                                        value="row.net_adv_deduction  " class="input" placeholder="Deduct">
+
+                                </td>
+                                <td>[[ row.esi ]]</td>
+                                <td>[[ row.pf ]]</td>
+                                <td>[[ row.tds ]]</td>
+                                <td>[[ row.other_deduction ]]</td>
+                                <td>[[ formatedNumber(row.total_deductions) ]]</td>
+                                <td>[[ formatedNumber(row.net_payable) ]]</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <!-- End saved sheets -->
         </div>
     </div>
 </section>

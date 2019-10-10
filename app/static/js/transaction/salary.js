@@ -8,7 +8,8 @@ new Vue({
             isGenerating: null,
             errors: {},
             salarySheet: null,
-            selectedRow: []
+            selectedRow: [],
+            salarySheetView: null,
         }
     },
     delimiters: ['[[', ']]'],
