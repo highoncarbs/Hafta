@@ -1,5 +1,3 @@
-# Hafta
-
 <p align="center">
 <img align="center" src="./docs/assets/sumup.png">
    <br><br>
@@ -10,9 +8,8 @@
 <br>
 <i> Built with Indian businesses , for Indian businesses </i>
 </p>
-<br>
+<hr>
 <p>Built to help ease payrolls for Manufactoring segment of Indian Businesses specifically. Feel free to make changes to your needs .</p>
-
 
 ## Features
 
