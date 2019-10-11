@@ -22,7 +22,7 @@
     Vue.component('custom-select', {
         props: {
             'which': "", 'preselect': {
-                default: [{
+                default: ()=> [{
                     'id': -1
                 }]
             }
