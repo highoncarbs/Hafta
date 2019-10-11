@@ -42,7 +42,6 @@ def get_advance(emp_id):
             Advance.employee.any(Employee.id == int(emp_id)), Advance.date >= year_start, Advance.date <= year_end).all()
         data_schema = AdvanceSchema(many=True)
         json_data = data_schema.dumps(data)
-        print(json_data)
         return jsonify(json_data)
     else:
         return jsonify({'message': 'Invalid HTTP Request , use POST.'})
@@ -77,8 +76,6 @@ def save_advance():
                 new_data.employee.append(emp)
                 for field in table_columns:
                     val = payload_data[field]
-                    print(val, field)
-
                     if val == '' or val is None:
                         continue
 
@@ -91,9 +88,8 @@ def save_advance():
                 return jsonify({'success': 'Data Added'})
 
             except Exception as e:
-                print(str(e))
                 db.session.rollback()
-                return jsonify({'message': 'Something went wrong'})
+                return jsonify({'message': 'Something went wrong - '+str(e)})
 
             return jsonify({'message': 'Something went wrong'})
         else:
@@ -145,7 +141,6 @@ def update_advance():
                 return jsonify({'success': 'Data Added'})
 
             except Exception as e:
-                print(str(e))
                 db.session.rollback()
                 return jsonify({'message': 'Something went wrong'})
 
@@ -166,5 +161,4 @@ def delete_advance(adv_id):
             db.session.commit()
             return jsonify({'success': 'Advance transaction deleted'})
         except Exception as e:
-            print(str(e))
-            return jsonify({'message': 'Somethign went wrong .'})
+            return jsonify({'message': 'Somethign went wrong'})

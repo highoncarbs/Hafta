@@ -26,7 +26,6 @@ def add_attendence_rules():
 
             check_data = AttendenceRules.query
             if check_data.first():
-                print('Hererh')
                 return jsonify({'message': 'Only one Rule is allowed , please edit or delete existing rule.'})
             else:
                 try:
@@ -79,7 +78,6 @@ def edit_attendence_rules():
 def delete_attendence_rules():
     if request.method == 'POST':
         payload = request.json
-        print(payload['id'])
         check_data = AttendenceRules.query.filter_by(id=payload['id'])
         if check_data.first():
             try:

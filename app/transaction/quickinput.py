@@ -34,10 +34,7 @@ def get_quick_emp():
         data = QuickInput.query.filter(
             QuickInput.employee.any(Employee.id == int(payload['emp_id'])),
             QuickInput.date >= fromdate, QuickInput.date <= todate).all()
-        print(data)
-
         json_data = data_schema.dumps(data)
-        print(json_data)
         return jsonify(json_data)
 
     else:

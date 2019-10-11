@@ -23,7 +23,6 @@ def get_performance_factors():
     data_schema = PerformanceSchema(many=True)
     data = Performance.query.all()
     json_data = data_schema.dumps(data)
-    print(json_data)
     return jsonify(json_data)
 
 
@@ -32,15 +31,7 @@ def get_performance_factors():
 def get_performance_all():
 
     data_schema = TransPerformanceSchema(many=True)
-    # payload = request.json
-    # temp_date = payload['fromdate'].split('-')
-    # fromdate = datetime(
-    #     int(temp_date[0]), int(temp_date[1]), int(temp_date[2]))
-
-    # temp_date = payload['todate'].split('-')
-    # todate = datetime(
-    #     int(temp_date[0]), int(temp_date[1]), int(temp_date[2]))
-
+   
     data = TransPerformance.query.all()
 
     json_data = json.loads(data_schema.dumps(data))
@@ -63,7 +54,6 @@ def get_performance_all():
         item['net_score'] = "%.2f" % round(item['net_score'], 2)
 
     json_data = json.dumps(json_data)
-    print(json_data)
     return jsonify(json_data)
 
 
@@ -108,7 +98,6 @@ def get_performance_factors_for_emp():
                 item['net_score'] = 0
         
         json_data = json.dumps(json_data)
-        print(json_data)
         return jsonify(json_data)
 
 

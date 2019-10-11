@@ -20,7 +20,6 @@ def get_attendence():
     if request.method == "POST":
         payload = request.json
         if payload != None:
-            print(payload)
             payload_date = payload['date'].split('-')
             payload_date = datetime(
                 int(payload_date[0]), int(payload_date[1]), int(1))
@@ -29,7 +28,6 @@ def get_attendence():
                 Attendence.company.any(Company.id == int(company)), Attendence.date == payload_date).all()
             data_schema = AttendenceSchema(many=True)
             json_data = data_schema.dumps(data)
-            print(json_data)
             return jsonify(json_data)
         else:
             return jsonify({'message': 'Empty Data Recieved'})
@@ -132,7 +130,6 @@ def save_attendence():
                 return jsonify({'success': 'Data Added'})
 
             except Exception as e:
-                print(str(e))
                 db.session.rollback()
                 return jsonify({'message': 'Something went wrong'})
 
@@ -146,15 +143,7 @@ def update_attendence():
     if request.method == 'POST':
         payload = request.json
         if payload != None:
-            print('this is it --')
-            print(payload)
-            print('---------------')
-            # payload_data = json.loads(payload['data'])
-            # payload_date = str(payload['date']).split('-')
-            # payload_date = datetime(
-            #     int(payload_date[0]), int(payload_date[1]), int(1))
-            # Date checks to be done
-            # print(payload_date)
+          
             table_columns = (
                 'daysatt',
                 'latecomin',
@@ -168,7 +157,6 @@ def update_attendence():
                         id=int(item['id'])).first()
                     for field in table_columns:
                         val = item[field]
-                        print(field ,val)
                         if val == '' or val is None:
                             continue
                         setattr(saved_att, field, val)
@@ -198,7 +186,6 @@ def update_attendence():
                             continue
                         setattr(saved_att, 'pf', item['pfval'])
 
-                # db.session.add(new_data)
                 db.session.commit()
                 return jsonify({'success': 'Data Updated'})
 

@@ -16,7 +16,6 @@ def view_company():
         data_schema = CompanySchema(many=True)
         data = Company.query.all()
         json_data = data_schema.dump(data)
-        print(json_data)
         return jsonify(data_schema.dump(data))
 
 
@@ -34,7 +33,6 @@ def add_company():
                     new_data = Company(payload['name'])
                     location = Location.query.filter_by(
                         id=payload['location']).first()
-                    print(location)
                     new_data.location.append(location)
                     db.session.add(new_data)
                     db.session.commit()
@@ -77,7 +75,6 @@ def edit_company():
                 except Exception as e:
                     db.session.rollback()
                     db.session.close()
-                    print(e)
                     return jsonify({'message': 'Something unexpected happened. Check logs', 'log': str(e)})
         else:
             return jsonify({'message': 'Empty Data.'})
@@ -182,13 +179,11 @@ def edit_location():
 def delete_location():
     if request.method == 'POST':
         payload = request.json
-        print(payload)
         check_data = Location.query.filter_by(id=payload['id'])
         if check_data.first():
             if len(check_data.first().company_location) is int(0):
 
                 try:
-                    print(check_data.first().name)
                     check_data.delete()
                     db.session.commit()
                     return jsonify({'success': 'Data deleted'})
@@ -213,10 +208,7 @@ def get_cat():
     if request.method == 'GET':
         data_schema = EmployeeCatSchema(many=True)
         data = EmployeeCategory.query.all()
-        print(data)
         json_data = data_schema.dump(data)
-        print(json_data)
-
         return jsonify(json_data)
 
 
@@ -279,11 +271,9 @@ def edit_cat():
 def delete_cat():
     if request.method == 'POST':
         payload = request.json
-        print(payload['id'])
         check_data = EmployeeCategory.query.filter_by(id=payload['id'])
         if check_data.first():
             try:
-                print(check_data.first().name)
                 check_data.delete()
                 db.session.commit()
                 return jsonify({'success': 'Data deleted'})

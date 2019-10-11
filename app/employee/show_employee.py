@@ -19,7 +19,6 @@ def get_detail(id):
         # Gets all ifo of employee
         data_schema = EmployeeSchema()
         data = Employee.query.filter_by(id=int(id)).first()
-        # print(data_schema)
         json_data = data_schema.dumps(data)
         return jsonify(json_data)
 
@@ -29,7 +28,6 @@ def get_basic():
     if request.method == 'GET':
         data_schema = EmployeeBasicSchema(many=True)
         data = Employee.query.filter(Employee.flag != int(1)).all()
-        # print(data_schema)
         json_data = data_schema.dumps(data)
         return jsonify(json_data)
 
@@ -65,9 +63,5 @@ def get_by_company(companyid):
         # compna = Company.query.filter_by(id= int(companyid)).first().name
         employee_schema = EmployeeMainSchema(many=True)
         data = Employee.query.filter(Employee.company.any(Company.id == int(companyid)) ).all()
-        print(data)
-        # data = Company.query.filter_by(name=str(companyname)).first().emp_company
-        # print(test[0].post)
         json_data = employee_schema.dumps(data)
-        print(json_data)
         return jsonify(json_data)

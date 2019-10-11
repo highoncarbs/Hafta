@@ -77,11 +77,9 @@ def edit_appointment():
 def delete_appointment():
     if request.method == 'POST':
         payload = request.json
-        print(payload['id'])
         check_data = Appointment.query.filter_by(id=payload['id'])
         if check_data.first():
             try:
-                print(check_data.first().name)
                 check_data.delete()
                 db.session.commit()
                 return jsonify({'success': 'Data deleted'})

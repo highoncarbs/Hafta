@@ -17,10 +17,11 @@ def login():
             session['mssg'] = "Invalid Username or Password"
             return redirect(url_for('auth.login'))
         login_user(user)
-        print("I'm in bitch")
         return redirect(url_for('main.home'))
     else:
         print(form.errors)
+        session['mssg'] = "Something went wrong."
+
     return render_template('auth/login.html', title=('Log In'), form=form)
 
 

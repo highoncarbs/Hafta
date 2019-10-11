@@ -14,7 +14,6 @@ import shutil
 
 ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg', 'gif'])
 UPLOAD_FOLDER = os.path.abspath('./app/static/uploads')
-print(UPLOAD_FOLDER)
 
 
 def allowed_file(filename):
@@ -82,8 +81,7 @@ def update_employee():
 
                 # Gets the str type of field from employee.name -> str(name)
                 temp = str(fields)
-                # print(temp)
-                # if(temp in emp_fields):
+            
                 val = payload[str(temp)]
                 if val is not None:
 
@@ -127,7 +125,6 @@ def update_employee():
                             return jsonify({'message': 'Please select appointment.'})
 
                     if temp == 'curr_city' and (val is not None):
-                        print(val)
                         if payload['curr_address'] is not None:
 
                             if val is not -1:
@@ -142,7 +139,6 @@ def update_employee():
                             continue
 
                     if temp == 'perm_city' and (val is not None):
-                        print(val)
                         if payload['perm_address'] is not None:
                             if val is not -1:
 
@@ -166,7 +162,6 @@ def update_employee():
                         continue
 
                     if val is not '' and val is not None and temp != 'benefits':
-                        print(temp, val)
                         setattr(new_data, str(temp), val)
 
                 # else:
@@ -201,7 +196,6 @@ def update_employee():
 
             except Exception as e:
                 print(str(e))
-                pass
             # AADHAR
             try:
                 file = request.files['aadharfile']
@@ -230,6 +224,7 @@ def update_employee():
 
             except Exception as e:
                 print(str(e))
+                
                 pass
 
             # Extra ID
@@ -346,7 +341,6 @@ def edit_employee(id):
     data = Employee.query.filter_by(id=int(id)).first()
     data_schema = EmployeeSchema()
     json_data = data_schema.dumps(data)
-    print(json_data)
     return jsonify(json_data)
     # return render_template('employees/edit.html')
 
@@ -401,85 +395,14 @@ def add_emp():
 
                 # Gets the str type of field from employee.name -> str(name)
                 temp = str(fields)
-                # print(temp)
-                # if(temp in emp_fields):
+               
                 val = payload[str(temp)]
                 if val is not None:
 
-                    # if temp == 'pan':
-
-                    #     if hasattr(request.files, 'panfile'):
-                    #         if val is not "" and val is not None:
-                    #             try:
-                    #                 file = request.files['panfile']
-                    #                 print(val , file.filename)
-                    #                 if file and allowed_file(file.filename):
-                    #                     filename = secure_filename(
-                    #                         file.filename)
-                    #                     foldertemp = os.path.join(
-                    #                         UPLOAD_FOLDER, tempfolder, 'pan')
-                    #                     print(foldertemp)
-                    #                     if not os.path.exists(foldertemp):
-                    #                         os.makedirs(foldertemp)
-                    #                     else:
-                    #                         shutil.rmtree(foldertemp)
-                    #                         os.makedirs(foldertemp)
-
-                    #                         filetemp = os.path.join(
-                    #                             foldertemp, filename)
-                    #                         file.save(filetemp)
-                    #                         print(filetemp)
-                    #                         setattr(
-                    #                             new_data, 'panfile', filetemp)
-                    #                         setattr(
-                    #                             new_data, 'pan', val)
-                    #                         continue
-                    #                 else:
-                    #                     return jsonify({'message': 'Please check filetype of Pan Card.'})
-                    #             except KeyError:
-                    #                 return jsonify({'message': 'Please upload <b>Pancard</b>.'})
-
-                    #         else:
-                    #             return jsonify({'message': 'Please enter <b>Pan Card Number</b>.'})
-
-                    # if temp == 'aadhar' :
-                    #     if hasattr(request.files, 'aadharfile'):
-                    #         if val is not "" and val is not None:
-                    #             try:
-                    #                 file = request.files['aadharfile']
-                    #                 if file and allowed_file(file.filename):
-                    #                     filename = secure_filename(
-                    #                         file.filename)
-                    #                     foldertemp = os.path.join(
-                    #                         UPLOAD_FOLDER, tempfolder, 'aadhar')
-
-                    #                     if not os.path.exists(foldertemp):
-                    #                         os.makedirs(foldertemp)
-                    #                     else:
-                    #                         shutil.rmtree(foldertemp)
-                    #                         os.makedirs(foldertemp)
-
-                    #                         filetemp = os.path.join(
-                    #                             foldertemp, filename)
-                    #                         file.save(filetemp)
-                    #                         setattr(
-                    #                             new_data, 'aadharfile', filetemp)
-                    #                         setattr(
-                    #                             new_data, 'aadhar', val)
-                    #                         continue
-                    #                 else:
-                    #                     return jsonify({'message': 'Please check filetype of Aadhar Card.'})
-
-                    #             except KeyError:
-                    #                 return jsonify({'message': 'Please upload <b>Aadhar card</b>.'})
-                    #         else:
-                    #             return jsonify({'message': 'Please enter <b>Aadhar Card Number</b>.'})
-
                     if temp == 'post' and (val is not None):
-                        print('inside post')
+                       
                         if val is not '-1':
                             data = Post.query.filter_by(id=int(val)).first()
-                            print(data)
                             new_data.post.append(data)
                             continue
                         else:
@@ -511,7 +434,6 @@ def add_emp():
                             return jsonify({'message': 'Please select appointment.'})
 
                     if temp == 'curr_city' and (val is not None):
-                        print(val)
                         if payload['curr_address'] is not None:
 
                             if val is not -1:
@@ -525,7 +447,6 @@ def add_emp():
                             continue
 
                     if temp == 'perm_city' and (val is not None):
-                        print(val)
                         if payload['perm_address'] is not None:
                             if val is not -1:
 
@@ -546,11 +467,9 @@ def add_emp():
                         continue
 
                     if val is not '' and val is not None and temp != 'benefits':
-                        print(temp, val)
                         setattr(new_data, str(temp), val)
 
-                # else:
-                #     pass
+                
 
             # Code for Key in request.files
             # PAN

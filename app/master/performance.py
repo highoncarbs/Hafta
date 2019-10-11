@@ -22,7 +22,6 @@ def get_perfomance():
 def add_perfomance():
     if request.method == 'POST':
         payload = request.json
-        print(payload)
         if payload['name'] is not None:
 
             check_data = Performance.query.filter_by(name=payload['name'])
@@ -50,7 +49,6 @@ def add_perfomance():
 def edit_perfomance():
     if request.method == 'POST':
         payload = request.json
-        print(payload)
         if payload['name'] is not None:
 
             check_data = Performance.query.filter_by(name=payload['name'])
@@ -81,11 +79,9 @@ def edit_perfomance():
 def delete_perfomance():
     if request.method == 'POST':
         payload = request.json
-        print(payload['id'])
         check_data = Performance.query.filter_by(id=payload['id'])
         if check_data.first():
             try:
-                print(check_data.first().name)
                 check_data.delete()
                 db.session.commit()
                 return jsonify({'success': 'Data deleted'})

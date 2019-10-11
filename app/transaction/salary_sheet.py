@@ -38,7 +38,6 @@ def process_sheet():
         payload_company = Company.query.filter_by(
             id=int(payload['company'])).first()
         payload_date = payload['date'].split('-')
-        print(payload_date)
         payload_date = datetime(
             int(payload_date[0]), int(payload_date[1]), int(1))
 
@@ -193,12 +192,9 @@ def generate_sheet(company, month):
 
         for item in adv_data:
             if (item.trans == 'credit'):
-                # print('Advane aamount - ' + str(item.advanceamt))
                 outstanding_advance += float(item.advanceamt)
 
             elif (item.trans == 'debit'):
-                # print('Debit aamount - ' + str(item.advanceamt))
-
                 outstanding_advance -= float(item.advanceamt)
 
         for adv_item in json_adv_data:
@@ -242,9 +238,6 @@ def generate_sheet(company, month):
             att_item['deductions']['year'] = 0
             att_item['deductions']['year'] = 0
 
-        # print(net_deduction_month, att_item['esi'], att_item['pf'],
-        #       att_item['tds'], att_item['other_deduction'])
-
         if att_item['other_deduction'] is None:
             att_item['other_deduction'] = float(0)
         if att_item['esi'] is None:
@@ -259,8 +252,7 @@ def generate_sheet(company, month):
 
         net_deduction_advance = float(
             net_deduction_month) + float(net_deduction_year)
-        # print(outstanding_advance, net_deduction_advance)
-
+        
         if outstanding_advance <= net_deduction_advance:
             att_item['net_adv_deduction'] = outstanding_advance
         else:
