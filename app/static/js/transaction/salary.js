@@ -32,6 +32,19 @@ new Vue({
                 this.isGenerating = true
                 let rawdata = this
                 let formdata = { 'company': this.company, 'month': this.month }
+                let checkformdata = { 'company': this.company, 'date': this.month }
+
+                axios.post('/transaction/salary_sheet/get/processed', checkformdata)
+                    .then(function (response) {
+                        let payload = response.data
+
+                        rawdata.salarySheetView = JSON.parse(payload.data)
+
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
+
                 axios.post('/transaction/salary_sheet/generate', formdata)
                     .then(function (response) {
                         rawdata.salarySheet = response.data
@@ -54,6 +67,10 @@ new Vue({
                         rawdata.isGenerating = null;
 
                     })
+
+
+
+
             }
 
 
@@ -87,6 +104,16 @@ new Vue({
                     const win = window.open('/transaction/salary_sheet/print/all', '_blank', [], true);
                 })
         },
+        printSavedAll() {
+            let rawdata = this
+            let formdata = { 'company': this.company, 'date': this.month, 'data': this.salarySheetView }
+            localStorage.setItem('jsondata', JSON.stringify(formdata))
+            axios.post('/transaction/salary_sheet/print/all', formdata)
+                .then(function (response) {
+                    console.log(response)
+                    const win = window.open('/transaction/salary_sheet/print/all', '_blank', [], true);
+                })
+        },
         pushRow(index) {
             console.log(index)
             let raw = this
@@ -112,10 +139,10 @@ new Vue({
             let formdata = { 'company': this.company, 'date': this.month, 'data': selectedData }
             localStorage.setItem('selecteddata', JSON.stringify(formdata))
             axios.post('/transaction/salary_sheet/print/selected', formdata)
-            .then(function (response) {
-                console.log(response)
-                const win = window.open('/transaction/salary_sheet/print/selected', '_blank', [], true);
-            })
+                .then(function (response) {
+                    console.log(response)
+                    const win = window.open('/transaction/salary_sheet/print/selected', '_blank', [], true);
+                })
         },
         processSalary() {
             let rawdata = this
