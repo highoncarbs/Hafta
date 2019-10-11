@@ -62,10 +62,27 @@
                     Please add them before processing salary sheet for the month.</p>
             </div>
         </div>
-        <div v-if="salarySheet != null && salarySheet.length != 0" class="animated fadeInn ">
+        <div v-if="salarySheetView != null ">
+            <div class="box has-text-centered has-text-weight-bold has-text-grey animated fadeIn">
+                <feather type="info" size="1.3rem"></feather>
+                <p>Salary Sheet has already been processed. <br>
+                    Print or view salary sheet.</p>
+                <br>
+                <button class="button" @click="printAll">
+                    <span class="icon icon-btn">
+                        <feather type="printer" size="1.3rem"></feather>
+                    </span>
+                    Print
+
+                </button>
+            </div>
+        </div>
+
+
+        <div v-if="salarySheet != null && salarySheet.length != 0 && salarySheetView == null" class="animated fadeInn ">
 
             <div class="buttons">
-                <button class="button" @click="printAll">
+                <button class="button" @click="printSavedAll">
                     <span class="icon icon-btn">
                         <feather type="printer" size="1.3rem"></feather>
                     </span>
@@ -83,7 +100,7 @@
             </div>
             <!-- Sheet Entry -->
             <div class="table-container">
-                <table class="table is-fullwidth is-bordered">
+                <table class="table  is-bordered">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -158,7 +175,7 @@
             <!-- End sheet -->
 
             <!-- Saved Sheets -->
-            <div class="table-container">
+            <!-- <div v-if="salarySheetView">
                 <table class="table is-fullwidth is-bordered">
                     <thead>
                         <tr>
@@ -180,22 +197,7 @@
                             <th>Net Payable ( #1 - #2)</th>
                         </tr>
                     </thead>
-                    <!-- <tfoot>
-                        <tr>
-                            <td colspan="16">
-                                <button class="button is-black" @click="processSalary">
-                                    <span class="icon icon-btn">
-                                        <feather type="refresh-cw" size="1.3rem"></feather>
-                                    </span>
-                                    Process
-
-                                </button>
-                                <span class="is-underline button is-text">
-                                    Processing debits advances of employees.
-                                </span>
-                            </td>
-                        </tr>
-                    </tfoot> -->
+                 
                     <tbody>
                         <template v-for="(row , index) in salarySheetView" :bind="index">
                             <tr @click="pushRow(row.id)"
@@ -209,17 +211,7 @@
                                 <td>[[ formatedNumber(row.employee[0].basicpay) ]]</td>
                                 <td>[[ formatedNumber(row.days_payable) ]]</td>
                                 <td>[[ formatedNumber(row.pay_1) ]]</td>
-                                <td>
-                                    <small class="has-text-grey">MONTHLY</small>
-
-                                    <ul v-for="dec in row.deductions.month ">
-                                        <li>[[ formatedNumber(dec) ]]</li>
-                                    </ul>
-
-                                    <input style="margin-top:0.5rem;" type="text" v-model="row.net_adv_deduction"
-                                        value="row.net_adv_deduction  " class="input" placeholder="Deduct">
-
-                                </td>
+                                <td>[[ formatedNumber(row.net_adv_deduction) ]]</td>
                                 <td>[[ row.esi ]]</td>
                                 <td>[[ row.pf ]]</td>
                                 <td>[[ row.tds ]]</td>
@@ -230,7 +222,7 @@
                         </template>
                     </tbody>
                 </table>
-            </div>
+            </div> -->
             <!-- End saved sheets -->
         </div>
     </div>
