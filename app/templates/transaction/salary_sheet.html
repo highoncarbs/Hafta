@@ -68,7 +68,7 @@
                 <p>Salary Sheet has already been processed. <br>
                     Print or view salary sheet.</p>
                 <br>
-                <button class="button" @click="printAll">
+                <button class="button" @click="printSavedAll">
                     <span class="icon icon-btn">
                         <feather type="printer" size="1.3rem"></feather>
                     </span>
@@ -82,7 +82,7 @@
         <div v-if="salarySheet != null && salarySheet.length != 0 && salarySheetView == null" class="animated fadeInn ">
 
             <div class="buttons">
-                <button class="button" @click="printSavedAll">
+                <button class="button" @click="printAll">
                     <span class="icon icon-btn">
                         <feather type="printer" size="1.3rem"></feather>
                     </span>

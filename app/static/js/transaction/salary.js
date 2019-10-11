@@ -95,8 +95,11 @@ new Vue({
             }
         },
         printAll() {
+
             let rawdata = this
+            localStorage.clear()
             let formdata = { 'company': this.company, 'date': this.month, 'data': this.salarySheet }
+            console.log(this.salarySheet)
             localStorage.setItem('jsondata', JSON.stringify(formdata))
             axios.post('/transaction/salary_sheet/print/all', formdata)
                 .then(function (response) {
@@ -106,6 +109,7 @@ new Vue({
         },
         printSavedAll() {
             let rawdata = this
+            localStorage.clear()
             let formdata = { 'company': this.company, 'date': this.month, 'data': this.salarySheetView }
             localStorage.setItem('jsondata', JSON.stringify(formdata))
             axios.post('/transaction/salary_sheet/print/all', formdata)

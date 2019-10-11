@@ -104,7 +104,7 @@
         },
         delimiters: ['[[', ']]'],
         mounted() {
-            if (localStorage.json) {
+            if (localStorage.jsondata) {
                 let payload = JSON.parse(localStorage.getItem('jsondata'))
                 console.log(payload)
                 this.salary_sheet = payload.data
