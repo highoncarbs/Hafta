@@ -86,8 +86,7 @@ def save_attendence():
             table_columns = (
                 'daysatt',
                 'latecomin',
-                'earlygoing',
-                'other_deduction'
+                'earlygoing'
 
             )
             try:
@@ -111,6 +110,13 @@ def save_attendence():
                     if 'tdsval' in item.keys():
                         if item['tdsval'] != "":
                             setattr(new_data, 'tds', item['tdsval'])
+                    
+                    if 'other_deduction' in item.keys():
+                        val = item['other_deduction']
+                        if val == '' or val is None:
+                            continue
+                        setattr(new_data, 'other_deduction',
+                                item['other_deduction'])
 
                     if 'esival' in item.keys():
                         if item['esival'] != "":
@@ -152,8 +158,7 @@ def update_attendence():
             table_columns = (
                 'daysatt',
                 'latecomin',
-                'earlygoing',
-                'other_deduction'
+                'earlygoing'
             )
             try:
 
@@ -163,6 +168,7 @@ def update_attendence():
                         id=int(item['id'])).first()
                     for field in table_columns:
                         val = item[field]
+                        print(field ,val)
                         if val == '' or val is None:
                             continue
                         setattr(saved_att, field, val)
@@ -172,6 +178,13 @@ def update_attendence():
                         if val == '' or val is None:
                             continue
                         setattr(saved_att, 'tds', item['tdsval'])
+
+                    if 'other_deduction' in item.keys():
+                        val = item['other_deduction']
+                        if val == '' or val is None:
+                            continue
+                        setattr(saved_att, 'other_deduction',
+                                item['other_deduction'])
 
                     if 'esival' in item.keys():
                         val = item['esival']
@@ -187,7 +200,7 @@ def update_attendence():
 
                 # db.session.add(new_data)
                 db.session.commit()
-                return jsonify({'success': 'Data Added'})
+                return jsonify({'success': 'Data Updated'})
 
             except Exception as e:
                 print(str(e))
