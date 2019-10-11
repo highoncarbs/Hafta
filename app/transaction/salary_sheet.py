@@ -5,7 +5,6 @@ from flask import Blueprint
 from flask import render_template, redirect, url_for, request, session, jsonify
 from flask_login import login_user, logout_user, current_user
 from app.transaction import bp
-# from app.transaction.model_sal im
 from app.employee.model import Employee, EmployeeAdvanceSchema
 from app.master.model import Company, AttendenceRules
 from app.transaction.model_att import Attendence, AttendenceSchema
@@ -15,6 +14,7 @@ from app import db, ma
 from datetime import datetime
 import requests
 import json
+
 @bp.route('/salary_sheet/', methods=['GET'])
 def show_sheet():
     return render_template('transaction/salary_sheet.html')
@@ -59,12 +59,16 @@ def process_sheet():
                     slip_data = SalarySheetSlips(
                         item['net_adv_deduction'], payload_date)
                     slip_data.employee.append(emp)
-                    new_data = Advance(advanceamt=float(
-                        item['net_adv_deduction']), trans="debit", date=payload_date, deduction_period="debit")
-                    new_data.employee.append(emp)
+                    pending_advance = float(
+                        item['net_deduction_month']) + float(item['net_deduction_year'])
+                    if pending_advance is not float(0):
+                        new_data = Advance(advanceamt=float(
+                            item['net_adv_deduction']), trans="debit", date=payload_date, deduction_period="debit")
+                        new_data.employee.append(emp)
+                        db.session.add(new_data)
+
                     slip_data.sheet.append(salary)
 
-                    db.session.add(new_data)
                     db.session.add(slip_data)
                     db.session.commit()
                     net_paid += float(item['net_payable'])
@@ -100,42 +104,39 @@ def salary_generate_sheet():
             payload = request.json
             company = payload['company']
             month = payload['month']
-            return generate_sheet(company , month)
+            return generate_sheet(company, month)
 
 
 @bp.route('/salary_sheet/get/processed', methods=['POST'])
 def get_processed_sheet():
+
     payload = request.json
-    print(payload)
     if payload is not None:
 
         payload_date = payload['date'].split('-')
         payload_date = datetime(
             int(payload_date[0]), int(payload_date[1]), int(1))
 
-        # net_paid = float(0)
-        # net_advance_deduction = float(0)
-        # net_attendence = {}
-
         check_data = SalarySheet.query.filter(SalarySheet.company.any(Company.id == int(payload['company'])),
                                               SalarySheet.month == payload_date).first()
         if check_data is not None:
             saved_data = SalarySheetSlips.query.filter(
                 SalarySheetSlips.sheet.any(SalarySheet.id == int(check_data.id))).all()
-        
-            generate_data = json.loads(generate_sheet(payload['company'], payload['date']).data)
+
+            generate_data = json.loads(generate_sheet(
+                payload['company'], payload['date']).data)
             for item in generate_data:
                 for slip in saved_data:
                     if (item['employee'][0]['id'] == slip.employee[0].id):
                         item['net_adv_deduction'] = slip.adv_deduction
 
             json_data = json.dumps(generate_data)
-            return jsonify(json_data)
-    else:
-        return jsonify({'data': None})
+            return jsonify({'data': json_data})
+        else:
+            return jsonify({'data': None})
 
 
-def generate_sheet(company , month):
+def generate_sheet(company, month):
     # Payload Date from User
     payload_date = month.split('-')
     payload_date = datetime(
@@ -180,7 +181,7 @@ def generate_sheet(company , month):
         att_item['deductions']['year'] = []
 
         adv_data = Advance.query.filter(
-            Advance.employee.any(Employee.id == int(att_item['employee'][0]['id'])), Advance.date >= year_start, Advance.date <= year_end, Advance.date >= payload_date).all()
+            Advance.employee.any(Employee.id == int(att_item['employee'][0]['id'])), Advance.date >= year_start, Advance.date <= payload_date).all()
         json_adv_data = json.loads(adv_data_schema.dumps(adv_data))
 
         net_advance_month = 0
@@ -192,11 +193,11 @@ def generate_sheet(company , month):
 
         for item in adv_data:
             if (item.trans == 'credit'):
-                print('Advane aamount - ' + str(item.advanceamt))
+                # print('Advane aamount - ' + str(item.advanceamt))
                 outstanding_advance += float(item.advanceamt)
 
             elif (item.trans == 'debit'):
-                print('Debit aamount - ' + str(item.advanceamt))
+                # print('Debit aamount - ' + str(item.advanceamt))
 
                 outstanding_advance -= float(item.advanceamt)
 
@@ -258,7 +259,7 @@ def generate_sheet(company , month):
 
         net_deduction_advance = float(
             net_deduction_month) + float(net_deduction_year)
-        print(outstanding_advance, net_deduction_advance)
+        # print(outstanding_advance, net_deduction_advance)
 
         if outstanding_advance <= net_deduction_advance:
             att_item['net_adv_deduction'] = outstanding_advance
