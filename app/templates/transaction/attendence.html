@@ -87,8 +87,8 @@
 
 
 
-
-                        <div class="field is-grouped animated fadeIn" v-if="data != null">
+                        <!-- Needs work -->
+                        <!-- <div class="field is-grouped animated fadeIn" v-if="data != null">
                             <div class="control is-expanded has-icons-left">
                                 <input type="text" class="input is-fdullwidth" v-model="searchQuery"
                                     placeholder="Search">
@@ -101,7 +101,7 @@
 
 
 
-                        </div>
+                        </div> -->
                         <thead style="cursor: pointer" class="animated fadeIn">
                             <!-- TABLE HEADER -->
                             <tr class="has-text-weight-semibold ">
@@ -237,19 +237,21 @@
                 </div>
             </div>
         </div>
-        <p v-if="isLoading "
-            class=" has-text-centered is-size-4 has-text-grey-light">
+
+        <p v-if="isLoading " class=" has-text-centered is-size-4 has-text-grey-light">
             <br>
             <span class="icon icon-btn">
                 <feather type="rotate-cw" animation="spin"></feather>
             </span> Loading
         </p>
+
+
         <table class="table is-bordered is-fullwidth is-hoverable " v-if="data && data.length != 0 && !showEditTable">
 
 
 
 
-            <div class="field is-grouped animated fadeIn" v-if="data != null">
+            <div class="field is-grouped animated fadeIn" v-if="data && data.length != 0 && !showEditTable">
                 <div class="control is-expanded has-icons-left">
                     <input type="text" class="input is-fdullwidth" v-model="searchQuery" placeholder="Search">
 
@@ -257,10 +259,6 @@
                         <feather type="search"></feather>
                     </span>
                 </div>
-
-
-
-
             </div>
             <thead style="cursor: pointer" class="animated fadeIn">
                 <!-- TABLE HEADER -->
