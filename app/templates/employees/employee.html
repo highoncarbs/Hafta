@@ -189,8 +189,7 @@
                                 Submit
                             </button>
                         </div>
-
-                        <div class="control animated fadeIn" v-if="slip != null">
+                        <div class="control animated fadeIn" v-if="slip != null && !slipNone">
 
                             <label for="" class="label has-text-white">Print</label>
                             <button class="button is-black" @click="printSelected">
@@ -205,7 +204,15 @@
                     </div>
 
                     <br>
-                    <table class="table is-bordered is-fullwidth" v-if="slip != null">
+
+                    <div class="notification has-text-centered animated fadeIn" v-if="slip == null && slipNone">
+                        <span class="icon">
+                            <feather type="info" size="1.3rem"></feather>
+                        </span>
+                        <p>Either Attendence or Salary Sheet hasn't been processed for this month.</p>
+
+                    </div>
+                    <table class="table is-bordered is-fullwidth" v-if="slip != null && !slipNone">
                         <tbody>
                             <tr>
                                 <td colspan="1">
