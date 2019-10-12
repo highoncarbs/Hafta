@@ -21,14 +21,14 @@ class Attendence(TimestampMixin,  db.Model):
     company = db.relationship('Company', secondary='att_comp',
                               backref='att_comp', cascade='all ,delete', lazy='joined')
 
-    date = db.Column(db.DateTime, default=None, nullable=False)
-    daysatt = db.Column(db.Float, default=None, nullable=False)
-    latecomin = db.Column(db.Float, default=None, nullable=False)
-    earlygoing = db.Column(db.Float, default=None, nullable=False)
-    esi = db.Column(db.Float, default=None)
-    pf = db.Column(db.Float, default=None)
-    tds = db.Column(db.Float, default=None)
-    other_deduction = db.Column(db.Float, default=None)
+    date = db.Column(db.DateTime, default=0, nullable=False)
+    daysatt = db.Column(db.Float, default=0, nullable=False)
+    latecomin = db.Column(db.Float, default=0, nullable=False)
+    earlygoing = db.Column(db.Float, default=0, nullable=False)
+    esi = db.Column(db.Float, default=0)
+    pf = db.Column(db.Float, default=0)
+    tds = db.Column(db.Float, default=0)
+    other_deduction = db.Column(db.Float, default=0)
     # __table_args__ = (db.UniqueConstraint(
     #     'employee.id', 'date', name='att_id'), )
 
