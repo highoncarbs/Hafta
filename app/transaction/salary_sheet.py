@@ -15,6 +15,7 @@ from datetime import datetime
 import requests
 import json
 
+
 @bp.route('/salary_sheet/', methods=['GET'])
 def show_sheet():
     return render_template('transaction/salary_sheet.html')
@@ -28,6 +29,52 @@ def print_salatry_sheet_company():
 @bp.route('/salary_sheet/print/selected', methods=['GET', 'POST'])
 def print_salatry_sheet_selected():
     return render_template('reports/print_sheet_selected.html')
+
+
+@bp.route('/salary_sheet/slips', methods=['POST'])
+def salary_slips_emp():
+    payload = request.json
+    if payload is not None:
+        payload_date = payload['date'].split('-')
+        payload_date = datetime(
+            int(payload_date[0]), int(payload_date[1]), int(1))
+        emp_id = payload['emp_id']
+        json_schema = AttendenceSchema()
+
+        emp_att = Attendence.query.filter(Attendence.employee.any(
+            Employee.id == int(emp_id)), Attendence.date == payload_date).first()
+        slips = SalarySheetSlips.query.filter(SalarySheetSlips.employee.any(
+            Employee.id == int(emp_id)), SalarySheetSlips.date == payload_date).first()
+        json_data = json.loads(json_schema.dumps(emp_att))
+        att_rules = AttendenceRules.query.first()
+        late_comin_ratio = float(
+            att_rules.late_comin_day / att_rules.late_comin)
+        early_going_ratio = float(
+            att_rules.early_going_day / att_rules.early_going)
+
+        json_data['net_adv_deduction'] = slips.adv_deduction
+
+        json_data['days_payable_late'] = late_comin_ratio * \
+            json_data['latecomin']
+
+        json_data['days_payable_early'] = early_going_ratio * \
+            json_data['earlygoing']
+        json_data['days_payable'] = round(
+            json_data['daysatt'] - (json_data['days_payable_late'] + json_data['days_payable_early']), 2)
+
+        json_data['pay_1'] = float(
+            json_data['days_payable']) * (float(json_data['employee'][0]['basicpay']) / 30)
+
+        json_data['total_deductions'] = float(json_data['esi']) + float(json_data['pf']) + float(
+            json_data['tds']) + float(json_data['other_deduction']) + float(json_data['net_adv_deduction'])
+
+
+        json_data['net_payable'] = float(
+            json_data['pay_1'] - json_data['total_deductions'])
+
+        return jsonify(json_data)
+    else:
+        return jsonify({'message': 'Empty data recieved.'})
 
 
 @bp.route('/salary_sheet/process', methods=['POST'])
@@ -133,6 +180,139 @@ def get_processed_sheet():
             return jsonify({'data': json_data})
         else:
             return jsonify({'data': None})
+
+
+def generate_slip(emp_id, month):
+    # Payload Date from User
+    payload_date = month.split('-')
+    payload_date = datetime(
+        int(payload_date[0]), int(payload_date[1]), int(1))
+
+    # Attendence data for company and month
+    emp_att = Attendence.query.filter(Attendence.employee.any(
+        Employee.id == int(emp_id)), Attendence.date == payload_date).first()
+    slips = SalarySheetSlips.query.filter(SalarySheetSlips.employee.any(
+        Employee.id == int(emp_id)), SalarySheetSlips.date == payload_date).first()
+
+    # For year range
+    today = payload_date
+    year_start = datetime(today.year, 1, 1)
+    year_end = datetime(today.year+1, 1, 1)
+
+    att_data_schema = AttendenceSchema(many=True)
+    json_att_data = json.loads(att_data_schema.dumps(att_data))
+
+    adv_data_schema = AdvanceSchema(many=True)
+
+    att_rules = AttendenceRules.query.first()
+    late_comin_ratio = float(
+        att_rules.late_comin_day / att_rules.late_comin)
+    early_going_ratio = float(
+        att_rules.early_going_day / att_rules.early_going)
+
+    for att_item in json_att_data:
+        att_item['advance'] = []
+        att_item['deductions'] = {}
+        att_item['deductions']['month'] = []
+
+        att_item['days_payable_late'] = late_comin_ratio * \
+            att_item['latecomin']
+        att_item['days_payable_early'] = early_going_ratio * \
+            att_item['earlygoing']
+
+        att_item['days_payable'] = round(
+            att_item['daysatt'] - (att_item['days_payable_late'] + att_item['days_payable_early']), 2)
+
+        att_item['pay_1'] = float(
+            att_item['days_payable']) * (float(att_item['employee'][0]['basicpay']) / 30)
+
+        att_item['deductions']['year'] = []
+
+        adv_data = Advance.query.filter(
+            Advance.employee.any(Employee.id == int(att_item['employee'][0]['id'])), Advance.date >= year_start, Advance.date <= payload_date).all()
+        json_adv_data = json.loads(adv_data_schema.dumps(adv_data))
+
+        net_advance_month = 0
+        net_advance_year = 0
+        net_deduction_month = 0
+        net_deduction_year = 0
+
+        outstanding_advance = float(0)
+
+        for item in adv_data:
+            if (item.trans == 'credit'):
+                outstanding_advance += float(item.advanceamt)
+
+            elif (item.trans == 'debit'):
+                outstanding_advance -= float(item.advanceamt)
+
+        for adv_item in json_adv_data:
+            if payload_date.month is not 12:
+                if adv_item['deduction_period'] == 'month':
+
+                    net_advance_month += float(adv_item['advanceamt'])
+                    net_deduction_month += float(adv_item['deduction'])
+
+                    # net_advance += float(-100)
+                    att_item['deductions']['month'].append(
+                        adv_item['deduction'])
+
+            else:
+                if adv_item['deduction_period'] == 'year':
+
+                    net_advance_year += float(adv_item['advanceamt'])
+                    net_deduction_year += float(adv_item['deduction'])
+
+                    # net_advance += float(-100)
+
+                    att_item['deductions']['year'].append(
+                        adv_item['deduction'])
+
+        if net_advance_month > net_deduction_month:
+            pass
+        elif net_advance_month <= net_deduction_month:
+            att_item['deductions']['month'] = net_advance_month
+
+        if net_advance_year > net_deduction_year:
+            pass
+        elif net_advance_year <= net_deduction_year:
+            att_item['deductions']['year'] = net_advance_year
+
+        # Setting to 0 if balance is 0
+
+        if float(net_advance_month) is float(0):
+            att_item['deductions']['month'] = 0
+            att_item['deductions']['month'] = 0
+        if float(net_advance_year) is float(0):
+            att_item['deductions']['year'] = 0
+            att_item['deductions']['year'] = 0
+
+        if att_item['other_deduction'] is None:
+            att_item['other_deduction'] = float(0)
+        if att_item['esi'] is None:
+            att_item['esi'] = float(0)
+        if att_item['pf'] is None:
+            att_item['pf'] = float(0)
+        if att_item['tds'] is None:
+            att_item['tds'] = float(0)
+
+        att_item['net_deduction_month'] = float(net_deduction_month)
+        att_item['net_deduction_year'] = float(net_deduction_year)
+
+        net_deduction_advance = float(
+            net_deduction_month) + float(net_deduction_year)
+
+        if outstanding_advance <= net_deduction_advance:
+            att_item['net_adv_deduction'] = outstanding_advance
+        else:
+            att_item['net_adv_deduction'] = net_deduction_advance
+
+        att_item['total_deductions'] = float(net_deduction_month) + float(att_item['esi']) + float(att_item['pf']) + float(
+            att_item['tds'])+float(att_item['other_deduction']) + float(att_item['net_deduction_year'])
+        att_item['net_payable'] = float(
+            att_item['pay_1'] - att_item['total_deductions'])
+
+    return jsonify(json_att_data)
 
 
 def generate_sheet(company, month):
@@ -252,7 +432,7 @@ def generate_sheet(company, month):
 
         net_deduction_advance = float(
             net_deduction_month) + float(net_deduction_year)
-        
+
         if outstanding_advance <= net_deduction_advance:
             att_item['net_adv_deduction'] = outstanding_advance
         else:
