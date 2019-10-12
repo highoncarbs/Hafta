@@ -5,7 +5,7 @@
 
 <body>
     <section class="section" id="print_pay_slip">
-        <p class="is-size-5 has-text-weight-semibold">[[salary_sheet[0].company[0].name ]] - [[ formatedMonth(date) ]]
+        <p class="is-size-5 has-text-weight-semibold">[[salary_sheet[0].company[0].name ]] - [[ formatedMonth() ]]
         </p>
         <br>
         <div v-for="(row , index) in salary_sheet">
@@ -15,7 +15,7 @@
                         <td colspan="1">
                             <small class="has-text-weight-semibold"> PAY for</small>
 
-                            <p>September , 2019 </p>
+                            <p> [[formatedMonth() ]] </p>
                         </td>
 
 
@@ -34,7 +34,7 @@
                         <td colspan="1">
                             <small class="has-text-weight-semibold"> APPOINTMENT</small>
 
-                            <!-- <p>[[ row.employee[0].name]]</p> -->
+                            <p v-html=" row.employee[0].appointment ? row.employee[0].appointment[0].name : 'None'"></p>
 
                         </td>
                         <td colspan="1">
@@ -224,7 +224,7 @@
             }
         },
         methods: {
-            formatedMonth(val) {
+            formatedMonth() {
                 let temp_date = new Date(this.date)
                 let month = temp_date.toLocaleString('default', { month: 'long' })
                 let year = temp_date.getFullYear()
