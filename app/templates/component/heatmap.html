@@ -14,7 +14,7 @@
     template: "#heatmap",
     props: {
       points: { type: Number, default: 12 },
-      datalist: { type: Array, default: [] },
+      datalist: { type: Array, default: () => [] },
       max: {
         type: Number,
         default: 30
