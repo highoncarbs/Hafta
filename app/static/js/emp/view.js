@@ -22,7 +22,8 @@ new Vue({
                 resume: false,
             },
             date: null,
-            slip: null
+            slip: null,
+            slipNone: false
         }
 
     },
@@ -120,7 +121,20 @@ new Vue({
             let formdata = { 'emp_id': this.emp_id, 'date': this.date }
             axios.post('/transaction/salary_sheet/slips', formdata)
                 .then(function (response) {
-                    raw.slip = response.data
+                    let payload = response.data
+                    console.log(payload.data)
+                    if (payload.data == null) {
+                        raw.slipNone = true 
+                        
+                    }
+                    else {
+                        raw.slip = payload
+                        
+
+                    }// }
+                    // else{
+                    //     raw.slip = "empty"
+                    // }
                 })
         },
         printSelected() {
