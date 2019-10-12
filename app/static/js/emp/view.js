@@ -20,7 +20,9 @@ new Vue({
                 extraid: false,
                 educert: false,
                 resume: false,
-            }
+            },
+            date: null,
+            slip: null
         }
 
     },
@@ -90,12 +92,10 @@ new Vue({
     methods: {
         formatedNumber(val) {
             let test = Number(val).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
-            console.log(test)
             return test
         },
         formatedDate(val) {
             var date = new Date(val)
-            console.log(date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
             return (date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear());
 
 
@@ -110,15 +110,30 @@ new Vue({
         viewPDF(filetype) {
             this.viewFile = filetype
             if (this.viewFile != null) {
-                
-                this.fileSrc = String('\\static') + String(this.empDetail[this.viewFile]).split('\static')[1]
-                window.open(this.fileSrc , '_blank')
-            }
-        }
-        // getTotalDays() {
-        //     this.total.days = this.attDetail.day_att.reduce(function (total, num) { return total + num }, 0);
-        //     return this.total.days
-        // }
 
+                this.fileSrc = String('\\static') + String(this.empDetail[this.viewFile]).split('\static')[1]
+                window.open(this.fileSrc, '_blank')
+            }
+        },
+        getSlip() {
+            let raw = this
+            let formdata = { 'emp_id': this.emp_id, 'date': this.date }
+            axios.post('/transaction/salary_sheet/slips', formdata)
+                .then(function (response) {
+                    raw.slip = response.data
+                })
+        },
+        printSelected() {
+            let rawdata = this
+            localStorage.clear()
+            let selectedData = []
+            selectedData.push(this.slip)
+            let formdata = { 'company': this.empDetail.company, 'date': this.date, 'data': selectedData }
+            localStorage.setItem('selecteddata', JSON.stringify(formdata))
+            axios.post('/transaction/salary_sheet/print/selected', formdata)
+                .then(function (response) {
+                    const win = window.open('/transaction/salary_sheet/print/selected', '_blank', [], true);
+                })
+        }
     }
 })
