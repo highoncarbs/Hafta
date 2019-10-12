@@ -46,9 +46,37 @@
                     <p class="has-text-weight-semibold is-size-5">
                         <span class="icon icon-btn">
                             <feather type="coffee" size="1.3rem"></feather>
-                        </span>Late Comers</p>
+                        </span>Late Comers </p>
                     <br>
-                    <br>
+                    <p v-if="latecomers == null" class="has-text-centered has-text-grey-light">
+                        <span class="icon icon-btn">
+                            <feather type="rotate-cw" animation="spin"></feather>
+                        </span> Loading
+                    </p>
+                    <table class="table is-fullwidth is-hoverable">
+                        <tbody>
+                            <tr v-for="row in latecomers">
+                                <td>
+                                    <span class="is-capitalized is-size-5">[[ row[1].name]]</span>
+                                    <br>
+                                    <small class="has-text-weight-bold has-text-grey"
+                                        v-html="parsejson(row[1].company)"></small>
+                                </td>
+                                <td> <span class="has-text-weight-semibold">
+                                        [[ row[1].late_att]]</span> Late Comins
+                                    <br>
+                                    [[ row[1].day_att]]</span> Days Attended
+                                </td>
+                                <td>
+                                    <button @click="viewReport(row[0])" class="button is-link is-outlined">
+                                        <span class="icon icon-btn">
+                                            <feather type="bar-chart-2"></feather>
+                                        </span>
+                                        Reports
+                                    </button></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
@@ -56,10 +84,38 @@
                 <div class="box">
                     <p class="has-text-weight-semibold is-size-5">
                         <span class="icon icon-btn">
-                            <feather type="clock" size="1.3rem"></feather>
-                        </span>Attendence</p>
+                            <feather type="truck" size="1.3rem"></feather>
+                        </span>Early Goers</p>
                     <br>
-                    <br>
+                    <p v-if="latecomers == null" class="has-text-centered has-text-grey-light">
+                        <span class="icon icon-btn">
+                            <feather type="rotate-cw" animation="spin"></feather>
+                        </span> Loading
+                    </p>
+                    <table class="table is-fullwidth is-hoverable">
+                        <tbody>
+                            <tr v-for="row in latecomers">
+                                <td>
+                                    <span class="is-capitalized is-size-5">[[ row[1].name]]</span>
+                                    <br>
+                                    <small class="has-text-weight-bold has-text-grey"
+                                        v-html="parsejson(row[1].company)"></small>
+                                </td>
+                                <td> <span class="has-text-weight-semibold">
+                                        [[ row[1].early_att]]</span> Early Going
+                                    <br>
+                                    [[ row[1].day_att]]</span> Days Attended
+                                </td>
+                                <td>
+                                    <button @click="viewReport(row[0])" class="button is-link is-outlined">
+                                        <span class="icon icon-btn">
+                                            <feather type="bar-chart-2"></feather>
+                                        </span>
+                                        Reports
+                                    </button></td>
+                            </tr>
+                        </tbody>
+                    </table>
 
                 </div>
 

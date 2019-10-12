@@ -4,7 +4,9 @@ new Vue({
     data() {
 
         return {
-            firms: []
+            firms: [],
+            latecomers: null,
+            earlygoers: null
 
         }
     },
@@ -16,6 +18,11 @@ new Vue({
             then(function (response) {
                 raw.firms = JSON.parse(response.data)
             })
+        axios.post('transaction/attendence/summary/latecomin').
+            then(function (response) {
+                raw.latecomers = response.data.late
+                raw.earlygoers = response.data.early
+            })
 
     },
     methods: {
@@ -24,6 +31,13 @@ new Vue({
             console.log(test)
             return test
         },
+        parsejson(val) {
+            company = JSON.parse(val)
+            return company[0].name + ',' + company[0].location[0].name 
+        },
+        viewReport(id) {
+            window.location.href= "/employee/view/detail/"+String(id)
+        }
     }
 
 })
