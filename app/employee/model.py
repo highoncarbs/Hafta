@@ -173,6 +173,7 @@ class EmployeeMainSchema(ma.ModelSchema):
     post = ma.Nested(PostSchema, many=True)
     department = ma.Nested(DepartmentSchema, many=True)
     company = ma.Nested(CompanySchema, many=True)
+    appointment = ma.Nested(AppointmentSchema, many=True)
 
     class meta:
         model = Employee
@@ -189,6 +190,8 @@ class EmployeeAdvanceSchema(ma.ModelSchema):
     post = ma.Nested(PostSchema, many=True)
     department = ma.Nested(DepartmentSchema, many=True)
     company = ma.Nested(CompanySchema, many=True)
+    appointment = ma.Nested(AppointmentSchema, many=True)
+
 
     class meta:
         model = Employee
