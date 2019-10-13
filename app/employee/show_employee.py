@@ -6,6 +6,7 @@ from app.employee.model import Employee, EmployeeSchema, EmployeeBasicSchema , E
 from app.master.model import Company ,CompanySchema
 from app import db
 
+# Removed Deleted employee from attendence
 
 @bp.route('/', methods=['GET'])
 @login_required
@@ -62,6 +63,6 @@ def get_by_company(companyid):
     if request.method == 'GET':
         # compna = Company.query.filter_by(id= int(companyid)).first().name
         employee_schema = EmployeeMainSchema(many=True)
-        data = Employee.query.filter(Employee.company.any(Company.id == int(companyid)) ).all()
+        data = Employee.query.filter(Employee.company.any(Company.id == int(companyid)) , Employee.flag == 0  ).all()
         json_data = employee_schema.dumps(data)
         return jsonify(json_data)
