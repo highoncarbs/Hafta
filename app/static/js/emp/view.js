@@ -122,19 +122,18 @@ new Vue({
             axios.post('/transaction/salary_sheet/slips', formdata)
                 .then(function (response) {
                     let payload = response.data
-                    console.log(payload.data)
-                    if (payload.data == null) {
-                        raw.slipNone = true 
+                    if (payload.success) {
                         
+                        raw.slipNone = false
+                        raw.slip = payload.success
                     }
-                    else {
-                        raw.slip = payload
-                        
+                    
+                    if (payload.message) {
+                        raw.slip = null
+                        raw.slipNone = true
+                    }
 
-                    }// }
-                    // else{
-                    //     raw.slip = "empty"
-                    // }
+
                 })
         },
         printSelected() {

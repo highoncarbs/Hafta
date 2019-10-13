@@ -46,7 +46,6 @@ def salary_slips_emp():
             Employee.id == int(emp_id)), Attendence.date == payload_date).first()
         slips = SalarySheetSlips.query.filter(SalarySheetSlips.employee.any(
             Employee.id == int(emp_id)), SalarySheetSlips.date == payload_date).first()
-
         if slips is not None and emp_att is not None: 
             json_data = json.loads(json_schema.dumps(emp_att))
             att_rules = AttendenceRules.query.first()
@@ -54,7 +53,6 @@ def salary_slips_emp():
                 att_rules.late_comin_day / att_rules.late_comin)
             early_going_ratio = float(
                 att_rules.early_going_day / att_rules.early_going)
-            print(slips.adv_deduction)
 
             json_data['net_adv_deduction'] = slips.adv_deduction
 
@@ -85,10 +83,9 @@ def salary_slips_emp():
 
             json_data['net_payable'] = float(
                 json_data['pay_1'] - json_data['total_deductions'])
-
-            return jsonify(json_data)
+            return jsonify({'success': json_data})
         else:
-            return jsonify({'data': None})
+            return jsonify({'message': 'Data not present'})
     else:
         return jsonify({'message': 'Empty data recieved.'})
 
@@ -241,9 +238,10 @@ def generate_sheet(company, month):
             att_item['days_payable']) * (float(att_item['employee'][0]['basicpay']) / 30)
 
         att_item['deductions']['year'] = []
-
+        
+        # Includes deduction from the month
         adv_data = Advance.query.filter(
-            Advance.employee.any(Employee.id == int(att_item['employee'][0]['id'])), Advance.date >= year_start, Advance.date <= payload_date).all()
+            Advance.employee.any(Employee.id == int(att_item['employee'][0]['id'])), Advance.date >= year_start, Advance.date >= payload_date).all()
         json_adv_data = json.loads(adv_data_schema.dumps(adv_data))
 
         net_advance_month = 0
