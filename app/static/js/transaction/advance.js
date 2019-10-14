@@ -208,6 +208,12 @@ new Vue({
                                     }
                                 })
 
+                                this.advanceForm.advanceamt = 0
+                                this.advanceForm.date = null
+                                this.advanceForm.deduction = null
+                                this.advanceForm.deduction_period = null
+                                this.advanceForm.cheque_no = null
+                                this.advanceForm.letter = null
 
                             }
                             else if (response.data.message) {
