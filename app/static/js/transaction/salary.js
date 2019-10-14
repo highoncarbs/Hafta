@@ -19,7 +19,7 @@ new Vue({
                 this.salarySheet.forEach(function (row) {
                     row.total_deductions = parseFloat(row.net_adv_deduction) + parseFloat(row.esi) + parseFloat(row.pf) + parseFloat(row.tds) + parseFloat(row.other_deduction) + parseFloat(0)
                     const tempPay = row.pay_1
-                    row.net_payable = parseFloat(tempPay) - parseFloat(row.total_deductions)
+                    row.net_payable = Math.round(parseFloat(tempPay) - parseFloat(row.total_deductions))
                 })
             }
 
