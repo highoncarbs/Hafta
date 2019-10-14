@@ -288,6 +288,32 @@
                     </table>
 
                 </div>
+
+                <div class="box">
+                    <p class="is-size-5 has-text-weight-semibold">Quick Reports</p>
+                    <br>
+                    <table class="table is-fullwidth is-bordered" v-if="quickReports != null">
+                        <thead>
+                            <th>Date</th>
+                            <th>Feedback</th>
+                            <th>Report</th>
+                        </thead>
+
+
+                        <tbody>
+                            <tr v-for="(row , index) in quickReports" :key="index">
+                                <td>
+                                    [[ formatedDate(row.date) ]]
+                                </td>
+                                <td class="has-text-weight-semibold"
+                                    :class="{'is-underline has-text-danger': row.feedback == 'negative' , '': row.feedback == 'positive' }">
+                                    [[ row.feedback ]]</td>
+                                <td>[[ row.report ]]</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="column">
                 <div class="box">

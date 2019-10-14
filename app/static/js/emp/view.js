@@ -23,7 +23,8 @@ new Vue({
             },
             date: null,
             slip: null,
-            slipNone: false
+            slipNone: false,
+            quickReports: null
         }
 
     },
@@ -76,6 +77,18 @@ new Vue({
                     raw.attDetail = JSON.parse(response.data)
 
                 })
+
+            if (this.emp_id != null) {
+                let today = new Date 
+                let fromdate = today.getFullYear()+'-01-01'
+                let todate = today.getFullYear() + '-12-31'
+                let rawdata = this
+                let reportdata = { 'emp_id': this.emp_id, 'fromdate': fromdate, 'todate': todate }
+                axios.post('/transaction/quick/get', reportdata)
+                    .then(function (response) {
+                        rawdata.quickReports = JSON.parse(response.data)
+                    })
+            }
         }
 
 
@@ -123,11 +136,11 @@ new Vue({
                 .then(function (response) {
                     let payload = response.data
                     if (payload.success) {
-                        
+
                         raw.slipNone = false
                         raw.slip = payload.success
                     }
-                    
+
                     if (payload.message) {
                         raw.slip = null
                         raw.slipNone = true
