@@ -287,6 +287,9 @@ new Vue({
                 return false;
             }
         },
+        editEmployee() {
+            window.location.href= "/employee/edit/view/"+String(this.emp_id)  
+        },
         deleteAdvance(id, index) {
             let rawdata = this
             axios.post('/transaction/advance/delete/' + String(id))
