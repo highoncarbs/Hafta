@@ -10,19 +10,9 @@ const DepartmentForm =
 
         <div class="box">
 
-            <div v-if="edit.mssg" class="notification animated fadeIn">
-            <p v-if="edit.mssg['success']">
-                             [[ edit.mssg['success'] ]]
-                </p>
-                <p class="is-inderline has-text-semibold" v-if="edit.mssg['message']">[[ edit.mssg['message'] ]]
-                </p>
-            </div>
+            
             <form id="data_entry" novalidate="true" @submit="saveEditData">
-                <div v-if="edit.errors.length" class="notification animated fadeIn">ERROR</p>
-                    <ul>
-                        <li v-for="error in edit.errors" class="is-underline">[[ error.message ]]</li>
-                    </ul>
-                </div>
+               
                 <p class="is-size-5">Edit Department</p>
                 <br>
                 <div class="field">
@@ -55,18 +45,6 @@ const DepartmentForm =
 <!-- Entry Form -->
 
 <form id="data_entry" novalidate="true" @submit="submitData ;" v-show="view">
-<div v-if="form.mssg" class="notification animated fadeIn">
-    <p v-if="form.mssg.success">[[ form.mssg['success'] ]]</p>
-    <p v-if="form.mssg.message" class="is-underline">[[ form.mssg['message'] ]]</p>
-
-</div>
-    
-<div v-if="form.errors.length" class="notification">
-        <p class="has-text-weight-semibold"> ERROR</p>
-        <ul>
-            <li v-for="error in form.errors " class="is-underline">[[ error ]]</li>
-        </ul>
-    </div>
 
     <div class="field">
         <div class="control">
@@ -96,7 +74,7 @@ const DepartmentForm =
                     class="icon icon-btn icon-btn-in"><i data-feather="eye"></i></span> View</button>
         </div>
         <br>
-    <div class="table-container" id="data_view">
+    <div id="data_view">
 
         <table class="table is-bordered is-fullwidth">
             <thead>
@@ -151,10 +129,10 @@ const DepartmentForm =
     `,
     data() {
         return {
-            view: true ,
+            view: true,
             form: {
                 errors: [],
-                id : null,
+                id: null,
                 name: null,
                 mssg: null
             },
@@ -170,17 +148,17 @@ const DepartmentForm =
             sortColumn: '',
         }
     },
-    watch:{
-        data : function(){
+    watch: {
+        data: function () {
             feather.replace()
         }
     },
-    delimiters: ["[[", "]]"], 
-   
-    methods: {      
-        focusInput(){
+    delimiters: ["[[", "]]"],
+
+    methods: {
+        focusInput() {
             this.$refs.name.focus();
-        }  ,
+        },
         checkData(e) {
             this.form.errors = []
 
@@ -192,14 +170,25 @@ const DepartmentForm =
 
             if (!this.form.name) {
                 this.form.errors.push('Department required');
+                this.$buefy.snackbar.open({
+                    duration: 4000,
+                    message: 'Department required',
+                    type: 'is-light',
+                    position: 'is-top-right',
+                    actionText: 'Close',
+                    queue: true,
+                    onAction: () => {
+                        this.isActive = false;
+                    }
+                })
             }
-           
+
 
         },
-        
+
         submitData(e) {
             this.checkData(e);
-            var formdata = this ;
+            var formdata = this;
 
             if (this.form.errors.length == 0) {
                 axios
@@ -207,32 +196,54 @@ const DepartmentForm =
                     .then(function (response) {
                         formdata.form.mssg = response['data']
                         formdata.form.name = null;
-                        setTimeout( () => { formdata.form.mssg = null } , 3000);
+
+                        formdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.success,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
                     })
                     .catch(function (error) {
                         console.log(error)
+                        formdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: 'Something went wrong',
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
                     })
             }
             e.preventDefault();
             this.focusInput()
         },
-        getData(e){
-            const formdata = this ;
+        getData(e) {
+            const formdata = this;
 
             axios
-                    .get('/master/get/department')
-                    .then(function (response) {
-                        console.log(response);
-                        formdata.data = response['data']
+                .get('/master/get/department')
+                .then(function (response) {
+                    console.log(response);
+                    formdata.data = response['data']
 
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                    });
-        
+                })
+                .catch(function (error) {
+                    console.log(error)
+                });
+
             e.preventDefault();
         },
-        editData(data){
+        editData(data) {
             this.edit.errors = []
 
             this.modal = true
@@ -240,28 +251,52 @@ const DepartmentForm =
             this.edit.id = data.id
 
         },
-        saveEditData(e){
+        saveEditData(e) {
             const formdata = this;
-            var data  = this.data;
+            var data = this.data;
             if (this.edit.name) {
-                
-                axios
-                .post('/master/edit/department' , this.edit)
-                .then(function (response) {
-                    console.log(response.data.success)
-                    if(response.data.success){
-                        data = data.filter( function(x){ return x.id === formdata.edit.id } )
-                        data[0].name = formdata.edit.name
-                        formdata.modal =     !formdata.modal;
-                    }
-                    else{
-                        formdata.edit.errors.push(response.data)
-                    }
 
-                })
-                .catch(function (error) {
-                    console.log(error)
-                })
+                axios
+                    .post('/master/edit/department', this.edit)
+                    .then(function (response) {
+                        console.log(response.data.success)
+                        if (response.data.success) {
+                            data = data.filter(function (x) { return x.id === formdata.edit.id })
+                            data[0].name = formdata.edit.name
+                            formdata.modal = !formdata.modal;
+
+                            formdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.success,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
+                        }
+                        else {
+                            formdata.edit.errors.push(response.data)
+
+                            formdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.message,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
+                        }
+
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
             }
 
 
@@ -270,29 +305,52 @@ const DepartmentForm =
 
             if (this.edit.name == "") {
                 this.edit.errors.push('Department required');
-                
+
             }
-          
-    e.preventDefault();
-            
+
+            e.preventDefault();
+
         },
-        deleteData(data , index){
+        deleteData(data, index) {
             // const removeId = data.id; 
             console.log(data);
-            var datalist = this.data; 
+            var datalist = this.data;
+            let formdata = this
 
             axios
-                    .post('/master/delete/department', data)
-                    .then(function (response) {
-                        if(response.data.success){
-                            datalist.splice(index, 1)
+                .post('/master/delete/department', data)
+                .then(function (response) {
+                    if (response.data.success) {
+                        datalist.splice(index, 1)
+                        formdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.success,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error)
+                    formdata.$buefy.snackbar.open({
+                        duration: 4000,
+                        message: 'Somethign went wrong - ' + String(error),
+                        type: 'is-light',
+                        position: 'is-top-right',
+                        actionText: 'Close',
+                        queue: true,
+                        onAction: () => {
+                            this.isActive = false;
                         }
                     })
-                    .catch(function (error) {
-                        console.log(error)
-                    })
+                })
         },
-        selectRow(){
+        selectRow() {
 
         },
     },

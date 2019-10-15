@@ -10,9 +10,6 @@ const AppointmentForm =
 
         <div class="box">
 
-            <div v-if="edit.mssg" class="notification animated fadeIn">
-          
-            </div>
             <form id="data_entry" novalidate="true" @submit="saveEditData">
                 
                 <p class="is-size-5">Edit Appointment</p>

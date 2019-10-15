@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask import render_template, redirect, url_for, request, session, jsonify
 from flask_login import login_user, logout_user, current_user
 from app.master import bp
-from app.master.model import Department , DepartmentSchema
+from app.master.model import Department, DepartmentSchema
 from app import db, ma
 
 
@@ -79,14 +79,17 @@ def delete_department():
         payload = request.json
         check_data = Department.query.filter_by(id=payload['id'])
         if check_data.first():
-            try:
-                check_data.delete()
-                db.session.commit()
-                return jsonify({'success': 'Data deleted'})
-            except Exception as e:
-                db.session.rollback()
-                db.session.close()
-                return jsonify({'message': 'Something unexpected happened. Check logs', 'log': str(e)})
+            if(len(check_data.first().emp_department) != 0):
+                return jsonify({'message': 'Cannot delete , data being used. '})
+            else:
+                try:
+                    check_data.delete()
+                    db.session.commit()
+                    return jsonify({'success': 'Data deleted'})
+                except Exception as e:
+                    db.session.rollback()
+                    db.session.close()
+                    return jsonify({'message': 'Something unexpected happened. Check logs', 'log': str(e)})
         else:
             return jsonify({'message': 'Data does not exist.'})
 

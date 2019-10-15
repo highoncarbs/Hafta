@@ -1,0 +1,135 @@
+<template id="benefit_template">
+    <div>
+        <!-- Edit Modal -->
+        <div class="modal animated is-active fadeIn" v-show="modal">
+            <div class="modal-background" @click="modal = !modal"></div>
+            <div class="modal-content">
+
+                <div class="box">
+
+
+                    <form id="data_entry" novalidate="true" @submit="saveEditData">
+
+                        <p class="is-size-5">Edit Benefits</p>
+                        <br>
+                        <div class="field">
+                            <label class="label">Benefits</label>
+                            <input class="input" ref="name" v-model="edit.name" type="text">
+                        </div>
+                        <br>
+                        <div class="field is-grouped">
+                            <p class="control">
+                                <a class="button is-black" @click="saveEditData"><span
+                                        class="icon icon-btn icon-btn-in"><i data-feather="plus"></i></span>Save
+                                </a>
+                            </p>
+
+                            <p class="control">
+                                <a class="button" @click="modal = !modal"><span class="icon icon-btn icon-btn-in"><i
+                                            data-feather="x"></i></span>Cancel
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+            <button class="modal-close is-large" aria-label="close" @click="modal = !modal"></button>
+
+        </div>
+
+
+
+
+        <!-- Entry Form -->
+
+        <form id="data_entry" novalidate="true" @submit="submitData ;" v-show="view">
+            <div v-if="form.mssg" class="notification animated fadeIn">
+                <p v-if="form.mssg.success">[[ form.mssg['success'] ]]</p>
+                <p v-if="form.mssg.message" class="is-underline">[[ form.mssg['message'] ]]</p>
+
+            </div>
+
+
+            <div class="field">
+                <div class="control">
+                    <label for="" class="label">Benefits</label>
+                    <input type="text" class="input" ref="name" v-model="form.name" placeholder="Enter Benefits">
+                </div>
+
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button type="submit" @click="submitData" class="button is-black"><span
+                            class="icon icon-btn icon-btn-in"><i data-feather="plus"></i></span> Add</button>
+                </div>
+                <div class="control">
+                    <button class="button" v-on:click="view = !view" @click="getData"><span
+                            class="icon icon-btn icon-btn-in"><i data-feather="eye"></i></span> View</button>
+                </div>
+            </div>
+        </form>
+
+
+        <!-- Table  -->
+
+        <div v-show="!view">
+            <div class="control">
+                <button class="button" v-on:click="view = !view ; form.errors = [] ; "><span
+                        class="icon icon-btn icon-btn-in"><i data-feather="eye"></i></span> View</button>
+            </div>
+            <br>
+            <div class="" id="data_view">
+
+                <table class="table is-bordered is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th >Name</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        <tr v-for="( row ,index ) in data" v-bind:index="index" @click="selectRow(row)"
+                            v:bind:class="selected : isSelected">
+                            <td>[[ row.name]]</td>
+                            <td>
+                                <div class="buttons">
+                                    <div class="button" @click="editData(row)">Edit</div>
+                                    <div class="dropdown">
+                                        <div class="dropdown is-hoverable">
+                                            <div class="dropdown-trigger">
+                                                <button class="button is-danger" aria-haspopup="true"
+                                                    aria-controls="dropdown-menu4">
+                                                    <span>Delete</span>
+
+                                                </button>
+                                            </div>
+                                            <div class="dropdown-menu" style="z-index:10;" id="dropdown-menu4"
+                                                role="menu">
+                                                <div class="dropdown-content has-background-light">
+                                                    <p class="dropdown-item">
+                                                        Are you sure ?
+                                                    </p>
+                                                    <hr class="dropdown-divider">
+
+                                                    <a class="dropdown-item">
+                                                        <div class="buttons ">
+                                                            <div class="button is-danger is-small"
+                                                                @click="deleteData(row , index)">Delete</div>
+                                                            <div class="button is-small">Cancel</div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</template>

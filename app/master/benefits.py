@@ -79,14 +79,17 @@ def delete_benefits():
         payload = request.json
         check_data = Benefit.query.filter_by(id=payload['id'])
         if check_data.first():
-            try:
-                check_data.delete()
-                db.session.commit()
-                return jsonify({'success': 'Data deleted'})
-            except Exception as e:
-                db.session.rollback()
-                db.session.close()
-                return jsonify({'message': 'Something unexpected happened. Check logs', 'log': str(e)})
+            if(len(check_data.first().emp_post) != 0):
+                return jsonify({'message': 'Cannot delete , data being used. '})
+            else:
+                try:
+                    check_data.delete()
+                    db.session.commit()
+                    return jsonify({'success': 'Data deleted'})
+                except Exception as e:
+                    db.session.rollback()
+                    db.session.close()
+                    return jsonify({'message': 'Something unexpected happened. Check logs', 'log': str(e)})
         else:
             return jsonify({'message': 'Data does not exist.'})
 
