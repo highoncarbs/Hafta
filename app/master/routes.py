@@ -9,6 +9,8 @@ from app import db, ma
 @bp.route('/', methods=['GET'])
 def view_master():
     return render_template('master/master.html')
+
+    
 #  Company Master Routes
 @bp.route('/get/company', methods=['GET'])
 def view_company():

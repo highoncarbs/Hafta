@@ -144,7 +144,7 @@ new Vue({
                     if (item.trans != 'debit') {
                         outstandingamt += Number(item.advanceamt)
                     }
-                    else if(item.trans == 'debit'){
+                    else if (item.trans == 'debit') {
                         outstandingamt -= Number(item.advanceamt)
                     }
                 })
@@ -165,9 +165,9 @@ new Vue({
                         console.log(response.data);
                         rawdata.dataName = []
                         rawdata.dataList = JSON.parse(response.data)
-                        rawdata.showEmpSelect =true
-                        rawdata.employee= ""
-                        rawdata.showAdvList= false
+                        rawdata.showEmpSelect = true
+                        rawdata.employee = ""
+                        rawdata.showAdvList = false
                         rawdata.dataList.forEach((item) => rawdata.dataName.push(item))
 
                     })
@@ -288,7 +288,7 @@ new Vue({
             }
         },
         editEmployee() {
-            window.location.href= "/employee/edit/view/"+String(this.emp_id)  
+            window.location.href = "/employee/edit/view/" + String(this.emp_id)
         },
         deleteAdvance(id, index) {
             let rawdata = this
