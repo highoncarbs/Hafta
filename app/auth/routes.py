@@ -36,7 +36,7 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.home'))
     form = RegistrationForm()
-    if form.validate_on_submit() and str(form.key.data) == "jaitexart":
+    if form.validate_on_submit() and str(form.key.data) == "admin":
         user = User(username=form.username.data)
         user.set_password(form.password.data)
         role = Role.query.filter_by(name="ADMIN").first()
