@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask import render_template, redirect, url_for, request, session, jsonify
 from flask_login import login_user, logout_user, current_user
 from app.master import bp
-from app.master.model import ModeOfPay , PaySchema
+from app.master.model import ModeOfPay, PaySchema
 from app import db, ma
 
 
@@ -79,6 +79,7 @@ def delete_pay():
         payload = request.json
         check_data = ModeOfPay.query.filter_by(id=payload['id'])
         if check_data.first():
+
             try:
                 check_data.delete()
                 db.session.commit()

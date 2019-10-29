@@ -18,11 +18,7 @@ const PayForm =
                 </p>
             </div>
             <form id="data_entry" novalidate="true" @submit="saveEditData">
-                <div v-if="edit.errors.length" class="notification animated fadeIn">ERROR</p>
-                    <ul>
-                        <li v-for="error in edit.errors" class="is-underline">[[ error.message ]]</li>
-                    </ul>
-                </div>
+              
                 <p class="is-size-5">Edit Pay</p>
                 <br>
                 <div class="field">
@@ -61,12 +57,7 @@ const PayForm =
 
 </div>
     
-<div v-if="form.errors.length" class="notification">
-        <p class="has-text-weight-semibold"> ERROR</p>
-        <ul>
-            <li v-for="error in form.errors " class="is-underline">[[ error ]]</li>
-        </ul>
-    </div>
+
 
     <div class="field">
         <div class="control">
@@ -149,10 +140,10 @@ const PayForm =
     `,
     data() {
         return {
-            view: true ,
+            view: true,
             form: {
                 errors: [],
-                id : null,
+                id: null,
                 name: null,
                 mssg: null
             },
@@ -168,20 +159,20 @@ const PayForm =
             sortColumn: '',
         }
     },
-    watch:{
-        data : function(){
+    watch: {
+        data: function () {
             feather.replace()
         }
     },
-    delimiters: ["[[", "]]"], 
+    delimiters: ["[[", "]]"],
     mounted() {
         feather.replace();
         this.focusInput();
     },
-    methods: {      
-        focusInput(){
+    methods: {
+        focusInput() {
             this.$refs.name.focus();
-        }  ,
+        },
         checkData(e) {
             this.form.errors = []
 
@@ -191,15 +182,26 @@ const PayForm =
 
 
             if (!this.form.name) {
-                this.form.errors.push('Pay required');
+                this.form.errors.push('Mode of Pay required');
+                this.$buefy.snackbar.open({
+                    duration: 4000,
+                    message: 'Mode of Pay required',
+                    type: 'is-light',
+                    position: 'is-top-right',
+                    actionText: 'Close',
+                    queue: true,
+                    onAction: () => {
+                        this.isActive = false;
+                    }
+                })
             }
-           
+
 
         },
-        
+
         submitData(e) {
             this.checkData(e);
-            var formdata = this ;
+            var formdata = this;
 
             if (this.form.errors.length == 0) {
                 axios
@@ -207,7 +209,34 @@ const PayForm =
                     .then(function (response) {
                         formdata.form.mssg = response['data']
                         formdata.form.name = null;
-                        setTimeout( () => { formdata.form.mssg = null } , 3000);
+
+                        if (response.data.success) {
+                            formdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.success,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
+                        }
+                        else {
+                            formdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.message,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
+
+                        }
                     })
                     .catch(function (error) {
                         console.log(error)
@@ -216,23 +245,23 @@ const PayForm =
             e.preventDefault();
             this.focusInput()
         },
-        getData(e){
-            const formdata = this ;
+        getData(e) {
+            const formdata = this;
 
             axios
-                    .get('/master/get/pay')
-                    .then(function (response) {
-                        console.log(response);
-                        formdata.data = response['data']
+                .get('/master/get/pay')
+                .then(function (response) {
+                    console.log(response);
+                    formdata.data = response['data']
 
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                    });
-        
+                })
+                .catch(function (error) {
+                    console.log(error)
+                });
+
             e.preventDefault();
         },
-        editData(data){
+        editData(data) {
             this.edit.errors = []
 
             this.modal = true
@@ -240,27 +269,51 @@ const PayForm =
             this.edit.id = data.id
 
         },
-        saveEditData(e){
+        saveEditData(e) {
             const formdata = this;
-            var data  = this.data;
+            var data = this.data;
             if (this.edit.name) {
-                
-                axios
-                .post('/master/edit/pay' , this.edit)
-                .then(function (response) {
-                    if(response.data.success){
-                        data = data.filter( function(x){ return x.id === formdata.edit.id } )
-                        data[0].name = formdata.edit.name
-                        formdata.modal =     !formdata.modal;
-                    }
-                    else{
-                        formdata.edit.errors.push(response.data)
-                    }
 
-                })
-                .catch(function (error) {
-                    console.log(error)
-                })
+                axios
+                    .post('/master/edit/pay', this.edit)
+                    .then(function (response) {
+                        if (response.data.success) {
+                            data = data.filter(function (x) { return x.id === formdata.edit.id })
+                            data[0].name = formdata.edit.name
+                            formdata.modal = !formdata.modal;
+
+                            formdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.success,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
+                        }
+                        else {
+                            formdata.edit.errors.push(response.data)
+
+                            formdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.message,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
+                        }
+
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
             }
 
 
@@ -269,30 +322,49 @@ const PayForm =
 
             if (this.edit.name == "") {
                 this.edit.errors.push('Pay required');
-                
+
             }
-          
-    e.preventDefault();
-            
+
+            e.preventDefault();
+
         },
-        deleteData(data , index){
+        deleteData(data, index) {
             // const removeId = data.id; 
             console.log(data);
-            var datalist = this.data; 
+            var datalist = this.data;
 
             axios
-                    .post('/master/delete/pay', data)
-                    .then(function (response) {
-                        if(response.data.success){
-                            datalist.splice(index, 1)
+                .post('/master/delete/pay', data)
+                .then(function (response) {
+                    if (response.data.success) {
+                        datalist.splice(index, 1)
+                        formdata.$buefy.snackbar.open({
+                            duration: 4000,
+                            message: response.data.success,
+                            type: 'is-light',
+                            position: 'is-top-right',
+                            actionText: 'Close',
+                            queue: true,
+                            onAction: () => {
+                                this.isActive = false;
+                            }
+                        })
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error)
+                    formdata.$buefy.snackbar.open({
+                        duration: 4000,
+                        message: error,
+                        type: 'is-light',
+                        position: 'is-top-right',
+                        actionText: 'Close',
+                        queue: true,
+                        onAction: () => {
+                            this.isActive = false;
                         }
                     })
-                    .catch(function (error) {
-                        console.log(error)
-                    })
-        },
-        selectRow(){
-
+                })
         },
     }
 }

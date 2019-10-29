@@ -192,8 +192,10 @@
                                 v-on:dblclick="employeeDetail(row.id)" :key="index">
                                 <td>[[ row.employee[0].id ]]</td>
                                 <td>[[ row.employee[0].name]] </td>
-                                <td> [[ row.employee[0].department[0].name]] </td>
-                                <td> [[ row.employee[0].post[0].name]] </td>
+                                <td v-if="row.employee[0].department.length != 0"> [[ row.employee[0].department[0].name]] </td>
+                                <td class="has-text-grey-light" v-if="row.employee[0].department.length == 0"> None </td>
+                                <td v-if="row.employee[0].post.length != 0"> [[ row.employee[0].post[0].name]] </td>
+                                <td class="has-text-grey-light" v-if="row.employee[0].post.length == 0"> None </td>
                                 <td>
                                     <input type="number" class="input" v-model.number="row.daysatt"
                                         placeholder="Days Attended"
@@ -342,8 +344,10 @@
                     v-on:dblclick="employeeDetail(row.id)" :key="index">
                     <td>[[ row.id ]]</td>
                     <td>[[ row.name]] </td>
-                    <td> [[ row.department[0].name]] </td>
-                    <td> [[ row.post[0].name]] </td>
+                    <td v-if="row.department.length != 0"> [[ row.department[0].name]] </td>
+                    <td class="has-text-grey-light" v-if="row.department.length == 0"> None </td>
+                    <td v-if="row.post.length != 0"> [[ row.post[0].name]] </td>
+                    <td class="has-text-grey-light" v-if="row.post.length == 0"> None </td>
                     <td>
                         <input type="number" class="input" v-model.number="row.daysatt" placeholder="Days Attended"
                             :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].daysatt == true }">
