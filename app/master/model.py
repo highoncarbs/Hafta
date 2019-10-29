@@ -5,12 +5,16 @@ from app import ma
 class Company(db.Model):
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(250), unique=True)
+    name = db.Column(db.String(250))
     location = db.relationship('Location', secondary='company_location',
                                backref='company_location', cascade='all ,delete', lazy='joined')
+    location_id = db.Column(db.Integer, nullable=False)
+    __table_args__ = (db.UniqueConstraint(
+        'name', 'location_id', name='CompanyLocationConstraint'), )
 
-    def __init__(self, name):
+    def __init__(self, name , location_id):
         self.name = name
+        self.location_id = location_id
 
 
 class EmployeeCategory(db.Model):
@@ -41,6 +45,7 @@ db.Table('company_location',
              'company.id', ondelete='SET NULL')),
          db.Column('location_id', db.Integer, db.ForeignKey(
              'location.id', ondelete='SET NULL'))
+
          )
 
 

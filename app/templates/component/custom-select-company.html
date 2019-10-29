@@ -1,0 +1,77 @@
+<template id="custom-select-company">
+
+    <span>
+        <div class="select is-fullwidth" v-bind:class="[selected == '' ? 'is-danger' : '']">
+            <select @change="change">
+                <option value="-1" selected> Select [[ which ]]</option>
+                <option v-for="opt in options" :selected="preselect[0].id == opt.id ? 'selected' : ''"
+                    v-bind:value="opt.id">
+                    [[opt.name]] - [[ opt.location[0].name ]]</option>
+            </select>
+        </div>
+        <p v-if="error" class="is-underline has-text-danger is-small">[[error]]</p>
+    </span>
+
+
+
+
+</template>
+
+<script>
+
+    Vue.component('custom-select-company', {
+        props: {
+            'which': "", 'preselect': {
+                default: ()=> [{
+                    'id': -1
+                }]
+            }
+        },
+        template: '#custom-select-company',
+
+
+        data() {
+            return {
+                selected: -1,
+                error: null,
+                options: null,
+            }
+        },
+        delimiters: ["[[", "]]"],
+        mounted() {
+
+
+            const data = this;
+            axios.get('/master/get/' + data.which)
+                .then(function (response) {
+                    if (response.data) {
+                        data.options = response.data;
+                        if (data.preselect) {
+                            data.selected = data.preselect
+                        }
+                    }
+
+                    else {
+                        console.error(response);
+                        error = 'Something unexpected happened.'
+                    }
+                })
+        },
+        methods: {
+            change(e) {
+                this.selected = e.target;
+                if (this.selected.value == -1) {
+                    this.error = 'Please select ' + this.which;
+                    this.$emit("input", null);
+                    this.selected = ''
+
+                }
+                else {
+                    this.error = null
+                    this.$emit("input", this.selected.value);
+                }
+            }
+        }
+    })
+
+</script>

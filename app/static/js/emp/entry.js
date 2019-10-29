@@ -74,6 +74,49 @@ new Vue({
 
     },
     methods: {
+        clearData() {
+            
+                this.formdata.name= null
+                this.formdata.dob= null
+                this.formdata.spousename= null
+                this.formdata.fathername= null
+                this.formdata.education= null
+                this.formdata.contact= null
+                this.formdata.curr_address= null
+                this.formdata.curr_city= -1
+                this.formdata.perm_address= null
+                this.formdata.perm_city= -1
+                this.formdata.pan= null
+
+                this.formdata.aadhar= null
+                this.formdata.reference= null
+                this.formdata.dateofapp= null
+                this.formdata.appointment= null
+                this.formdata.post= null
+                this.formdata.department= null
+                this.formdata.company= null
+                this.formdata.benefits= []
+                this.formdata.dateeff= null
+                this.formdata.salary_structure= null
+                this.formdata.basicpay= null
+                this.formdata.pf= null
+                this.formdata.esi= null
+                this.formdata.advance= 'allowed'
+
+                this.formdata.advancevalue= null
+                this.formdata.advancenum= null
+                this.formdata.paidleave= null
+                this.formdata.incrementpr= null
+                this.formdata.errors= {}
+                this.formfiles.panfile= null
+                this.formfiles.aadharfile= null
+                this.formfiles.extraidfile= null
+                this.formfiles.educertfile= null
+                this.formfiles.resumefile= null
+
+
+         
+        },
         submitData(e) {
             if (this.checkData(e)) {
                 let formData = new FormData()
@@ -110,6 +153,7 @@ new Vue({
                 })
                     .then(function (response) {
                         if (response.data.success) {
+                            rawdata.clearData()
                             rawdata.$buefy.snackbar.open({
                                 duration: 4000,
                                 message: response.data.success,
