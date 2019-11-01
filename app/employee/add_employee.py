@@ -226,6 +226,36 @@ def update_employee():
                 print(str(e))
                 
                 pass
+            # Photo
+            try:
+                file = request.files['photofile']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    foldertemp = os.path.join(
+                        UPLOAD_FOLDER, tempfolder, 'photo')
+
+                    if not os.path.exists(foldertemp):
+                        os.makedirs(foldertemp)
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'photofile', filetemp)
+                    else:
+                        shutil.rmtree(foldertemp)
+                        os.makedirs(foldertemp)
+
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'photofile', filetemp)
+                else:
+                    return jsonify({'message': 'Please check filetype of Photo.'})
+
+            except KeyError:
+                pass
+
+            except Exception as e:
+                print(str(e))
+                
+                pass
 
             # Extra ID
             try:
@@ -523,6 +553,35 @@ def add_emp():
                         setattr(new_data, 'aadharfile', filetemp)
                 else:
                     return jsonify({'message': 'Please check filetype of Aadhar.'})
+
+            except KeyError:
+                pass
+
+            except Exception as e:
+                print(str(e))
+                pass
+            # Photo
+            try:
+                file = request.files['photofile']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    foldertemp = os.path.join(
+                        UPLOAD_FOLDER, tempfolder, 'photo')
+
+                    if not os.path.exists(foldertemp):
+                        os.makedirs(foldertemp)
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'photofile', filetemp)
+                    else:
+                        shutil.rmtree(foldertemp)
+                        os.makedirs(foldertemp)
+
+                        filetemp = os.path.join(foldertemp, filename)
+                        file.save(filetemp)
+                        setattr(new_data, 'photofile', filetemp)
+                else:
+                    return jsonify({'message': 'Please check filetype of Photo.'})
 
             except KeyError:
                 pass

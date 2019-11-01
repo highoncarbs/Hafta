@@ -45,6 +45,7 @@ new Vue({
             formfiles: {
                 panfile: null,
                 aadharfile: null,
+                photofile: null,
                 extraidfile: null,
                 educertfile: null,
                 resumefile: null,
@@ -110,6 +111,7 @@ new Vue({
                 this.formdata.errors= {}
                 this.formfiles.panfile= null
                 this.formfiles.aadharfile= null
+                this.formfiles.photofile= null
                 this.formfiles.extraidfile= null
                 this.formfiles.educertfile= null
                 this.formfiles.resumefile= null
@@ -129,6 +131,9 @@ new Vue({
 
                 if (this.formfiles.panfile) {
                     formData.append('panfile', this.formfiles.panfile, this.formfiles.panfile.name)
+                }
+                if (this.formfiles.photofile) {
+                    formData.append('photofile', this.formfiles.photofile, this.formfiles.photofile.name)
                 }
                 if (this.formfiles.aadharfile) {
 
@@ -270,6 +275,11 @@ new Vue({
             if (field == 'aadhar') {
                 this.formfiles.aadharfile = this.$refs.aadharfile.files[0];
                 this.fileUploadType(this.formfiles.aadharfile.name, field)
+
+            }
+            if (field == 'photo') {
+                this.formfiles.photofile = this.$refs.photofile.files[0];
+                this.fileUploadType(this.formfiles.photofile.name, field)
 
             }
             if (field == 'extraidfile') {

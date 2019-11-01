@@ -21,8 +21,36 @@
                     <form v-on:submit="submitData" method="POST" novalidate=True>
 
                         <!-- name -->
-                        <div class="field">
-                            <div class="control">
+                        <div class="field is-grouped">
+
+                            <div class="control ">
+                                <label for="" class="label">Upload Photo</label>
+                                <div class="file has-name is-fullwidth"
+                                    v-bind:class=" formdata.errors.photo ? 'is-danger' : '' ">
+                                    <label class="file-label">
+                                        <input class="file-input" type="file" ref="photofile"
+                                            v-on:change="handleFileUpload('photo')">
+                                        <span class="file-cta">
+                                            <span class="file-icon">
+                                                <i data-feather="upload"></i>
+                                            </span>
+                                            <span class="file-label">
+                                                Choose a file…
+                                            </span>
+                                        </span>
+                                        <span class="file-name">
+                                            <p v-if="formfiles.photofile " v-html="formfiles.photofile.name">
+                                            </p>
+                                            <p v-if="formfiles.photofile == null ">Emp. Photo</p>
+                                        </span>
+                                    </label>
+
+                                </div>
+                                <small class="has-text-danger is-underline" v-if="formdata.errors.photo">[[
+                                    formdata.errors.photo.error ]]</small>
+
+                            </div>
+                            <div class="control is-expanded">
                                 <label for="" class="label">Name*</label>
                                 <input type="text" class="input" v-model="formdata.name" placeholder="Enter Name"
                                     v-bind:class=" formdata.errors.name ? 'is-danger' : '' ">

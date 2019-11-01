@@ -75,6 +75,15 @@
                     </td>
                 </tr>
                 <tr class="has-background-light">
+                    <td> <small class="has-text-weight-semibold has-text-grey"> PHOTO</small>
+                        <br>
+                        <button class="button" @click="isPdf.pan ? viewPDF('photofile') : showUpload('photofile') "
+                            :disabled="empDetail.photofile == null ">
+                            <span class="icon icon-btn">
+                                <feather type="eye" size="1.3rem"></feather>
+                            </span>
+                            View</button>
+                    </td>
                     <td> <small class="has-text-weight-semibold has-text-grey"> PAN</small>
                         <br>
                         <button class="button" @click="isPdf.pan ? viewPDF('panfile') : showUpload('panfile') "
