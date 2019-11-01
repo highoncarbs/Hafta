@@ -33,7 +33,7 @@ def print_salatry_sheet_selected():
 
 @bp.route('/salary_sheet/slips', methods=['POST'])
 def salary_slips_emp():
-    # Needs none checks 
+    # Needs none checks
     payload = request.json
     if payload is not None:
         payload_date = payload['date'].split('-')
@@ -46,7 +46,7 @@ def salary_slips_emp():
             Employee.id == int(emp_id)), Attendence.date == payload_date).first()
         slips = SalarySheetSlips.query.filter(SalarySheetSlips.employee.any(
             Employee.id == int(emp_id)), SalarySheetSlips.date == payload_date).first()
-        if slips is not None and emp_att is not None: 
+        if slips is not None and emp_att is not None:
             json_data = json.loads(json_schema.dumps(emp_att))
             att_rules = AttendenceRules.query.first()
             late_comin_ratio = float(
@@ -73,13 +73,12 @@ def salary_slips_emp():
                 json_data['tds'] = 0
             if json_data['pf'] is None:
                 json_data['pf'] = 0
-                
+
             if json_data['other_deduction'] is None:
                 json_data['other_deduction'] = 0
 
             json_data['total_deductions'] = float(json_data['esi']) + float(json_data['pf']) + float(
                 json_data['tds']) + float(json_data['other_deduction']) + float(json_data['net_adv_deduction'])
-
 
             json_data['net_payable'] = float(
                 json_data['pay_1'] - json_data['total_deductions'])
@@ -160,10 +159,14 @@ def process_sheet():
 def salary_generate_sheet():
     if request.method == 'POST':
         if request.json != None:
-            payload = request.json
-            company = payload['company']
-            month = payload['month']
-            return generate_sheet(company, month)
+            try:
+                payload = request.json
+                company = payload['company']
+                month = payload['month']
+                return generate_sheet(company, month)
+            except Exception as e:
+                print(str(e))
+                return jsonify({'message': 'Data not entered for required company & month.'})
 
 
 @bp.route('/salary_sheet/get/processed', methods=['POST'])
@@ -181,22 +184,27 @@ def get_processed_sheet():
         if check_data is not None:
             saved_data = SalarySheetSlips.query.filter(
                 SalarySheetSlips.sheet.any(SalarySheet.id == int(check_data.id))).all()
+            try:
 
-            generate_data = json.loads(generate_sheet(
-                payload['company'], payload['date']).data)
-            for item in generate_data:
-                for slip in saved_data:
-                    if (item['employee'][0]['id'] == slip.employee[0].id):
-                        item['net_adv_deduction'] = slip.adv_deduction
+                generate_data = json.loads(generate_sheet(
+                    payload['company'], payload['date']).data)
+                for item in generate_data:
+                    for slip in saved_data:
+                        if (item['employee'][0]['id'] == slip.employee[0].id):
+                            item['net_adv_deduction'] = slip.adv_deduction
 
-            json_data = json.dumps(generate_data)
-            return jsonify({'data': json_data})
+                json_data = json.dumps(generate_data)
+                return jsonify({'data': json_data})
+            except Exception as e:
+                print(str(e))
+                return jsonify({'message': 'Data not entered for required company & month.'})
         else:
             return jsonify({'data': None})
 
 
 def generate_sheet(company, month):
     # Payload Date from User
+    
     payload_date = month.split('-')
     payload_date = datetime(
         int(payload_date[0]), int(payload_date[1]), int(1))
@@ -238,7 +246,7 @@ def generate_sheet(company, month):
             att_item['days_payable']) * (float(att_item['employee'][0]['basicpay']) / 30)
 
         att_item['deductions']['year'] = []
-        
+
         # Includes deduction from the month
         adv_data = Advance.query.filter(
             Advance.employee.any(Employee.id == int(att_item['employee'][0]['id'])), Advance.date >= year_start, Advance.date >= payload_date).all()

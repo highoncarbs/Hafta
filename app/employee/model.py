@@ -2,7 +2,7 @@ from app import db
 from app import ma
 from datetime import datetime
 from app.master.model import Post, Department, Company, CompanySchema,\
-    Benefit, Location, LocationSchema, PostSchema, DepartmentSchema, BenefitSchema , Appointment , AppointmentSchema
+    Benefit, Location, LocationSchema, PostSchema, DepartmentSchema, BenefitSchema , Appointment , AppointmentSchema , City ,CitySchema
         
 from marshmallow_sqlalchemy import field_for
 
@@ -22,11 +22,11 @@ class Employee(TimestampMixin, db.Model):
     education = db.Column(db.String(250), default=None)
     contact = db.Column(db.String(250), default=None)
     curr_address = db.Column(db.String(400), default=None)
-    curr_city = db.relationship('Location', secondary='emp_curr_location',
-                                backref='emp_curr_location', cascade='all ,delete', lazy='joined')
+    curr_city = db.relationship('City', secondary='emp_curr_city',
+                                backref='emp_curr_city', cascade='all ,delete', lazy='joined')
     perm_address = db.Column(db.String(400))
-    perm_city = db.relationship('Location', secondary='emp_perm_location',
-                                backref='emp_perm_location', cascade='all ,delete', lazy='joined')
+    perm_city = db.relationship('City', secondary='emp_perm_city',
+                                backref='emp_perm_city', cascade='all ,delete', lazy='joined')
     pan = db.Column(db.String(250), unique=True, default=None)
     panfile = db.Column(db.String(250), default=None)
     aadhar = db.Column(db.String(250), unique=True, default=None)
@@ -52,7 +52,7 @@ class Employee(TimestampMixin, db.Model):
     basicpay = db.Column(db.String(250), default=None)
     pf = db.Column(db.String(50), default=None)
     esi = db.Column(db.String(50), default=None)
-    advance = db.Column(db.String(50), default=None)
+    advance = db.Column(db.String(50), default="not")
     advancevalue = db.Column(db.Float, default=None)
     advancenum = db.Column(db.Integer, default=None)
     paidleave = db.Column(db.Integer, default=None)
@@ -62,18 +62,18 @@ class Employee(TimestampMixin, db.Model):
         'name', 'dob', 'fathername','flag', name='emp_id'), )
 
 
-db.Table('emp_curr_location',
+db.Table('emp_curr_city',
          db.Column('emp_id', db.Integer, db.ForeignKey(
              'employee.id', ondelete='SET NULL')),
-         db.Column('location_id', db.Integer, db.ForeignKey(
-             'location.id', ondelete='SET NULL'))
+         db.Column('city_id', db.Integer, db.ForeignKey(
+             'city.id', ondelete='SET NULL'))
          )
 
-db.Table('emp_perm_location',
+db.Table('emp_perm_city',
          db.Column('emp_id', db.Integer, db.ForeignKey(
              'employee.id', ondelete='SET NULL')),
-         db.Column('location_id', db.Integer, db.ForeignKey(
-             'location.id', ondelete='SET NULL'))
+         db.Column('city_id', db.Integer, db.ForeignKey(
+             'city.id', ondelete='SET NULL'))
          )
 
 
@@ -130,10 +130,10 @@ class EmployeeSchema(ma.ModelSchema):
     education = field_for(Employee, 'education', dump_only=True)
     contact = field_for(Employee, 'contact', dump_only=True)
     curr_address = field_for(Employee, 'curr_address', dump_only=True)
-    curr_city = ma.Nested(LocationSchema, many=True)
+    curr_city = ma.Nested(CitySchema, many=True)
 
     perm_address = field_for(Employee, 'perm_address', dump_only=True)
-    perm_city = ma.Nested(LocationSchema, many=True)
+    perm_city = ma.Nested(CitySchema, many=True)
     pan = field_for(Employee, 'pan', dump_only=True)
     panfile = field_for(Employee, 'panfile', dump_only=True)
     aadhar = field_for(Employee, 'aadhar', dump_only=True)

@@ -54,6 +54,22 @@ class LocationSchema(ma.ModelSchema):
         model = Location
 
 
+
+class City(db.Model):
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250), unique=True)
+
+    def __init__(self, name):
+        self.name = name
+
+class CitySchema(ma.ModelSchema):
+    class Meta:
+        model = City
+
+
+
 class Appointment(db.Model):
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)

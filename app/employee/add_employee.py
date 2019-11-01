@@ -3,7 +3,7 @@ from flask import render_template, redirect, url_for, request, session, jsonify
 from flask_login import login_required
 from app.employee import bp
 from app.employee.model import Employee, EmployeeSchema
-from app.master.model import Location, Post, Company, Department, Benefit, Appointment
+from app.master.model import Location, Post, Company, Department, Benefit, Appointment , City
 from app import db
 from werkzeug import secure_filename
 import json
@@ -437,7 +437,7 @@ def add_emp():
                         if payload['curr_address'] is not None:
 
                             if val is not -1:
-                                data = Location.query.filter_by(
+                                data = City.query.filter_by(
                                     id=int(val)).first()
                                 new_data.curr_city.append(data)
                                 continue
@@ -450,7 +450,7 @@ def add_emp():
                         if payload['perm_address'] is not None:
                             if val is not -1:
 
-                                data = Location.query.filter_by(
+                                data = City.query.filter_by(
                                     id=int(val)).first()
                                 new_data.perm_city.append(data)
                                 continue
@@ -634,6 +634,5 @@ def add_emp():
             return jsonify({'message': ''+str(errorInfo[1])})
         except Exception as e:
             db.session.rollback()
-            errorInfo = e.orig.args
-
-            return jsonify({'message': ''+str(errorInfo[1])})
+            print(e)
+            return jsonify({'message': ''+str(e)})

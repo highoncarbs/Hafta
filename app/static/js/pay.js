@@ -69,7 +69,7 @@ const PayForm =
     <div class="field is-grouped">
         <div class="control">
             <button type="submit" @click="submitData" class="button is-black"><span
-                    class="icon icon-btn icon-btn-in"><i data-feather="plus"></i></span> Add</button>
+                    class="icon icon-btn icon-btn-in"><i data-feather="plus"></i></span> Save</button>
         </div>
         <div class="control">
             <button class="button" v-on:click="view = !view" @click="getData"><span

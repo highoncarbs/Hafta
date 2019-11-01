@@ -1,5 +1,4 @@
-<template id="performance_form">
-
+<template id="city_form">
     <div>
 
         <!-- Edit Modal -->
@@ -9,31 +8,14 @@
 
                 <div class="box">
 
-
-                    <form id="data_entry" novalidate="true" @submit="saveEditData">
-                        <div v-if="edit.errors.length" class="notification animated fadeIn">ERROR</p>
-                            <ul>
-                                <li v-for="error in edit.errors" class="is-underline">[[ error.message ]]</li>
-                            </ul>
-                        </div>
-                        <p class="is-size-5">Edit Performance</p>
+                  
+                    <form id="data_entry" novalidate="true" @submit="submitData">
+                      
+                        <p class="is-size-5">Edit City</p>
                         <br>
-                        <div class="field is-grouped is-grouped-multiline">
-                            <div class="control">
-                                <label class="label">Performance</label>
-                                <input class="input" ref="name" v-model="edit.name" type="text" placeholder="Enter Name"
-                                    v-bind:class="[edit.errors.name ? 'is-danger' : '']">
-                            </div>
-                            <div class="control">
-                                <label for="" class="label">Max. Score</label>
-                                <input type="text" class="input" v-model="edit.score"
-                                    v-bind:class="[edit.errors.score ? 'is-danger' : '']" placeholder="Enter Score">
-                            </div>
-                            <div class="control">
-                                <label for="" class="label">Weight</label>
-                                <input type="text" class="input" v-model="edit.weight"
-                                    v-bind:class="[edit.errors.weight ? 'is-danger' : '']" placeholder="Enter Weight">
-                            </div>
+                        <div class="field">
+                            <label class="label">City</label>
+                            <input class="input" ref="editname" v-model="edit.name" type="text" :class="{ 'is-danger': edit.errors.length != 0}">
                         </div>
                         <br>
                         <div class="field is-grouped">
@@ -47,10 +29,9 @@
                                 <a class="button" @click="modal = !modal"><span class="icon icon-btn icon-btn-in"><i
                                             data-feather="x"></i></span>Cancel
                                 </a>
+                                <span class="has-text-danger is-underline" v-if="edit.errors.length != 0">Please fix the errors.</span>
+
                             </p>
-                            <div class="control" v-if="Object.keys(edit.errors).length != 0">
-                                <p class="has-text-danger is-underline">Please fix the errors</p>
-                            </div>
                         </div>
                     </form>
 
@@ -62,25 +43,15 @@
         </div>
 
         <!-- Entry Form -->
+       
 
         <form id="data_entry" novalidate="true" @submit="submitData ;" v-show="view">
+        
 
-
-            <div class="field is-grouped is-grouped-multiline">
-                <div class="control is-expanded">
-                    <label for="" class="label">Performance</label>
-                    <input type="text" class="input is-fullwidth" ref="name" v-model="form.name"
-                        v-bind:class="[form.errors.name ? 'is-danger' : '']" placeholder="Enter Performance">
-                </div>
+            <div class="field">
                 <div class="control">
-                    <label for="" class="label">Max. Score</label>
-                    <input type="text" class="input" v-model="form.score"
-                        v-bind:class="[form.errors.score ? 'is-danger' : '']" placeholder="Enter Score">
-                </div>
-                <div class="control">
-                    <label for="" class="label">Weight</label>
-                    <input type="text" class="input" v-model="form.weight"
-                        v-bind:class="[form.errors.weight ? 'is-danger' : '']" placeholder="Enter Weight">
+                    <label for="" class="label">City</label>
+                    <input type="text" class="input" v-model="form.name" ref="name" placeholder="Enter City" :class="{ 'is-danger': form.errors.length != 0}">
                 </div>
 
             </div>
@@ -93,9 +64,8 @@
                     <button class="button" v-on:click="view = !view" @click="getData"><span
                             class="icon icon-btn icon-btn-in"><i data-feather="eye"></i></span> View</button>
                 </div>
-                <div class="control" v-if="Object.keys(form.errors).length != 0">
-                    <p class="has-text-danger is-underline">Please fix the errors</p>
-                </div>
+                <span class="has-text-danger is-underline" v-if="form.errors.length != 0">Please fix the errors.</span>
+
             </div>
         </form>
 
@@ -108,14 +78,12 @@
                         class="icon icon-btn icon-btn-in"><i data-feather="eye"></i></span> View</button>
             </div>
             <br>
-            <div class="table-container" id="data_view">
+            <div class="" id="data_view">
 
                 <table class="table is-bordered is-fullwidth">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Score</th>
-                            <th>Weight</th>
+                            <th v-on:click="sortTable()">Name</th>
                             <th>Action</th>
                         </tr>
 
@@ -124,8 +92,6 @@
                         <tr v-for="( row ,index ) in data" v-bind:index="index" @click="selectRow(row)"
                             v:bind:class="selected : isSelected">
                             <td>[[ row.name]]</td>
-                            <td>[[ row.score]]</td>
-                            <td>[[ row.weight]]</td>
                             <td>
                                 <div class="buttons">
                                     <div class="button" @click="editData(row)">Edit</div>
@@ -141,27 +107,28 @@
                                             <div class="dropdown-menu" style="z-index:10;" id="dropdown-menu4"
                                                 role="menu">
                                                 <div class="dropdown-content has-background-light">
-                                                    <p class="dropdown-item is-size-6 is-underline">
+                                                    <p class="dropdown-item">
                                                         Are you sure ?
                                                     </p>
                                                     <hr class="dropdown-divider">
 
                                                     <a class="dropdown-item">
-                                                        <div class="button is-danger is-small"
-                                                            @click="deleteData(row , index)">Delete</div>
+                                                        <div class="buttons ">
+                                                            <div class="button is-danger is-small"
+                                                                @click="deleteData(row , index)">Delete</div>
+                                                            <div class="button is-small">Cancel</div>
+                                                        </div>
+                                                    </a>
                                                 </div>
-                                                </a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            </td>
-            </tr>
-            </tbody>
-            </table>
         </div>
     </div>
-    </div>
-
 </template>

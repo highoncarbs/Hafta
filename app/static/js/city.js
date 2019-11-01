@@ -1,133 +1,6 @@
-const PostForm =
+const CityForm =
 {
-    template: `  
-            <div>
-
-<!-- Edit Modal -->
-<div class="modal animated is-active fadeIn" v-show="modal">
-    <div class="modal-background" @click="modal = !modal"></div>
-    <div class="modal-content">
-
-        <div class="box">
-
-            
-            <form id="data_entry" novalidate="true" @submit="saveEditData">
-                
-                <p class="is-size-5">Edit Post</p>
-                <br>
-                <div class="field">
-                    <label class="label">Post</label>
-                    <input class="input" ref="name" v-model="edit.name" type="text">
-                </div>
-                <br>
-                <div class="field is-grouped">
-                    <p class="control">
-                        <a class="button is-black" @click="saveEditData"><span class="icon icon-btn icon-btn-in"><i
-                                    data-feather="plus"></i></span>Save
-                        </a>
-                    </p>
-
-                    <p class="control">
-                        <a class="button" @click="modal = !modal"><span class="icon icon-btn icon-btn-in"><i
-                                    data-feather="x"></i></span>Cancel
-                        </a>
-                    </p>
-                </div>
-            </form>
-
-        </div>
-        <button class="modal-close is-large" aria-label="close" @click="modal = !modal"></button>
-
-    </div>
-
-</div>
-
-<!-- Entry Form -->
-
-<form id="data_entry" novalidate="true" @submit="submitData ;" v-show="view">
- 
-
-    <div class="field">
-        <div class="control">
-            <label for="" class="label">Post</label>
-            <input type="text" class="input"ref="name" v-model="form.name" placeholder="Enter Post">
-        </div>
-
-    </div>
-    <div class="field is-grouped">
-        <div class="control">
-            <button type="submit" @click="submitData" class="button is-black"><span
-                    class="icon icon-btn icon-btn-in"><i data-feather="plus"></i></span> Save</button>
-        </div>
-        <div class="control">
-            <button class="button" v-on:click="view = !view" @click="getData"><span
-                    class="icon icon-btn icon-btn-in"><i data-feather="eye"></i></span> View</button>
-        </div>
-    </div>
-</form>
-
-
-<!-- Table  -->
-
-<div v-show="!view">
-<div class="control">
-            <button class="button" v-on:click="view = !view ; form.errors = [] ; "><span
-                    class="icon icon-btn icon-btn-in"><i data-feather="eye"></i></span> View</button>
-        </div>
-        <br>
-    <div id="data_view">
-
-        <table class="table is-bordered is-fullwidth">
-            <thead>
-                <tr>
-                    <th v-on:click="sortTable()">Name</th>
-                    <th>Action</th>
-                </tr>
-
-            </thead>
-            <tbody>
-                <tr v-for="( row ,index ) in data" v-bind:index="index" @click="selectRow(row)"
-                    v:bind:class="selected : isSelected">
-                    <td>[[ row.name]]</td>
-                    <td>
-                        <div class="buttons">
-                            <div class="button" @click="editData(row)">Edit</div>
-                            <div class="dropdown">
-                                <div class="dropdown is-hoverable">
-                                    <div class="dropdown-trigger">
-                                        <button class="button is-danger" aria-haspopup="true"
-                                            aria-controls="dropdown-menu4">
-                                            <span>Delete</span>
-
-                                        </button>
-                                    </div>
-                                    <div class="dropdown-menu" style="z-index:10;" id="dropdown-menu4" role="menu">
-                                        <div class="dropdown-content has-background-light">
-                                            <p class="dropdown-item">
-                                                Are you sure ?
-                                            </p>
-                                            <hr class="dropdown-divider">
-
-                                            <a class="dropdown-item">
-                                                <div class="buttons ">
-                                                    <div class="button is-danger is-small"
-                                                        @click="deleteData(row , index)">Delete</div>
-                                                    <div class="button is-small">Cancel</div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-</div>
-    `,
+    template: '#city_form',
     data() {
         return {
             view: true,
@@ -165,16 +38,18 @@ const PostForm =
         },
         checkData(e) {
             this.form.errors = []
-
             if (this.form.name) {
+
                 return true;
             }
 
+
+
             if (!this.form.name) {
-                this.form.errors.push('Post required');
+                this.form.errors.push('City required');
                 this.$buefy.snackbar.open({
                     duration: 4000,
-                    message: 'Post required',
+                    message: 'City required',
                     type: 'is-light',
                     position: 'is-top-right',
                     actionText: 'Close',
@@ -185,7 +60,6 @@ const PostForm =
                 })
             }
 
-
         },
 
         submitData(e) {
@@ -194,10 +68,11 @@ const PostForm =
 
             if (this.form.errors.length == 0) {
                 axios
-                    .post('/master/add/post', this.form)
+                    .post('/master/add/city', this.form)
                     .then(function (response) {
                         formdata.form.mssg = response['data']
                         formdata.form.name = null;
+
                         formdata.$buefy.snackbar.open({
                             duration: 4000,
                             message: response.data.success,
@@ -221,7 +96,7 @@ const PostForm =
             const formdata = this;
 
             axios
-                .get('/master/get/post')
+                .get('/master/get/city')
                 .then(function (response) {
                     console.log(response);
                     formdata.data = response['data']
@@ -247,7 +122,7 @@ const PostForm =
             if (this.edit.name) {
 
                 axios
-                    .post('/master/edit/post', this.edit)
+                    .post('/master/edit/city', this.edit)
                     .then(function (response) {
                         console.log(response.data.success)
                         if (response.data.success) {
@@ -294,7 +169,7 @@ const PostForm =
             console.log(this.edit.name)
 
             if (this.edit.name == "") {
-                this.edit.errors.push('Post required');
+                this.edit.errors.push('City required');
 
             }
 
@@ -305,10 +180,9 @@ const PostForm =
             // const removeId = data.id; 
             console.log(data);
             var datalist = this.data;
-            const formdata = this
 
             axios
-                .post('/master/delete/post', data)
+                .post('/master/delete/city', data)
                 .then(function (response) {
                     if (response.data.success) {
                         datalist.splice(index, 1)

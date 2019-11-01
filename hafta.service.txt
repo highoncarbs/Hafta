@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve Hafta
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/root/hafta/Hafta
+Environment="PATH=/root/hafta/ENV/bin"
+ExecStart=/root/hafta/ENV/bin/gunicorn --workers 3 --bind unix:hafta.sock -m 007 run:app
+
+[Install]
+WantedBy=multi-user.target

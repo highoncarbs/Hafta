@@ -47,9 +47,27 @@ new Vue({
 
                 axios.post('/transaction/salary_sheet/generate', formdata)
                     .then(function (response) {
-                        rawdata.salarySheet = response.data
-
-                        rawdata.isGenerating = null;
+                        if (response.data.message) {
+                            rawdata.$buefy.snackbar.open({
+                                duration: 4000,
+                                message: response.data.message,
+                                type: 'is-light',
+                                position: 'is-top-right',
+                                actionText: 'Close',
+                                queue: true,
+                                onAction: () => {
+                                    this.isActive = false;
+                                }
+                            })
+                            rawdata.salarySheet = null
+                            
+                            rawdata.isGenerating = null;
+                        }
+                        else {
+                            rawdata.salarySheet = response.data
+                            
+                            rawdata.isGenerating = null;
+                        }
                     })
                     .catch(function (error) {
                         rawdata.$buefy.snackbar.open({

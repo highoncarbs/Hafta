@@ -5,6 +5,7 @@
     <div class="container">
 
         {% include 'component/custom-select.html'%}
+        {% include 'component/custom-select-company.html'%}
         <div class="columns">
 
             <div class="column">
@@ -349,11 +350,13 @@
                                 </div>
                                 <div class="control is-expanded">
                                     <label for="" class="label">Company</label>
-                                    <custom-select v-model="formdata.company" which="company"
-                                        v-if="formdatasaved.company.length == 0"></custom-select>
-                                    <custom-select v-model="formdata.company" v-if="formdatasaved.company.length != 0" which="company"
-                                        :preselect="formdatasaved.company">
-                                    </custom-select>
+                                    <custom-select-company v-model="company" which="company" v-if="formdatasaved.company.length == 0">
+                                    </custom-select-company>
+                                    
+                                    <custom-select-company v-model="company" which="company" v-if="formdatasaved.company.length != 0"
+                                    :preselect="formdatasaved.company">
+                                    </custom-select-company>
+                                    
                                 </div>
 
 

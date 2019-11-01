@@ -1,7 +1,7 @@
 {% extends 'base/base.html' %}
 {% block content %}
 
-{% include 'component/custom-select.html'%}
+{% include 'component/custom-select-company.html'%}
 
 
 <section class="section">
@@ -25,8 +25,8 @@
 
             <div class="control">
                 <label for="" class="label">Select company</label>
-                <custom-select v-model="company" which="company">
-                </custom-select>
+                <custom-select-company v-model="company" which="company">
+                </custom-select-company>
             </div>
 
             <div class="control">

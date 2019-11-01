@@ -6,6 +6,7 @@
 {% include 'master/company.html' %}
 {% include 'master/location.html' %}
 {% include 'master/benefit.html' %}
+{% include 'master/city.html' %}
 
 <script src="{{ url_for('static' , filename ='js/company.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/location.js' )}}"></script>
@@ -15,6 +16,7 @@
 <script src="{{ url_for('static' , filename ='js/department.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/post.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/benefits.js' )}}"></script>
+<script src="{{ url_for('static' , filename ='js/city.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/pay.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/performance.js' )}}"></script>
 <script src="{{ url_for('static' , filename ='js/attendence_rules.js' )}}"></script>
@@ -30,6 +32,9 @@
                     </li>
                     <li>
                         <router-link to="/location">Location</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/city">City</router-link>
                     </li>
                     <li>
                         <router-link to="/category">Emp. Category</router-link>
@@ -86,6 +91,7 @@
 
         { path: '/company', component: CompanyForm },
         { path: '/location', component: LocationForm },
+        { path: '/city', component: CityForm },
         { path: '/category', component: EmpCatForm },
         { path: '/appointment', component: AppointmentForm },
         { path: '/department', component: DepartmentForm },
@@ -115,6 +121,7 @@
         components: {
             'company-form': CompanyForm,
             'location-form': LocationForm,
+            'city-form': CityForm,
             'category-form': EmpCatForm,
             'appointment-form': AppointmentForm,
             'department-form': DepartmentForm,

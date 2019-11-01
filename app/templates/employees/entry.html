@@ -6,6 +6,7 @@
     <div class="container">
 
         {% include 'component/custom-select.html'%}
+        {% include 'component/custom-select-company.html'%}
         <div class="columns">
 
             <div class="column">
@@ -31,14 +32,17 @@
                         </div>
 
                         <!-- DOB -->
-                        <div class="field ">
-                            <div class="control">
-                                <label for="" class="label">Date of Birth*</label>
+                        <div class="field is-grouped ">
+                            <div class="field">
 
-                                <input type="date" v-model="formdata.dob" class="input"
-                                    v-bind:class=" formdata.errors.dob ? 'is-danger' : '' ">
-                                <small class="has-text-danger is-underline" v-if="formdata.errors.dob">[[
-                                    formdata.errors.dob ]]</small>
+                                <div class="control">
+                                    <label for="" class="label">Date of Birth*</label>
+
+                                    <input type="date" v-model="formdata.dob" class="input"
+                                        v-bind:class=" formdata.errors.dob ? 'is-danger' : '' ">
+                                    <small class="has-text-danger is-underline" v-if="formdata.errors.dob">[[
+                                        formdata.errors.dob ]]</small>
+                                </div>
                             </div>
                         </div>
 
@@ -91,7 +95,7 @@
                         <div class="field">
                             <div class="control">
                                 <label for="" class="label"> City</label>
-                                <custom-select v-model="formdata.curr_city" which="location">
+                                <custom-select v-model="formdata.curr_city" which="city">
                                 </custom-select>
                             </div>
                         </div>
@@ -116,7 +120,7 @@
                             <div class="field">
                                 <div class="control">
                                     <label for="" class="label"> City</label>
-                                    <custom-select v-model="formdata.perm_city" which="location"></custom-select>
+                                    <custom-select v-model="formdata.perm_city" which="city"></custom-select>
                                 </div>
                             </div>
 
@@ -328,8 +332,9 @@
                                 </div>
                                 <div class="control is-expanded">
                                     <label for="" class="label">Company</label>
-                                    <custom-select v-model="formdata.company" which="company">
-                                    </custom-select>
+                                    <custom-select-company v-model="formdata.company" which="company">
+                                    </custom-select-company>
+
                                 </div>
 
 
