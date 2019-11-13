@@ -7,13 +7,17 @@
         <div class="container">
 
 
-            <div class="columns is-centered" >
+            <div class="columns is-centered">
                 <div class="column is-one-quarter-desktop is-centered">
                     <p class="libre is-size-3">Hafta</p>
                     <br>
                     <p class=" is-size-5">Welcome back. <br>
                         Please login in to continue</p>
-                    <div class="" style="margin-top:3rem;">
+                    <div class="" style="margin-top:2rem;">
+                        {% if mssg != "" %}
+                        <p id="auth_snackbar" class="has-text-weight-bold is-underline has-text-danger">{{ mssg }}</p>
+                        {% endif %}
+                        <br>
                         <form action="{{ url_for('auth.login')}}" method="POST">
                             {{form.hidden_tag()}}
 
@@ -22,34 +26,32 @@
                                     <label for="username" class="label">Username</label>
                                     {{form.username(class="input" , placeholder="Enter Username")}}
                                 </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                    <label for="password" class="label">Password</label>
-                                    {{form.password(class="input" , placeholder="Enter Password")}}
-                                </div>
-                            </div>
-                            <br>
-                            <div class="level">
-                                <div class="level-start">
-                                    <div class="level-item">
-                                        <div class="control">
-                                            {{form.submit(class="button is-black")}}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="level-end">
-                                    <div class="level-item">
-                                        <a href="{{ url_for( 'auth.register')}}" class="button is-text">Sign Up?</a>
-                                    </div>
-                                </div>
 
-
+                                <label for="password" class="label">Password</label>
+                                {{form.password(class="input" , placeholder="Enter Password")}}
                             </div>
-                        </form>
                     </div>
+                    <br>
+                    <div class="level">
+                        <div class="level-start">
+                            <div class="level-item">
+                                <div class="control">
+                                    {{form.submit(class="button is-black")}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="level-end">
+                            <div class="level-item">
+                                <a href="{{ url_for( 'auth.register')}}" class="button is-text">Sign Up?</a>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    </form>
                 </div>
             </div>
+        </div>
         </div>
     </section>
     <footer class="footer has-background-white has-text-centered is-size-6">
@@ -58,5 +60,22 @@
     </footer>
 
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        if (document.getElementById("#auth_snackbar")) {
+            setTimeout(function () {
+                document.getElementById("#auth_snackbar").addClass("animated fadeOutUp");
+            }, 3000);
+
+        }
+    }
+    );
+    axios.post("/auth/remove/session")
+        .then(function (response) {
+            console.log("session['mssg'] is empty")
+        })
+
+</script>
 
 </html>

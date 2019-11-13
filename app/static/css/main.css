@@ -67,6 +67,8 @@ i {
 
 .notification {
     border-radius: 0 !important;
+    padding: 1rem !important;
+
 }
 
 .router-link-active {
@@ -81,10 +83,6 @@ i {
 .button {
     font-family: 'Inter';
     border-radius: 0 !important;
-}
-
-.notification {
-    padding: 1rem !important;
 }
 
 .label {
