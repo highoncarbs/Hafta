@@ -32,6 +32,9 @@ new Vue({
                 basicpay: null,
                 pf: null,
                 esi: null,
+                bankname: null ,
+                accnumber: null ,
+                ifsccode: null ,
                 advance: 'allowed',
 
                 advancevalue: null,

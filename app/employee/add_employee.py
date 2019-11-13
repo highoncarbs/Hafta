@@ -65,7 +65,10 @@ def update_employee():
                       'advancevalue',
                       'advancenum',
                       'paidleave',
-                      'incrementpr'
+                      'incrementpr',
+                      'bankname',
+                      'accnumber',
+                      'ifsccode'
                       )
 
         # init for Employee data
@@ -138,7 +141,7 @@ def update_employee():
                         else:
                             continue
 
-                    if temp == 'perm_city' and (val is not None):
+                if temp == 'perm_city' and (val is not None):
                         if payload['perm_address'] is not None:
                             if val is not -1:
 
@@ -152,17 +155,17 @@ def update_employee():
                         else:
                             continue
 
-                    if temp == 'benefits' and (len(val) is not 0):
-                        new_data.benefits = []
+                if temp == 'benefits' and (len(val) is not 0):
+                    new_data.benefits = []
 
-                        for item in val:
-                            data = Benefit.query.filter_by(
-                                id=item['id']).first()
-                            new_data.benefits.append(data)
-                        continue
+                    for item in val:
+                        data = Benefit.query.filter_by(
+                            id=item['id']).first()
+                        new_data.benefits.append(data)
+                    continue
 
-                    if val is not '' and val is not None and temp != 'benefits':
-                        setattr(new_data, str(temp), val)
+                if val is not '' and val is not None and temp != 'benefits':
+                    setattr(new_data, str(temp), val)
 
                 # else:
                 #     pass
@@ -409,7 +412,10 @@ def add_emp():
                       'advancevalue',
                       'advancenum',
                       'paidleave',
-                      'incrementpr'
+                      'incrementpr',
+                      'bankname',
+                      'accnumber',
+                      'ifsccode'
                       )
 
         # init for Employee data

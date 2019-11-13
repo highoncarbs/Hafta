@@ -35,7 +35,9 @@ new Vue({
                 pf: null,
                 esi: null,
                 advance: 'allowed',
-
+                bankname: null ,
+                accnumber: null ,
+                ifsccode: null ,
                 advancevalue: null,
                 advancenum: null,
                 paidleave: null,
