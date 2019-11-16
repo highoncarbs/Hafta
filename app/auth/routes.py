@@ -12,6 +12,7 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.home'))
     form = LoginForm()
+    session['mssg'] = ""
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
@@ -34,6 +35,7 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.home'))
     form = RegistrationForm()
+    session['mssg'] = ""
     if form.validate_on_submit():
         if str(form.key.data) == "admin":
             user = User(username=form.username.data)
