@@ -1,0 +1,294 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+{% include 'component/custom-select-company.html'%}
+
+
+<section class="section">
+
+    <div class="container" id="advance_form_view">
+
+
+
+
+
+        <!-- Heading Title -->
+        <div class="level">
+            <div class="level-left">
+                <p class="is-size-4 has-text-weight-semibold">Advance</p>
+            </div>
+
+        </div>
+
+        <!-- Advacne Company and Date selection -->
+        <div class="field is-grouped is-grouped-multiline">
+
+            <div class="control">
+                <label for="" class="label">Select company</label>
+                <custom-select-company v-model="company" which="company">
+                </custom-select-company>
+            </div>
+
+            <div class="control">
+                <label for="" class="label">Select month</label>
+                <input type="month" class="input" v-model="month">
+            </div>
+
+            <div class="control">
+                <label for="" class="label has-text-white"> Submit</label>
+
+                <button class="button is-black" @click="getAdvanceDetail">
+                    <span class="icon icon-btn icon-btn-in">
+                        <i data-feather="check"></i>
+                    </span>
+                    Submit</button>
+            </div>
+
+        </div>
+
+
+        <br>
+        <div class="field is-grouped is-grouped-multiline animated fadeIn" v-if="showEmpSelect">
+
+            <div class="control">
+                <label for="" class="label">Select Employee</label>
+                <b-autocomplete v-model="employee" placeholder="e.g. Jitendre" :keep-first='true' :open-on-focus='true'
+                    :data="filteredDataObj" field="name" @select="getSelected">
+
+
+                </b-autocomplete>
+            </div>
+            <div class="control">
+                <label for="" class="label has-text-white"> Submit</label>
+
+                <button class="button is-black" @click="getAdvanceDetail">
+                    <span class="icon icon-btn icon-btn-in">
+                        <feather type="check" size="1.3rem"></feather>
+                    </span>
+                    Submit</button>
+            </div>
+
+        </div>
+
+
+        <small v-if="errors.submit " class="has-text-danger is-underline animated fadeInDown is-size-6">[[
+            errors.submit]]</small>
+        <br>
+        <div class="box has-background-light" v-if="empAdvanceDetail != null && empAdvanceDetail.advance == 'not'">
+            <p>This employee has not been allowed advance. <br> If you'd like to change that , please edit
+                employee's
+                details.</p>
+            <br>
+            <div class="field">
+                <div class="control"><button class="button" @click="editEmployee"><span class="icon icon-btn">
+                            <feather type="edit" size="1.3rem"></feather>
+                        </span> Edit [[ employee ]]</button></div>
+            </div>
+        </div>
+
+
+        <div v-if="showAdvList">
+            <div class="box has-background-light animated fadeIn"
+                v-if="empAdvanceDetail != null && empAdvanceDetail.advance != 'not' && employee != ''">
+
+                <!-- Max limit reached notification -->
+                <div v-if="!more" class="box has-background-white animated bounce ">
+                    <p class="has-text-weight-semibold is-underline">
+                        Employee has reached the allowed
+                        advance limit. <br>
+                        If you'd like to increase advance limit , please edit Employee details.
+                    </p>
+                    <br>
+                    <div class="field">
+                        <div class="control"><button class="button"><span class="icon icon-btn">
+                                    <feather type="edit" size="1.3rem"></feather>
+                                </span> Edit [[ employee ]]</button></div>
+                    </div>
+                </div>
+
+
+                <p class="is-size-5 has-text-weight-semibold">Outstanding Advance : [[ getOutstandingAdvance() ]]</p>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-black" @click="viewAdvances" v-if="advEdit == false">
+
+                            <span class="icon icon-btn">
+                                <feather type="eye" size="1.3rem"></feather>
+                            </span>
+                            View
+                        </button>
+                        <button class="button is-black" v-if="advEdit == true" @click="advEdit = !advEdit">
+
+                            <span class="icon icon-btn">
+                                <feather type="x" size="1.3rem"></feather>
+                            </span>
+                            Close
+                        </button>
+                    </div>
+                </div>
+                <br>
+
+                <!-- Advance Entry adn edit -->
+                <div class="table-container" v-if="advEdit">
+
+                    <p class="is-size-5 has-text-weight-semibold">Advance List - [[ employee ]]</p>
+                    <br>
+                    <table class="table is-fullwidth is-bordered is-striped">
+
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Cheque No.</th>
+                                <th>Letter</th>
+                                <th>Deduction</th>
+                                <th>Deduction Period </th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr v-for="(adv , index) in empAdvanceList"
+                                :class="  adv.trans == 'debit'? 'has-background-info' : ''">
+
+                                <td>[[ formatedDate(adv.date)]]</td>
+                                <td v-html="adv.trans != 'debit'?  adv.cheque_no : '--' "> </td>
+                                <td v-html="adv.trans != 'debit'?  adv.letter : '--' "></td>
+                                <td v-html="adv.trans != 'debit'? formatedNumber(adv.deduction) : '--' "> </td>
+                                <td v-html="adv.trans != 'debit'?  adv.deduction_period : '--' "></td>
+                                <td> [[ formatedNumber(adv.advanceamt) ]]</td>
+                                <td>
+                                    <button class=" button is-danger" @click="deleteAdvance(adv.id , index)">
+                                        <span class="icon">
+                                            <feather type="x" size="1.3rem"></feather>
+                                        </span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <div v-if="!advEdit">
+                    <div class="table-container animated fadeIn">
+                        <table class="table is-bordered is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <th>Advance</th>
+                                    <th>Max. Advance</th>
+                                    <th>Number of Advances</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>[[ empAdvanceDetail.advance ]]</td>
+                                    <td v-html="formatedNumber( empAdvanceDetail.advancevalue )"> </td>
+                                    <td>[[ empAdvanceDetail.advancenum ]]</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="field is-grouped is-grouped-multiline">
+                        <div class="control">
+                            <label for="" class="label">Select Date</label>
+                            <input type="date" class="input" v-model="advanceForm.date" :disabled="!more"
+                                :class="{ 'is-danger' :  advanceForm.errors.date == true }">
+                        </div>
+                        <div class="control">
+                            <label for="" class="label">Enter Amount</label>
+                            <input type="text" class="input" v-model="advanceForm.advanceamt" :disabled="!more"
+                                :class="{ 'is-danger' :  advanceForm.errors.advanceamt == true || advanceForm.errors.maxadv == true  }">
+                            <small v-if="advanceForm.errors.maxadv == true" class="has-text-danger is-underline">Amount
+                                greater than Max. Advance. </small>
+                        </div>
+                        <div class="control">
+                            <label for="" class="label">Total Advance</label>
+                            <p>[[ total ]] </p>
+                        </div>
+
+                    </div>
+                    <hr style="background-color:rgba(0,0,0,0.2) !important; height: 1px !important;">
+                    <div>
+                        <p class="is-size-5 has-text-weight-semibold">Security </p>
+                        <br>
+                        <div class="field is-grouped is-grouped-multiline">
+                            <div class="control">
+                                <label for="" class="label">Cheque No.</label>
+                                <input type="text" class="input" v-model="advanceForm.cheque_no"
+                                    placeholder="Cheque No." :disabled="!more"
+                                    :class="{ 'is-danger' :  advanceForm.errors.cheque_no == true }">
+                            </div>
+                            <div class="control">
+                                <label for="" class="label">Letter
+                                    <small v-if="advanceForm.errors.letter == true"
+                                        class="has-text-danger is-underline">Please
+                                        select
+                                    </small>
+                                </label>
+
+                                <label class="radio">
+                                    <input type="radio" value="yes" v-model="advanceForm.letter" :disabled="!more">
+                                    Yes
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" value="no" v-model="advanceForm.letter" :disabled="!more">
+                                    no
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="field is-grouped is-grouped-multiline">
+                        <div class="control">
+                            <label for="" class="label">Deduction Amount</label>
+                            <input type="text" class="input" v-model="advanceForm.deduction"
+                                placeholder="Deduction Amount" :disabled="!more"
+                                :class="{ 'is-danger' :  advanceForm.errors.deduction == true }">
+                        </div>
+                        <div class="control">
+                            <label for="" class="label">Period <small v-if="advanceForm.errors.deduction_period == true"
+                                    class="has-text-danger is-underline">Please select. </small>
+                            </label>
+
+                            <label class="radio">
+                                <input type="radio" value="month" v-model="advanceForm.deduction_period"
+                                    :disabled="!more">
+                                Month
+                            </label>
+                            <label class="radio">
+                                <input type="radio" value="year" v-model="advanceForm.deduction_period"
+                                    :disabled="!more">
+                                Year
+                            </label>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="field">
+                        <div class="control">
+
+                            <button class="button is-black" @click="submitData" :disabled="submitting"
+                                :disabled="!more">
+                                <span class="icon icon-btn">
+                                    <feather type="check" size="1.3rem"></feather>
+
+                                </span>
+                                Save
+                            </button>
+
+                            <span style="padding-left:1rem;" v-if="Object.keys(advanceForm.errors).length != 0 && advanceForm.errors.constructor === Object
+                    " class="has-text-danger is-underline animated pulse"> Please fix the errors.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</section>
+
+<script src="{{ url_for('static' , filename='js/reports/advance.js')}}"></script>
+
+{% endblock %}

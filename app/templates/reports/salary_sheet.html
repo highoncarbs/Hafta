@@ -1,0 +1,213 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+{% include 'component/custom-select.html'%}
+{% include 'component/custom-select-company.html'%}
+
+
+<section class="section">
+
+    <div class="container" id="salary_sheet_form_view">
+
+        <!-- Heading Title -->
+        <div class="level">
+            <div class="level-left">
+                <p class="is-size-4 has-text-weight-semibold">Salary Sheet</p>
+            </div>
+
+        </div>
+
+        <!-- Advacne Company and Date selection -->
+        <div class="field is-grouped is-grouped-multiline">
+
+            <div class="control">
+                <label for="" class="label">Select company</label>
+                <custom-select-company v-model="company" which="company">
+                </custom-select-company>
+            </div>
+
+            <div class="control">
+                <label for="" class="label">Select month</label>
+                <input type="month" class="input" v-model="month">
+            </div>
+
+            <div class="control">
+                <label for="" class="label has-text-white"> Generate</label>
+
+                <button class="button is-black" @click="generateSalarySheet()">
+                    <span class="icon icon-btn icon-btn-in">
+                        <i data-feather="check"></i>
+                    </span>
+                    Submit</button>
+            </div>
+
+        </div>
+        <small v-if="errors.req == true" class="has-text-danger is-underline">
+            Please set both company and month.
+        </small>
+
+        <br>
+        <div class="box has-background-light animated fadeIn" v-if="isGenerating">
+            <p class="has-text-weight-semibold has-text-grey animated">
+                <span class="icon icon-btn icon-btn-in">
+                    <feather type="loader" size="1.3rem" animation="spin"></feather>
+                </span>
+                Generating Salary Sheet </p>
+        </div>
+
+
+        <div v-if="salarySheet != null && salarySheet.length == 0">
+            <div class="box has-text-centered has-text-weight-bold has-text-grey animated fadeIn">
+                <feather type="info" size="1.3rem"></feather>
+                <p>Attendence has not been added for this month. <br>
+                    Please add them before processing salary sheet for the month.</p>
+            </div>
+        </div>
+
+        <div v-if="salarySheet != null && salarySheet.length != 0 && salarySheetView != null" class="animated fadeInn ">
+
+            <div class="buttons">
+                <button class="button" @click="printAll">
+                    <span class="icon icon-btn">
+                        <feather type="printer" size="1.3rem"></feather>
+                    </span>
+                    Print
+
+                </button>
+                <button @click="printSelected" class="button"
+                    :disabled=" selectedRow == null || selectedRow.length == 0">
+                    <span class="icon icon-btn">
+                        <feather type="paperclip" size="1.3rem"></feather>
+                    </span>
+                    Print Selected
+
+                </button>
+            </div>
+            <!-- Sheet Entry -->
+            <div class="table-container">
+                <table class="table  is-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Dept.</th>
+                            <th>Post</th>
+                            <th>Days Attn.</th>
+                            <th>Late Comin <br><span class="has-text-grey">No.</span></th>
+                            <th>Early Going <br><span class="has-text-grey">No.</span></th>
+                            <th>Salary</th>
+                            <th>Days Payable</th>
+                            <th>Pay #1</th>
+                            <th>Adv. Ded.</th>
+                            <th>ESI</th>
+                            <th>PF</th>
+                            <th>TDS</th>
+                            <th>Other Ded.</th>
+                            <th>Total Ded. #2</th>
+                            <th>Net Payable ( #1 - #2)</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                            <tr>
+                                <th colspan="3">Total</th>
+                                <th>[[ formatedNumber(days) ]]</th>
+                                <th>[[ formatedNumber(late) ]]</th>
+                                <th>[[ formatedNumber(going) ]]</th>
+                                <th>[[ formatedNumber(salary) ]]</th>
+                                <th>[[ formatedNumber(daysPayable) ]]</th>
+                                <th>[[ formatedNumber(pay_1) ]]</th>
+                                <th>[[ formatedNumber(adv_deduction) ]]</th>
+                                <th>[[ formatedNumber(esi) ]]</th>
+                                <th>[[ formatedNumber(pf) ]]</th>
+                                <th>[[ formatedNumber(tds) ]]</th>
+                                <th>[[ formatedNumber(other_deduction )]]</th>
+                                <th>[[ formatedNumber(total_deductions) ]]</th>
+                                <th>[[ formatedNumber(net_pay) ]]</th>
+                            </tr>
+                        </tfoot>
+                    <tbody>
+                        <template v-for="(row , index) in salarySheetEdit" :bind="index">
+                            <tr @click="pushRow(row.id)"
+                                :class="{'has-background-info' : selectedRow.includes(row.id)} ">
+                                <td>[[ row.employee[0].name]]</td>
+                                <td>[[ row.employee[0].department[0].name]]</td>
+                                <td>[[ row.employee[0].post[0].name]]</td>
+                                <td> [[ row.daysatt ]]</td>
+                                <td> [[ row.latecomin ]]</td>
+                                <td> [[ row.earlygoing ]]</td>
+                                <td>[[ formatedNumber(row.employee[0].basicpay) ]]</td>
+                                <td>[[ formatedNumber(row.days_payable) ]]</td>
+                                <td>[[ formatedNumber(row.pay_1) ]]</td>
+                                <td>
+                                    [[ formatedNumber(row.net_adv_deduction) ]]
+
+                                </td>
+                                <td>[[ row.esi ]]</td>
+                                <td>[[ row.pf ]]</td>
+                                <td>[[ row.tds ]]</td>
+                                <td>[[ row.other_deduction ]]</td>
+                                <td>[[ formatedNumber(row.total_deductions) ]]</td>
+                                <td>[[ formatedNumber(row.net_payable) ]]</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <!-- End sheet -->
+
+            <!-- Saved Sheets -->
+            <!-- <div v-if="salarySheetView">
+                <table class="table is-fullwidth is-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Dept.</th>
+                            <th>Post</th>
+                            <th>Days Attn.</th>
+                            <th>Late Comin <br><span class="has-text-grey">No.</span></th>
+                            <th>Early Going <br><span class="has-text-grey">No.</span></th>
+                            <th>Salary</th>
+                            <th>Days Payable</th>
+                            <th>Pay #1</th>
+                            <th>Adv. Ded.</th>
+                            <th>ESI</th>
+                            <th>PF</th>
+                            <th>TDS</th>
+                            <th>Other Ded.</th>
+                            <th>Total Ded. #2</th>
+                            <th>Net Payable ( #1 - #2)</th>
+                        </tr>
+                    </thead>
+                 
+                    <tbody>
+                        <template v-for="(row , index) in salarySheetView" :bind="index">
+                            <tr @click="pushRow(row.id)"
+                                :class="{'has-background-info' : selectedRow.includes(row.id)} ">
+                                <td>[[ row.employee[0].name]]</td>
+                                <td>[[ row.employee[0].department[0].name]]</td>
+                                <td>[[ row.employee[0].post[0].name]]</td>
+                                <td> [[ row.daysatt ]]</td>
+                                <td> [[ row.latecomin ]]</td>
+                                <td> [[ row.earlygoing ]]</td>
+                                <td>[[ formatedNumber(row.employee[0].basicpay) ]]</td>
+                                <td>[[ formatedNumber(row.days_payable) ]]</td>
+                                <td>[[ formatedNumber(row.pay_1) ]]</td>
+                                <td>[[ formatedNumber(row.net_adv_deduction) ]]</td>
+                                <td>[[ row.esi ]]</td>
+                                <td>[[ row.pf ]]</td>
+                                <td>[[ row.tds ]]</td>
+                                <td>[[ row.other_deduction ]]</td>
+                                <td>[[ formatedNumber(row.total_deductions) ]]</td>
+                                <td>[[ formatedNumber(row.net_payable) ]]</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div> -->
+            <!-- End saved sheets -->
+        </div>
+    </div>
+</section>
+
+<script src="{{ url_for('static' , filename='js/reports/salary.js')}}"></script>
+
+{% endblock %}

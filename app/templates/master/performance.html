@@ -129,39 +129,14 @@
                             <td>
                                 <div class="buttons">
                                     <div class="button" @click="editData(row)">Edit</div>
-                                    <div class="dropdown">
-                                        <div class="dropdown is-hoverable">
-                                            <div class="dropdown-trigger">
-                                                <button class="button is-danger" aria-haspopup="true"
-                                                    aria-controls="dropdown-menu4">
-                                                    <span>Delete</span>
-
-                                                </button>
-                                            </div>
-                                            <div class="dropdown-menu" style="z-index:10;" id="dropdown-menu4"
-                                                role="menu">
-                                                <div class="dropdown-content has-background-light">
-                                                    <p class="dropdown-item is-size-6 is-underline">
-                                                        Are you sure ?
-                                                    </p>
-                                                    <hr class="dropdown-divider">
-
-                                                    <a class="dropdown-item">
-                                                        <div class="button is-danger is-small"
-                                                            @click="deleteData(row , index)">Delete</div>
-                                                </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div class="button is-danger"  @click="deleteData(row , index)">Delete</div>
                                 </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            </td>
-            </tr>
-            </tbody>
-            </table>
         </div>
-    </div>
     </div>
 
 </template>

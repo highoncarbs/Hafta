@@ -52,6 +52,9 @@ def create_app(config_class=Config):
         from app.transaction import bp as trans_bp
         app.register_blueprint(trans_bp, url_prefix='/transaction')
 
+        from app.report import bp as report_bp
+        app.register_blueprint(report_bp, url_prefix='/reports')
+
         db.create_all()
 
         from app.model import Role

@@ -1,7 +1,7 @@
 // Reset all data when changing selection of select employee
 
 new Vue({
-    el: "#advance_form",
+    el: "#advance_form_view",
     data() {
 
         return {
@@ -89,8 +89,8 @@ new Vue({
         getAdvanceDetail(e) {
             let rawdata = this
 
-            if (this.emp_id != null) {
-                axios.post('/transaction/advance/employee/' + String(this.emp_id))
+            if (this.company != null) {
+                axios.get('/transaction/advance/all/' + String(this.company))
                     .then(function (response) {
                         console.log(response.data);
                         rawdata.empAdvanceDetail = JSON.parse(response.data)
@@ -152,7 +152,7 @@ new Vue({
             this.advanceForm.totalAdvance = Number(outstandingamt)
             return this.formatedNumber(outstandingamt)
         },
-        getEmployee(e) {
+        getAll(e) {
             let rawdata = this
             this.advanceForm.errors = {}
             this.data = null
@@ -189,7 +189,7 @@ new Vue({
                     this.submitting = true
                     this.value = 'Saving'
 
-                    let formdata = { 'emp_id': this.emp_id, 'data': this.advanceForm  , 'company_id' : this.company , 'month' : this.month}
+                    let formdata = { 'emp_id': this.emp_id, 'data': this.advanceForm }
                     console.log(formdata)
                     axios.post('/transaction/advance/save', formdata)
                         .then(function (response) {

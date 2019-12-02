@@ -2,6 +2,7 @@
     font-family: 'Inter', serif;
     font-weight: 700;
     letter-spacing: -4px;
+   
 }
 
 body, html {
@@ -39,9 +40,14 @@ i {
 }
 
 .is-sidebar-menu {
-    padding: 2.5rem;
-    position: sticky !important;
-    border-right: 2px solid rgba(0, 0, 0, 0.1);
+    top: 0;
+    bottom: 0;
+    overflow-y: scroll;
+    width: inherit;
+    position: fixed;
+    padding: 2.5rem 2rem 0 1rem;
+    /* position: sticky !important; */
+    /* border-right: 2px solid rgba(0, 0, 0, 0.1); */
 }
 
 .columns.is-fullheight {

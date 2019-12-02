@@ -24,6 +24,21 @@ def get_advance_for_emp(id):
     json_data = data_schema.dumps(data)
     return jsonify(json_data)
 
+@bp.route('/advance/all/<id>', methods=['GET'])
+def get_advance_firm(id):
+    # Get's advance details on employees
+    data = Company.query.first()
+    data_t = Company.query.all()[1]
+    adv = Advance.query.filter(Advance.company.any(Company.id == int(id))).all()
+    data_schema = AdvanceSchema(many=True)
+    json_data = data_schema.dumps(adv)
+    print(data ,data_t , adv )
+    return jsonify(json_data)
+    # data_schema = EmployeeAdvanceSchema()
+    # data = Employee.query.filter_by(id=int(id)).first()
+    # json_data = data_schema.dumps(data)
+    return jsonify({})
+
 
 @bp.route('/advance/get/<emp_id>', methods=['POST'])
 def get_advance(emp_id):
@@ -72,8 +87,11 @@ def save_advance():
                 new_data = Advance()
                 emp = Employee.query.filter_by(
                     id=int(payload['emp_id'])).first()
+                comp = Company.query.filter_by(
+                    id=int(payload['company_id'])).first()
 
                 new_data.employee.append(emp)
+                new_data.company.append(comp)
                 for field in table_columns:
                     val = payload_data[field]
                     if val == '' or val is None:

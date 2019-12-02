@@ -7,7 +7,7 @@
 <!-- TODO : Date ranges inclusion for submitting data in performance -->
 <section class="section">
 
-    <div class="container" id="performance_form">
+    <div class="container" id="performance_form_view">
 
         <!-- Heading Title -->
         <div class="level">
@@ -24,7 +24,7 @@
                 <label for="" class="label">Select company</label>
                 <custom-select-company v-model="company" which="company">
                 </custom-select-company>
-               
+
             </div>
 
             <div class="control">
@@ -39,49 +39,17 @@
             <div class="control">
                 <label for="" class="label has-text-white"> Generate</label>
 
-                <button class="button is-black" @click="getEmployee()">
+                <button class="button is-black" @click="viewPastRecords">
                     <span class="icon icon-btn icon-btn-in">
                         <i data-feather="check"></i>
                     </span>
                     Submit</button>
-            </div>
-            <div class="control">
-                <label for="" class="label has-text-white"> View Past</label>
-
-                <button class="button" @click="viewPastRecords">
-                    <span class="icon icon-btn icon-btn-in">
-                        <feather type="eye" size="1.3rem"></feather>
-                    </span>
-                    View</button>
             </div>
         </div>
         <small v-if="errors.submit" class="has-text-danger is-underline">
             Please set both company and dates.
         </small>
 
-        <br>
-        <div class="field is-grouped is-grouped-multiline animated fadeIn" v-if="showEmpSelect">
-
-            <div class="control">
-                <label for="" class="label">Select Employee</label>
-                <b-autocomplete v-model="employee" placeholder="e.g. Jitendre" :keep-first='true' :open-on-focus='true'
-                    :data="filteredDataObj" field="name" @select="getSelected">
-
-
-                </b-autocomplete>
-            </div>
-            <div class="control animated fadeIn">
-                <label for="" class="label has-text-white"> Submit</label>
-
-                <button class="button is-black" @click="getFactor">
-                    <span class="icon icon-btn icon-btn-in">
-                        <feather type="check" size="1.3rem"></feather>
-                    </span>
-                    Submit</button>
-            </div>
-
-
-        </div>
         <br>
 
         <!-- Modal Attention for performance -->
@@ -178,20 +146,12 @@
                         <th></th>
                     </tr>
 
-                    <!-- EMPTY Mssg -->
-                    <!-- <p v-if="filteredList.length == 0"
-                        class=" has-text-centered is-size-4 has-text-grey-light is-underline">
-                        <br>
-                        <span class="icon icon-btn"><i data-feather="slash"></i></span> Zero data matching query.
-                        <script> feather.replace()</script>
-                    </p> -->
 
                 </thead>
 
 
                 <tbody>
-                    <tr v-for="(row , index) in filteredRecordList " >
-                        <!-- add to row @dblclick="performanceModal(row.employee[0].id)" -->
+                    <tr v-for="(row , index) in filteredRecordList ">
                         <td>[[ formatedDate(row.fromdate) ]]</td>
                         <td>[[ formatedDate(row.todate) ]]</td>
                         <td>[[ row.employee[0].name ]]</td>
@@ -200,12 +160,7 @@
                             <div class="buttons">
                                 <button class="button" @click="editPerformance(index)">
                                     <span class=" icon">
-                                        <feather type="edit" size="1.3rem"></feather>
-                                    </span>
-                                </button>
-                                <button class="button is-danger" @click="deletePerformance(row.id , index)">
-                                    <span class="icon">
-                                        <feather type="x" size="1.3rem"></feather>
+                                        <feather type="eye" size="1.3rem"></feather>
                                     </span>
                                 </button>
                             </div>
@@ -216,107 +171,7 @@
         </div>
 
 
-        <!-- Quick Reports modal View -->
-        <div v-if="quickPerfModal" :class="{ 'is-active' : quickPerfModal }" class="modal  ">
-            <div class="modal-background animated fadeIn" @click="quickPerfModal = !quickPerfModal"></div>
-            <div class="modal-content animated fadeIn ">
 
-                <div class="box is-fullwidth ">
-                    <p class="is-size-5"> Reports for - <span class="has-text-weight-semibold">
-                            [[ employee ]]
-                        </span> </p>
-
-                    <small class=" has-text-grey">DATE RANGE: <span class="has-text-weight-semibold">[[
-                            formatedDate(fromdate)]] - [[ formatedDate(todate)
-                            ]]</span>
-                    </small>
-                    <br>
-                    <br>
-                    <div class="table-container animated fadeIn" style="overflow: visible;">
-                        <table class="table is-fullwidth is-bordered">
-                            <thead>
-                                <th>Date</th>
-                                <th>Feedback</th>
-                                <th>Report</th>
-                            </thead>
-
-
-                            <tbody>
-                                <tr v-for="(row , index) in quickReports" :key="index">
-                                    <td>
-                                        [[ formatedDate(row.date) ]]
-                                    </td>
-                                    <td class="has-text-weight-semibold"
-                                        :class="{'is-danger is-underline has-text-white': row.feedback == 'negative' , 'is-light': row.feedback == 'positive' }">
-                                        [[ row.feedback ]]</td>
-                                    <td>[[ row.report ]]</td>
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-            </div>
-            <button class="modal-close is-large" @click="quickPerfModal = !quickPerfModal"></button>
-        </div>
-
-        <!-- Entry  Performance Records -->
-        <div v-show="showPerfTable && employee != ''">
-            <div class="table-container animated fadeIn" style="overflow: visible;">
-                <div class="field">
-                    <div class="control">
-                        <button class="button" @click="quickPerfModal = !quickPerfModal">
-                            <span class="icon icon-btn">
-                                <feather type="message-square" size="1.3rem"></feather>
-                            </span>
-                            View Reports
-                        </button>
-                    </div>
-                </div>
-                <table class="table is-fullwidth is-bordered">
-                    <thead>
-                        <th>Factor</th>
-                        <th>Max. Score</th>
-                        <th>Weight</th>
-                        <th>Obtained Score</th>
-                    </thead>
-
-                    <tfoot>
-                        <tr>
-                            <td colspan="5">
-                                <div class="buttons">
-
-                                    <button class="button is-black" @click="submitData" :disabled="submitting">
-                                        <span class="icon icon-btn">
-                                            <feather type="check" size="1.3rem"></feather>
-                                        </span>
-                                        Save
-                                    </button>
-                                    <span v-if="Object.keys(errors).length != 0"
-                                        class="has-text-danger is-underline">Please fix the errors.</span>
-                                </div>
-
-                            </td>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        <tr v-for="(row , index) in factorList" :key="index">
-                            <td>
-                                [[ row.name]]
-                            </td>
-                            <td v-html="row.score"></td>
-                            <td v-html="row.weight"></td>
-                            <td> <input type="text" class="input" v-model="row.obt_score"
-                                    placeholder="Enter Obtained Score"
-                                    :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].obt_score == true }">
-                            </td>
-
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
 
 
         <!-- Edit Modal -->
@@ -341,28 +196,6 @@
                                 <th>Weight</th>
                                 <th>Obtained Score</th>
                             </thead>
-
-                            <tfoot>
-                                <tr>
-                                    <td colspan="5">
-                                        <div class="buttons">
-
-                                            <button class="button is-black" @click="updateData" :disabled="submitting">
-                                                <span class="icon icon-btn">
-                                                    <feather type="refresh-cw" size="1.3rem"></feather>
-                                                </span>
-                                                Update
-                                            </button>
-                                            <span v-if="Object.keys(editerrors).length != 0"
-                                                class="has-text-danger is-underline">Please fix the
-                                                errors.</span>
-
-
-                                        </div>
-
-                                    </td>
-                                </tr>
-                            </tfoot>
                             <tbody>
                                 <tr v-for="(row , index) in editFactorList.performance_items"
                                     animation="spin ? submitting : false" :key="index">
@@ -371,16 +204,38 @@
                                     </td>
                                     <td v-html="row.performance.score"></td>
                                     <td v-html="row.performance.weight"></td>
-                                    <td> <input type="text" class="input" v-model="row.obt_score"
-                                            placeholder="Enter Obtained Score"
-                                            :class="{ 'is-danger' : editerrors[row.id] != undefined && editerrors[row.id].obt_score == true }">
-                                    </td>
+                                    <td v-html="row.obt_score"></td>
 
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                    <br>
+                    <div class="box">
+                        <p class="is-size-5 has-text-weight-semibold">Quick Reports</p>
+                        <br>
+                        <table class="table is-fullwidth is-bordered" v-if="quickReports != null">
+                            <thead>
+                                <th>Date</th>
+                                <th>Feedback</th>
+                                <th>Report</th>
+                            </thead>
 
+
+                            <tbody>
+                                <tr v-for="(row , index) in quickReports" :key="index">
+                                    <td>
+                                        [[ formatedDate(row.date) ]]
+                                    </td>
+                                    <td class="has-text-weight-semibold"
+                                        :class="{'is-underline has-text-danger': row.feedback == 'negative' , '': row.feedback == 'positive' }">
+                                        [[ row.feedback ]]</td>
+                                    <td>[[ row.report ]]</td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <button class="modal-close is-large" @click="editPerfModal = !editPerfModal"></button>
@@ -389,5 +244,5 @@
 
 
 </section>
-<script src="{{ url_for('static' ,filename='js/transaction/performance.js')}}"></script>
+<script src="{{ url_for('static' ,filename='js/reports/performance.js')}}"></script>
 {% endblock %}

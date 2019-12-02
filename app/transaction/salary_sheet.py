@@ -204,7 +204,7 @@ def get_processed_sheet():
 
 def generate_sheet(company, month):
     # Payload Date from User
-    
+
     payload_date = month.split('-')
     payload_date = datetime(
         int(payload_date[0]), int(payload_date[1]), int(1))
@@ -220,7 +220,6 @@ def generate_sheet(company, month):
 
     att_data_schema = AttendenceSchema(many=True)
     json_att_data = json.loads(att_data_schema.dumps(att_data))
-
     adv_data_schema = AdvanceSchema(many=True)
 
     att_rules = AttendenceRules.query.first()
@@ -249,9 +248,9 @@ def generate_sheet(company, month):
 
         # Includes deduction from the month
         adv_data = Advance.query.filter(
-            Advance.employee.any(Employee.id == int(att_item['employee'][0]['id'])), Advance.date >= year_start, Advance.date >= payload_date).all()
+            Advance.employee.any(Employee.id == int(att_item['employee'][0]['id']))).all()
         json_adv_data = json.loads(adv_data_schema.dumps(adv_data))
-
+        print(json_adv_data)
         net_advance_month = 0
         net_advance_year = 0
         net_deduction_month = 0
@@ -267,18 +266,17 @@ def generate_sheet(company, month):
                 outstanding_advance -= float(item.advanceamt)
 
         for adv_item in json_adv_data:
-            if payload_date.month is not 12:
-                if adv_item['deduction_period'] == 'month':
+            if adv_item['deduction_period'] == 'month':
 
-                    net_advance_month += float(adv_item['advanceamt'])
-                    net_deduction_month += float(adv_item['deduction'])
+                net_advance_month += float(adv_item['advanceamt'])
+                net_deduction_month += float(adv_item['deduction'])
 
-                    # net_advance += float(-100)
-                    att_item['deductions']['month'].append(
-                        adv_item['deduction'])
+                # net_advance += float(-100)
+                att_item['deductions']['month'].append(
+                    adv_item['deduction'])
 
-            else:
-                if adv_item['deduction_period'] == 'year':
+            if adv_item['deduction_period'] == 'year':
+                if payload_date.month is 12:
 
                     net_advance_year += float(adv_item['advanceamt'])
                     net_deduction_year += float(adv_item['deduction'])
@@ -331,5 +329,4 @@ def generate_sheet(company, month):
             att_item['tds'])+float(att_item['other_deduction']) + float(att_item['net_deduction_year'])
         att_item['net_payable'] = float(
             att_item['pay_1'] - att_item['total_deductions'])
-
     return jsonify(json_att_data)

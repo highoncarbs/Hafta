@@ -1,0 +1,736 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+{% include 'component/custom-select.html'%}
+{% include 'component/custom-select-company.html'%}
+
+
+<section class="section">
+
+    <div class="container" id="attendence_form_view">
+
+        <!-- Heading Title -->
+        <div class="level">
+            <div class="level-left">
+                <p class="is-size-4 has-text-weight-semibold">Attendence</p>
+            </div>
+
+        </div>
+
+        <!-- Attendence Company and Date selection -->
+        <div class="field is-grouped">
+
+            <div class="control">
+                <label for="" class="label">Select company</label>
+                <custom-select-company v-model="company" which="company" class="is-danger">
+                </custom-select-company>
+               
+            </div>
+
+            <div class="control">
+                <label for="" class="label">Select month</label>
+                <input type="month" class="input" v-model="month">
+            </div>
+
+            <div class="control">
+                <label for="" class="label has-text-white"> Submit</label>
+
+                <button class="button is-black" @click="getEmployee">
+                    <span class="icon icon-btn icon-btn-in">
+                        <i data-feather="check"></i>
+                    </span>
+                    Submit</button>
+            </div>
+
+        </div>
+        <small v-if="errors.submit " class="has-text-danger is-underline animated fadeInDown is-size-6">[[
+            errors.submit]]</small>
+        <br>
+
+
+        <!-- Edit Data table -->
+
+
+        <div class="box animated fadeIn has-background-light" v-if="attendenceList.length !=0">
+            <div class="level">
+                <div class="level-left">
+                    <!-- DATA LIST for data laready filled up -->
+                    <p v-if="attendenceList.length > 4">
+                        Data already entered for : [[ attendenceList.length ]] employees
+                    </p>
+                    <p v-else="attendenceList.length <= 4">Data already entered for : <span class=""
+                            v-for="(att , index ) in attendenceList"> [[
+                            att.employee[0].name ]] , </span></p>
+                </div>
+                <div class="level-right">
+                    <div class="butttons">
+                        <button class="button " @click="attModal = !attModal">
+                            <span class="icon icon-btn">
+                                <feather type="eye" size="1.3rem"></feather>
+                            </span>
+                            View</button>
+                        <button class="button is-black" @click="showEditTable = !showEditTable">
+                            <span class="icon icon-btn">
+                                <feather v-if="!showEditTable" type="edit" size="1.3rem"></feather>
+                                <feather v-if="showEditTable" type="x" size="1.3rem"></feather>
+
+                            </span>
+                            Edit</button>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div v-if="showEditTable">
+                <div class="table-container">
+
+                    <table class="table is-bordered is-fullwidth is-hoverable " v-if="attendenceList.length != 0">
+
+
+
+                        <!-- Needs work -->
+                        <!-- <div class="field is-grouped animated fadeIn" v-if="data != null">
+                            <div class="control is-expanded has-icons-left">
+                                <input type="text" class="input is-fdullwidth" v-model="searchQuery"
+                                    placeholder="Search">
+
+                                <span class="icon icon-btn icon-btn-in is-left">
+                                    <feather type="search"></feather>
+                                </span>
+                            </div>
+
+
+
+
+                        </div> -->
+                        <thead style="cursor: pointer" class="animated fadeIn">
+                            <!-- TABLE HEADER -->
+                            <tr class="has-text-weight-semibold ">
+                                <th @click="sortBy('id')">ID
+                                    <span class="icon icon-btn icon-btn-in">
+
+                                        <feather v-if="this.currentSort == 'id'"
+                                            :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'">
+                                        </feather>
+                                    </span>
+                                    </feather>
+                                </th>
+                                <td @click=" sortBy('name')">Name
+                                    <span class="icon icon-btn icon-btn-in">
+
+                                        <feather v-if="this.currentSort == 'name'"
+                                            :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'">
+                                        </feather>
+                                    </span>
+                                </td>
+
+                                <td @click=" sortBy('dept')">Dept.
+                                    <span class="icon icon-btn icon-btn-in">
+
+                                        <feather v-if="this.currentSort == 'dept'"
+                                            :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'">
+                                        </feather>
+                                    </span>
+                                </td>
+
+                                <td @click=" sortBy('post')">Post
+                                    <span class="icon icon-btn icon-btn-in">
+
+                                        <feather v-if="this.currentSort == 'post'"
+                                            :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'">
+                                        </feather>
+                                    </span>
+                                </td>
+                                <td @click=" sortBy('days')">Days Attended
+                                    <small class="has-text-grey">30 DAYS</small>
+
+                                </td>
+                                <td @click=" sortBy('late')">Late Come in
+
+                                </td>
+                                <td @click=" sortBy('early')">Early Going
+
+                                </td>
+                                <td>PF</td>
+                                <td>ESI</td>
+                                <td>TDS</td>
+                                <td>Other Deduction</td>
+
+
+                            </tr>
+                            <!-- EMPTY Mssg -->
+                            <!-- <p v-if="filteredList.length == 0"
+                                    class=" has-text-centered is-size-4 has-text-grey-light is-underline">
+                                    <br>
+                                    <span class="icon icon-btn"><i data-feather="slash"></i></span> Zero data matching query.
+                                    <script> feather.replace()</script>
+                                </p> -->
+
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th colspan="11" style="padding:1rem;">
+                                    <button class="button is-black" @click="updateData" type="submit">
+                                        <span class="icon icon-btn">
+                                            <feather type="refresh-cw" SIZE="1.3rem"></feather>
+                                        </span>
+                                        Update
+                                    </button>
+                                    <span class="is-underline has-text-danger has-text-weight-normal"
+                                        style="padding-left:1rem;" v-if="errors.length != 0"> Please fix the
+                                        errors.</span>
+                                </th>
+                            </tr>
+
+
+
+                        </tfoot>
+                        <tbody>
+                            <!-- <tr v-show="filteredList.length == 0">
+                                    <p class="is-szie-5 is-underline has-text-grey"> <feather type="slash"></feather> Zero results matching query. </p>
+                                </tr> -->
+                            <tr v-for="( row , index) in attendenceList " class="animated fadeIn"
+                                v-on:dblclick="employeeDetail(row.id)" :key="index">
+                                <td>[[ row.employee[0].id ]]</td>
+                                <td>[[ row.employee[0].name]] </td>
+                                <td v-if="row.employee[0].department.length != 0"> [[ row.employee[0].department[0].name]] </td>
+                                <td class="has-text-grey-light" v-if="row.employee[0].department.length == 0"> None </td>
+                                <td v-if="row.employee[0].post.length != 0"> [[ row.employee[0].post[0].name]] </td>
+                                <td class="has-text-grey-light" v-if="row.employee[0].post.length == 0"> None </td>
+                                <td>
+                                    <input type="number" class="input" v-model.number="row.daysatt"
+                                        placeholder="Days Attended"
+                                        :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].daysatt == true }">
+                                </td>
+                                <td>
+                                    <input type="number" class="input" v-model.number="row.latecomin"
+                                        placeholder="Late Come in"
+                                        :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].latecomin == true }">
+
+                                </td>
+                                <td>
+                                    <input type="text" class="input" v-model.number="row.earlygoing"
+                                        placeholder="Early Going"
+                                        :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].earlygoing == true }">
+
+                                </td>
+                                <td>
+                                    <input type="text" class="input" v-model="row.pf" placeholder="PF"
+                                        :disabled="row.pf == 'no'">
+
+                                </td>
+                                <td>
+                                    <input type="text" class="input" v-model="row.esi" placeholder="ESI"
+                                        :disabled="row.esi == 'no'">
+
+                                </td>
+                                <td>
+                                    <input type="text" class="input" v-model="row.tds" placeholder="TDS">
+
+                                </td>
+                                <td>
+                                    <input type="text" class="input" v-model="row.other_deduction"
+                                        placeholder="Other Deduction">
+
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <p v-if="isLoading " class=" has-text-centered is-size-4 has-text-grey-light">
+            <br>
+            <span class="icon icon-btn">
+                <feather type="rotate-cw" animation="spin"></feather>
+            </span> Loading
+        </p>
+
+
+        <table class="table is-bordered is-fullwidth is-hoverable " v-if="data && data.length != 0 && !showEditTable">
+
+
+
+
+            <div class="field is-grouped animated fadeIn" v-if="data && data.length != 0 && !showEditTable">
+                <div class="control is-expanded has-icons-left">
+                    <input type="text" class="input is-fdullwidth" v-model="searchQuery" placeholder="Search">
+
+                    <span class="icon icon-btn icon-btn-in is-left">
+                        <feather type="search"></feather>
+                    </span>
+                </div>
+            </div>
+            <thead style="cursor: pointer" class="animated fadeIn">
+                <!-- TABLE HEADER -->
+                <tr class="has-text-weight-semibold ">
+                    <th @click="sortBy('id')">ID
+                        <span class="icon icon-btn icon-btn-in">
+
+                            <feather v-if="this.currentSort == 'id'"
+                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                        </span>
+                        </feather>
+                    </th>
+                    <td @click=" sortBy('name')">Name
+                        <span class="icon icon-btn icon-btn-in">
+
+                            <feather v-if="this.currentSort == 'name'"
+                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                        </span>
+                    </td>
+
+                    <td @click=" sortBy('dept')">Dept.
+                        <span class="icon icon-btn icon-btn-in">
+
+                            <feather v-if="this.currentSort == 'dept'"
+                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                        </span>
+                    </td>
+
+                    <td @click=" sortBy('post')">Post
+                        <span class="icon icon-btn icon-btn-in">
+
+                            <feather v-if="this.currentSort == 'post'"
+                                :type="this.currentSortDir == 'asc' ? 'chevron-up' : 'chevron-down'"></feather>
+                        </span>
+                    </td>
+                    <td @click=" sortBy('days')">Days Attended
+                        <small class="has-text-grey">30 DAYS</small>
+
+                    </td>
+                    <td @click=" sortBy('late')">Late Come in
+
+                    </td>
+                    <td @click=" sortBy('early')">Early Going
+
+                    </td>
+                    <td>PF</td>
+                    <td>ESI</td>
+                    <td>TDS</td>
+                    <td>Other Deduction</td>
+
+
+                </tr>
+                <!-- EMPTY Mssg -->
+                <!-- <p v-if="filteredList.length == 0"
+                    class=" has-text-centered is-size-4 has-text-grey-light is-underline">
+                    <br>
+                    <span class="icon icon-btn"><i data-feather="slash"></i></span> Zero data matching query.
+                    <script> feather.replace()</script>
+                </p> -->
+
+            </thead>
+            <tfoot>
+                <tr>
+                    <th colspan="11" style="padding:1rem;">
+
+                        <input type="submit" class="button is-black" @click="submitData" :value="value"
+                            :disabled="submitting">
+                        <span class="is-underline has-text-danger has-text-weight-normal" style="padding-left:1rem;"
+                            v-if="errors.length != 0"> Please fix the errors.</span>
+                    </th>
+                </tr>
+
+
+
+            </tfoot>
+            <tbody>
+                <!-- <tr v-show="filteredList.length == 0">
+                    <p class="is-szie-5 is-underline has-text-grey"> <feather type="slash"></feather> Zero results matching query. </p>
+                </tr> -->
+                <tr v-if="filteredList.length != 0" v-for="( row , index) in filteredList " class="animated fadeIn"
+                    v-on:dblclick="employeeDetail(row.id)" :key="index">
+                    <td>[[ row.id ]]</td>
+                    <td>[[ row.name]] </td>
+                    <td v-if="row.department.length != 0"> [[ row.department[0].name]] </td>
+                    <td class="has-text-grey-light" v-if="row.department.length == 0"> None </td>
+                    <td v-if="row.post.length != 0"> [[ row.post[0].name]] </td>
+                    <td class="has-text-grey-light" v-if="row.post.length == 0"> None </td>
+                    <td>
+                        <input type="number" class="input" v-model.number="row.daysatt" placeholder="Days Attended"
+                            :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].daysatt == true }">
+                    </td>
+                    <td>
+                        <input type="number" class="input" v-model.number="row.latecomin" placeholder="Late Come in"
+                            :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].latecomin == true }">
+
+                    </td>
+                    <td>
+                        <input type="text" class="input" v-model.number="row.earlygoing" placeholder="Early Going"
+                            :class="{ 'is-danger' : errors[row.id] != undefined && errors[row.id].earlygoing == true }">
+
+                    </td>
+                    <td>
+                        <input type="text" class="input" v-model="row.pfval" placeholder="PF"
+                            :disabled="row.pf == 'no'">
+
+                    </td>
+                    <td>
+                        <input type="text" class="input" v-model="row.esival" placeholder="ESI"
+                            :disabled="row.esi == 'no'">
+
+                    </td>
+                    <td>
+                        <input type="text" class="input" v-model="row.tdsval" placeholder="TDS">
+
+                    </td>
+                    <td>
+                        <input type="text" class="input" v-model="row.other_deduction" placeholder="Other Deduction">
+
+                    </td>
+                </tr>
+
+            </tbody>
+
+
+
+
+
+        </table>
+
+        <!-- Employee Detail  Popup-->
+
+        <div :class="{ 'is-active' : detailModal }" class="modal  ">
+            <div class="modal-background animated fadeIn" @click="detailModal = !detailModal"></div>
+            <div class="modal-content animated fadeIn ">
+
+                <div class="box">
+
+                    <p v-if="empDetail == null " class="has-text-grey">
+                        <span class="icon icon-btn">
+                            <feather type="rotate-cw" animation="spin" animation-speed="slow"></feather>
+                        </span>
+                        Fetching data
+                    </p>
+                    <div v-if="empDetail != null " class="animated fadeIn">
+                        <div class="level is-mobile">
+                            <div class="level-left">
+                                <h2 class="is-size-5 has-text-weight-medium"> [[ empDetail.name ]] </h2>
+
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                    <a href="" class="button"><span class="icon icon-btn">
+                                            <feather type="edit" size="1.3rem"></feather>
+                                        </span> Edit</a>
+                                </div>
+                                <div class="level-item">
+                                    <a href="" class="button is-black"><span class="icon icon-btn">
+                                            <feather type="bar-chart-2" size="1.3rem"></feather>
+                                        </span> Report</a>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <table class="table is-bordered is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <td colspan="2">
+                                        <small class="has-text-weight-semibold"> NAME</small>
+
+                                        <p> [[ empDetail.name ]]</p>
+                                    </td>
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> DATE OF BIRTH</small>
+
+                                        <p>[[ formatedDate(empDetail.dob) ]] </p>
+                                    </td>
+                                    <td colspan="1">
+
+                                        <small class="has-text-weight-semibold"> FATHER'S NAME</small>
+                                        <p>[[ empDetail.fathername ]]
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+
+                                        <small class="has-text-weight-semibold">CONTACT</small>
+                                        <p v-html=" empDetail.contact != undefined ? empDetail.contact : 'None'">
+                                        </p>
+                                    </td>
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> SPOUSE NAME</small>
+
+                                        <p v-html=" empDetail.spousename != undefined ? empDetail.spousename : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> EDUCATION</small>
+
+                                        <p v-html=" empDetail.education != undefined ? empDetail.education : 'None'">
+                                        </p>
+
+                                    </td>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+
+                                        <small class="has-text-weight-semibold">CURRENT ADDRESS</small>
+                                        <p
+                                            v-html=" empDetail.curr_address != undefined ? empDetail.curr_address : 'None'">
+                                        </p>
+                                        <p v-html=" empDetail.curr_city != undefined ? empDetail.curr_city : 'None'">
+                                        </p>
+                                    </td>
+                                    <td colspan="2">
+                                        <small class="has-text-weight-semibold"> PERMANENT ADDRESS</small>
+
+                                        <p
+                                            v-html=" empDetail.perm_address != undefined ? empDetail.perm_address : 'None'">
+                                        </p>
+                                        <p v-html=" empDetail.perm_city != undefined ? empDetail.perm_city : 'None'">
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                <tr>
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> AADHAR NO</small>
+
+                                        <p v-html=" empDetail.aadahr != undefined ? empDetail.aadhar : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="2">
+
+                                        <small class="has-text-weight-semibold">PAN NO</small>
+                                        <p v-html=" empDetail.pan != undefined ? empDetail.pan : 'None'">
+                                        </p>
+                                    </td>
+
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> REFERENCE</small>
+
+                                        <p v-html=" empDetail.reference != undefined ? empDetail.reference : 'None'">
+                                        </p>
+
+                                    </td>
+
+                                </tr>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <small class="has-text-weight-semibold"> DATE OF APPOINTMENT</small>
+
+                                        <p
+                                            v-html="empDetail.dateofapp != undefined ?  formatedDate(empDetail.dateofapp) : 'None'">
+                                        </p>
+
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> APPOINTMENT</small>
+
+                                        <p
+                                            v-html=" empDetail.appointment != undefined ? empDetail.appointment : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="1">
+
+                                        <small class="has-text-weight-semibold">POST</small>
+                                        <p v-html=" empDetail.post != undefined ? empDetail.post : 'None'">
+                                        </p>
+                                    </td>
+
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> DEPARTMENT</small>
+
+                                        <p v-html=" empDetail.department != undefined ? empDetail.department : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> COMPANY</small>
+
+                                        <p v-html=" empDetail.company != undefined ? empDetail.company : 'None'">
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <small class="has-text-weight-semibold"> BENEFITS</small>
+
+                                        <p v-html=" empDetail.company != undefined ? empDetail.company : 'None'">
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr class="has-background-light">
+                                    <td colspan="4">
+                                        <p class="is-size-6 has-text-weight-semibold">SALARY STRUCTURE</p>
+
+                                    </td>
+
+                                </tr>
+                                <tr class="has-background-light">
+                                    <td colspan="2">
+                                        <small class="has-text-weight-semibold"> EFFECTIVE DATE</small>
+
+                                        <p
+                                            v-html="empDetail.dateeff != undefined ?  formatedDate(empDetail.dateeff) : 'None'">
+                                        </p>
+                                    </td>
+                                    <td colspan="2">
+                                        <small class="has-text-weight-semibold"> PAYMENT MODEL</small>
+
+                                        <p
+                                            v-html="empDetail.salary_structure != undefined ?  empDetail.salary_structure : 'None'">
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr class="has-background-light">
+                                    <td colspan="2">
+                                        <small class="has-text-weight-semibold"> BASIC PAY</small>
+
+                                        <p
+                                            v-html=" empDetail.basicpay != undefined ? formatedNumber(empDetail.basicpay) : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="1">
+
+                                        <small class="has-text-weight-semibold">P.F</small>
+                                        <p v-html=" empDetail.pf != undefined ? empDetail.pf : 'None'">
+                                        </p>
+                                    </td>
+
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> ESI</small>
+
+                                        <p v-html=" empDetail.esi != undefined ? empDetail.esi : 'None'">
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr class="has-background-light">
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> SALARY ADVANCE</small>
+
+                                        <p v-html=" empDetail.advance != undefined ? empDetail.advance : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="2">
+
+                                        <small class="has-text-weight-semibold">MAX. ADVANCE</small>
+                                        <p
+                                            v-html=" empDetail.advancevalue != undefined ? formatedNumber(empDetail.advancevalue) : 'None'">
+                                        </p>
+                                    </td>
+
+                                    <td colspan="1">
+                                        <small class="has-text-weight-semibold"> ESI</small>
+
+                                        <p v-html=" empDetail.advancenum != undefined ? empDetail.advancenum : 'None'">
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr class="has-background-light">
+
+                                    <td colspan="2">
+                                        <small class="has-text-weight-semibold">PAID LEAVES</small>
+                                        <small>IN A YEAR</small>
+
+                                        <p v-html=" empDetail.paidleave != undefined ? empDetail.paidleave : 'None'">
+                                        </p>
+
+                                    </td>
+                                    <td colspan="2">
+
+                                        <small class="has-text-weight-semibold">INCREMENT PERIOD</small>
+                                        <small>IN MONTHS</small>
+
+                                        <p
+                                            v-html=" empDetail.incrementpr != undefined ? empDetail.incrementpr : 'None'">
+                                        </p>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+
+                    </div>
+
+                </div>
+                <button class="modal-close is-large" @click="detailModal = !detailModal"></button>
+
+            </div>
+
+        </div>
+
+        <!-- Attendence detail List popup -->
+
+        <div v-if="attModal" :class="{ 'is-active' : attModal }" class="modal  ">
+            <div class="modal-background animated fadeIn" @click="attModal = !attModal"></div>
+            <div class="modal-content animated fadeIn ">
+
+                <div class="box is-fullwidth ">
+                    <div class="table-container">
+                        <table class="table is-fullwidth is-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Days Attended</th>
+                                    <th>Late Come in</th>
+                                    <th>Early Going</th>
+                                    <th>PF</th>
+                                    <th>ESI</th>
+                                    <th>TDS</th>
+                                    <th>Other Deduction</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="row in attendenceList">
+                                    <td> [[ row.employee[0].id ]] </td>
+                                    <td> [[ row.employee[0].name ]] </td>
+                                    <td>[[ row.daysatt ]] / <span class=" has-text-grey-light"> 30</span> </td>
+                                    <td> [[ row.latecomin ]] </td>
+                                    <td> [[ row.earlygoing ]] </td>
+                                    <td> [[ row.pf ]] </td>
+                                    <td> [[ row.esi ]] </td>
+                                    <td> [[ row.tds ]] </td>
+                                    <td> [[ row.other_deduction ]] </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <button class="modal-close is-large" @click="attModal = !attModal"></button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</section>
+
+<script src="{{ url_for('static' , filename='js/reports/attendence.js')}}"></script>
+{% endblock %}
