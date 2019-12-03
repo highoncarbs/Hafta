@@ -185,6 +185,9 @@ new Vue({
                     const win = window.open('/transaction/salary_sheet/print/all', '_blank', [], true);
                 })
         },
+        // deleteSheet() {
+            
+        // },
         printSavedAll() {
             let rawdata = this
             localStorage.clear()

@@ -16,6 +16,7 @@ import requests
 import json
 
 
+
 @bp.route('/salary_sheet/', methods=['GET'])
 def show_sheet():
     return render_template('transaction/salary_sheet.html')
@@ -25,6 +26,17 @@ def show_sheet():
 def print_salatry_sheet_company():
     return render_template('reports/print_sheet.html')
 
+
+@bp.route('/salary_sheet/delete/<id>', methods=['GET', 'POST'])
+def delete_salatry_sheet_company(id):
+    data = SalarySheet.query.filter_by(id=int(id))
+    try:
+        data.delete()
+        db.session.commit()
+
+        return jsonify({'success' : 'Deleted'})
+    except Exception as e:
+        return jsonify({'message' : 'Somethign went wrong' + str(e)})
 
 @bp.route('/salary_sheet/print/selected', methods=['GET', 'POST'])
 def print_salatry_sheet_selected():
@@ -44,6 +56,7 @@ def salary_slips_emp():
 
         emp_att = Attendence.query.filter(Attendence.employee.any(
             Employee.id == int(emp_id)), Attendence.date == payload_date).first()
+            
         slips = SalarySheetSlips.query.filter(SalarySheetSlips.employee.any(
             Employee.id == int(emp_id)), SalarySheetSlips.date == payload_date).first()
         if slips is not None and emp_att is not None:
@@ -88,7 +101,81 @@ def salary_slips_emp():
     else:
         return jsonify({'message': 'Empty data recieved.'})
 
+@bp.route('/salary_sheet/slips/range', methods=['POST'])
+def salary_slips_emp_range():
+    # Needs none checks
+    payload = request.json
+    if payload is not None:
+        payload_start_date = payload['start_date'].split('-')
+        payload_start_date = datetime(
+            int(payload_start_date[0]), int(payload_start_date[1]), int(1))
+        
+        payload_end_date = payload['end_date'].split('-')
+        payload_end_date = datetime(
+            int(payload_end_date[0]), int(payload_end_date[1]), int(1))
+        
+        emp_id = payload['emp_id']
+        json_schema = AttendenceSchema()
 
+        emp_att = Attendence.query.filter(Attendence.employee.any(
+            Employee.id == int(emp_id)), Attendence.date >= payload_start_date , Attendence.date <= payload_end_date).all()
+
+        slips = SalarySheetSlips.query.filter(SalarySheetSlips.employee.any(
+            Employee.id == int(emp_id)), SalarySheetSlips.date >= payload_start_date , SalarySheetSlips.date <= payload_end_date ).all()
+        
+        print(slips)
+        
+        
+        att_rules = AttendenceRules.query.first()
+        
+        late_comin_ratio = float(
+        att_rules.late_comin_day / att_rules.late_comin)
+        
+        early_going_ratio = float(
+        att_rules.early_going_day / att_rules.early_going)
+        
+        all_data = []
+        
+        for slip, att in zip(slips , emp_att):
+        
+            json_data = json.loads(json_schema.dumps(att))
+            
+
+            json_data['net_adv_deduction'] = slip.adv_deduction
+
+            json_data['days_payable_late'] = late_comin_ratio * \
+                json_data['latecomin']
+
+            json_data['days_payable_early'] = early_going_ratio * \
+                json_data['earlygoing']
+
+            json_data['days_payable'] = round(
+                json_data['daysatt'] - (json_data['days_payable_late'] + json_data['days_payable_early']), 2)
+
+            json_data['pay_1'] = float(
+                json_data['days_payable']) * (float(json_data['employee'][0]['basicpay']) / 30)
+
+            if json_data['esi'] is None:
+                json_data['esi'] = 0
+            if json_data['tds'] is None:
+                json_data['tds'] = 0
+            if json_data['pf'] is None:
+                json_data['pf'] = 0
+
+            if json_data['other_deduction'] is None:
+                json_data['other_deduction'] = 0
+
+            json_data['total_deductions'] = float(json_data['esi']) + float(json_data['pf']) + float(
+                json_data['tds']) + float(json_data['other_deduction']) + float(json_data['net_adv_deduction'])
+
+            json_data['net_payable'] = float(
+                json_data['pay_1'] - json_data['total_deductions'])
+            print(json_data['net_payable'])
+            all_data.append(json_data)
+        return jsonify({'success': all_data})
+    else:
+        return jsonify({'message': 'Data not present'})
+ 
 @bp.route('/salary_sheet/process', methods=['POST'])
 def process_sheet():
     payload = request.json
@@ -123,6 +210,7 @@ def process_sheet():
                         new_data = Advance(advanceamt=float(
                             item['net_adv_deduction']), trans="debit", date=payload_date, deduction_period="debit")
                         new_data.employee.append(emp)
+                        new_data.employee.append(payload_company)
                         db.session.add(new_data)
 
                     slip_data.sheet.append(salary)

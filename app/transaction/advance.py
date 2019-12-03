@@ -30,6 +30,7 @@ def get_advance_firm(id):
     data = Company.query.first()
     data_t = Company.query.all()[1]
     adv = Advance.query.filter(Advance.company.any(Company.id == int(id))).all()
+    print(adv)
     data_schema = AdvanceSchema(many=True)
     json_data = data_schema.dumps(adv)
     print(data ,data_t , adv )

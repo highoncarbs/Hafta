@@ -7,6 +7,11 @@ from app import db
 
 
 
+@bp.route('/salary_slips' , methods=['GET' , 'POST'])
+@login_required
+def view_slips():
+    return render_template('reports/salary_slips.html', title=('Report - Salary Sheet'))
+
 @bp.route('/salary_sheet' , methods=['GET' , 'POST'])
 @login_required
 def view_sheet():
@@ -26,3 +31,4 @@ def view_attendence():
 @login_required
 def view_performance():
     return render_template('reports/performance.html', title=('Report - Salary Sheet'))
+

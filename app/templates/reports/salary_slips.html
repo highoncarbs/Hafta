@@ -1,0 +1,153 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+{% include 'component/custom-select.html'%}
+{% include 'component/custom-select-company.html'%}
+
+
+<section class="section">
+
+    <div class="container" id="salary_slips_view">
+
+        <!-- Heading Title -->
+        <div class="level">
+            <div class="level-left">
+                <p class="is-size-4 has-text-weight-semibold">Salary Slips</p>
+            </div>
+
+        </div>
+
+        <!-- Advacne Company and Date selection -->
+        <div class="field is-grouped is-grouped-multiline">
+
+            <div class="control">
+                <label for="" class="label">Select Employee</label>
+                <b-autocomplete v-model="employee" placeholder="e.g. Jitendre" :keep-first='true' :open-on-focus='true'
+                    :data="filteredDataObj" field="name" @select="getSelected">
+                </b-autocomplete>
+            </div>
+
+            <div class="control">
+                <label for="" class="label">Select Start Month</label>
+                <input type="month" class="input" v-model="start_month">
+            </div>
+            <div class="control">
+                <label for="" class="label">Select End Month</label>
+                <input type="month" class="input" v-model="end_month">
+            </div>
+
+            <div class="control">
+                <label for="" class="label has-text-white"> Generate</label>
+
+                <button class="button is-black" @click="submitData">
+                    <span class="icon icon-btn icon-btn-in">
+                        <i data-feather="check"></i>
+                    </span>
+                    Submit</button>
+            </div>
+
+        </div>
+        <!-- <small v-if="errors.req == true" class="has-text-danger is-underline">
+            Please set both company and month.
+        </small> -->
+
+        <br>
+        <div v-if="slips != null && slips.length != 0 ">
+            <button class="button" @click="printAll">
+                <span class="icon icon-btn">
+                    <feather type="printer" size="1.3rem"></feather>
+                </span>
+                Print
+
+            </button>
+            <br>
+            <div v-for="slip in slips">
+                <table class="table is-bordered is-fullwidth">
+                    <tbody>
+                        <tr>
+                            <td colspan="5" class="has-text-weight-semibold">
+                                [[ formatedMonth(slip.date) ]]
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+                                <small class="has-text-weight-semibold"> DAYS ATTENDED</small>
+
+                                <p> [[ slip.daysatt ]]</p>
+
+                            </td>
+                            <td colspan="1">
+
+                                <small class="has-text-weight-semibold">LATE COMING</small>
+                                <p>[[ slip.latecomin ]]</p>
+                            </td>
+
+                            <td colspan="1">
+                                <small class="has-text-weight-semibold">BASIC PAY</small>
+
+                                <p>[[ formatedNumber(slip.employee[0].basicpay) ]]</p>
+
+                            </td>
+                            <td colspan="1">
+                                <small class="has-text-weight-semibold"> DAYS PAYABLE</small>
+
+                                <p>[[ slip.days_payable ]]</p>
+
+
+                            </td>
+                            <td colspan="1">
+                                <small class="has-text-weight-semibold"> ADVANCE DEDUCTION</small>
+                                <p> [[ formatedNumber(slip.net_adv_deduction) ]]
+                                </p>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1">
+
+                                <small class="has-text-weight-semibold">P.F</small>
+                                <p> [[ slip.esi ]] </p>
+                            </td>
+
+                            <td colspan="1">
+                                <small class="has-text-weight-semibold"> ESI</small>
+
+                                <p>[[ slip.pf ]]</p>
+
+                            </td>
+                            <td colspan="1">
+                                <small class="has-text-weight-semibold"> TDS</small>
+
+                                <p> [[ slip.tds ]] </p>
+
+                            </td>
+                            <td colspan="1">
+                                <small class="has-text-weight-semibold"> Other Deduction</small>
+
+                                <p> [[ slip.other_deduction ]]</p>
+                            </td>
+                            <td colspan="1">
+                                <small class="has-text-weight-semibold">TOTAL DEDUCTION</small>
+
+                                <p> [[ formatedNumber(slip.total_deductions) ]] </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"> <small class="has-text-weight-semibold">NET PAYABLE</small>
+                            </td>
+                            <td colspan="1">
+                                <p class="has-text-weight-semibold">[[ formatedNumber(slip.net_payable) ]]</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="{{ url_for('static' , filename='js/reports/salary_slips.js')}}"></script>
+
+{% endblock %}
