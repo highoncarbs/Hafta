@@ -338,7 +338,6 @@ def generate_sheet(company, month):
         adv_data = Advance.query.filter(
             Advance.employee.any(Employee.id == int(att_item['employee'][0]['id']))).all()
         json_adv_data = json.loads(adv_data_schema.dumps(adv_data))
-        print(json_adv_data)
         net_advance_month = 0
         net_advance_year = 0
         net_deduction_month = 0
@@ -377,12 +376,12 @@ def generate_sheet(company, month):
         if net_advance_month > net_deduction_month:
             pass
         elif net_advance_month <= net_deduction_month:
-            att_item['deductions']['month'] = net_advance_month
+            att_item['deductions']['month'] = [ net_advance_month ]
 
         if net_advance_year > net_deduction_year:
             pass
         elif net_advance_year <= net_deduction_year:
-            att_item['deductions']['year'] = net_advance_year
+            att_item['deductions']['year'] = [ net_advance_year ]
 
         # Setting to 0 if balance is 0
 

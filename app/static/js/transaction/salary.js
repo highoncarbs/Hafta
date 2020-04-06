@@ -15,7 +15,7 @@ new Vue({
     delimiters: ['[[', ']]'],
     computed: {
         salarySheetEdit() {
-            if (this.salarySheet != null) {
+            if (this.salarySheet != null) { 
                 this.salarySheet.forEach(function (row) {
                     row.total_deductions = parseFloat(row.net_adv_deduction) + parseFloat(row.esi) + parseFloat(row.pf) + parseFloat(row.tds) + parseFloat(row.other_deduction) + parseFloat(0)
                     const tempPay = row.pay_1
