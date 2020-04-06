@@ -12,6 +12,7 @@
         <!-- Heading Title -->
         <div class="level">
             <div class="level-left">
+                <p>Check</p>
                 <p class="is-size-4 has-text-weight-semibold">Salary Sheet</p>
             </div>
 
@@ -143,8 +144,10 @@
                             <tr @click="pushRow(row.id)"
                                 :class="{'has-background-info' : selectedRow.includes(row.id)} ">
                                 <td>[[ row.employee[0].name]]</td>
-                                <td>[[ row.employee[0].department[0].name]]</td>
-                                <td>[[ row.employee[0].post[0].name]]</td>
+                                <td v-if="row.employee[0].department.length != 0">[[ row.employee[0].department[0].name]]</td>
+                                <td v-else>None</td>
+                                <td v-if="row.employee[0].post.length != 0">[[ row.employee[0].post[0].name]]</td>
+                                <td v-else>None</td>
                                 <td> [[ row.daysatt ]]</td>
                                 <td> [[ row.latecomin ]]</td>
                                 <td> [[ row.earlygoing ]]</td>
@@ -154,8 +157,11 @@
                                 <td>
                                     <small class="has-text-grey">MONTHLY</small>
 
-                                    <ul v-for="dec in row.deductions.month ">
-                                        <li>[[ formatedNumber(dec) ]]</li>
+                                    <ul v-if="typeof(row.deductions.month) == 'object'" v-for="dec in row.deductions.month ">
+                                        <li>[[ dec ]]</li>
+                                    </ul>
+                                    <ul v-else >
+                                        <li>[[  row.deductions.month ]]</li>
                                     </ul>
 
                                     <input style="margin-top:0.5rem;" type="text" v-model="row.net_adv_deduction"

@@ -12,6 +12,7 @@
         <!-- Heading Title -->
         <div class="level">
             <div class="level-left">
+                <p>CHECECK</p>
                 <p class="is-size-4 has-text-weight-semibold">Salary Sheet</p>
             </div>
 
@@ -122,7 +123,7 @@
                             <th>[[ formatedNumber(salary) ]]</th>
                             <th>[[ formatedNumber(daysPayable) ]]</th>
                             <th>[[ formatedNumber(pay_1) ]]</th>
-                            <th>[[ formatedNumber(adv_deduction) ]]</th>
+                            <!-- <th>[[ formatedNumber(adv_deduction) ]]</th> -->
                             <th>[[ formatedNumber(esi) ]]</th>
                             <th>[[ formatedNumber(pf) ]]</th>
                             <th>[[ formatedNumber(tds) ]]</th>
@@ -136,8 +137,10 @@
                             <tr @click="pushRow(row.id)"
                                 :class="{'has-background-info' : selectedRow.includes(row.id)} ">
                                 <td>[[ row.employee[0].name]]</td>
-                                <td>[[ row.employee[0].department[0].name]]</td>
-                                <td>[[ row.employee[0].post[0].name]]</td>
+                                <td v-if="row.employee[0].department.length != 0">[[ row.employee[0].department[0].name]]</td>
+                                <td v-else>None</td>
+                                <td v-if="row.employee[0].post.length != 0">[[ row.employee[0].post[0].name]]</td>
+                                <td v-else>None</td>
                                 <td> [[ row.daysatt ]]</td>
                                 <td> [[ row.latecomin ]]</td>
                                 <td> [[ row.earlygoing ]]</td>
@@ -145,7 +148,7 @@
                                 <td>[[ formatedNumber(row.days_payable) ]]</td>
                                 <td>[[ formatedNumber(row.pay_1) ]]</td>
                                 <td>
-                                    [[ formatedNumber(row.net_adv_deduction) ]]
+                                    <!-- [[ row.net_adv_deduction ]] -->
 
                                 </td>
                                 <td>[[ row.esi ]]</td>
