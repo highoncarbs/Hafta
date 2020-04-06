@@ -157,7 +157,11 @@
                                 <td>
                                     <small class="has-text-grey">MONTHLY</small>
 
+<<<<<<< HEAD
                                     <ul v-if="typeof(row.deductions.month) == 'object'" v-for="dec in row.deductions.month ">
+=======
+                                    <ul v-if="typeof(row.deductions) == "object" v-for="dec in row.deductions.month ">
+>>>>>>> 8500ab7cf97774d55c0d25c42b4732b8bee6a5cc
                                         <li>[[ dec ]]</li>
                                     </ul>
                                     <ul v-else >

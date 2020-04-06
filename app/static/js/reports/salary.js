@@ -154,8 +154,8 @@ new Vue({
 
         },
         formatedNumber(val) {
-            let test = Number(val).toLocaleString('en-IN');
-            return test
+            // let test = Number(val).toLocaleString('en-IN');
+            return val
         },
 
         checkData() {

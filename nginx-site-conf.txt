@@ -1,0 +1,9 @@
+    server {
+        listen 80;
+        server_name 139.59.83.117 ;
+
+        location / {
+            include proxy_params;
+            proxy_pass http://unix:/home/hafta/Hafta/hafta.sock;
+        }
+    } 
