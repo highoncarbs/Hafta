@@ -4,7 +4,7 @@ from flask import Flask, request, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
-from flask_moment import Moment
+# from flask_moment import Moment
 from config import Config
 from werkzeug.debug import DebuggedApplication
 from flask_marshmallow import Marshmallow
@@ -19,7 +19,7 @@ login = LoginManager()
 login.login_view = 'auth.login'
 login.login_message = 'Please log in to access this page.'
 
-moment = Moment()
+# moment = Moment()
 
 
 def create_app(config_class=Config):
@@ -29,7 +29,7 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
-    moment.init_app(app)
+    # moment.init_app(app)
     ma.init_app(app)
 
     sentry_sdk.init(

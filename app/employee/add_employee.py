@@ -5,7 +5,7 @@ from app.employee import bp
 from app.employee.model import Employee, EmployeeSchema
 from app.master.model import Location, Post, Company, Department, Benefit, Appointment , City
 from app import db
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 import json
 import os
 from sqlalchemy.exc import IntegrityError

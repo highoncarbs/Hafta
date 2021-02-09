@@ -53,7 +53,7 @@ db.Table('adv_comp',
 # Unique Constraint over Attendence -> Needs DB level uniqueness
 
 
-class AdvanceSchema(ma.ModelSchema):
+class AdvanceSchema(ma.SQLAlchemySchema ):
     id = field_for(Advance, 'id', dump_only=True)
     date = field_for(Advance, 'date', dump_only=True)
     advanceamt = field_for(Advance, 'advanceamt', dump_only=True)

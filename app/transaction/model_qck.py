@@ -34,7 +34,7 @@ db.Table('qck_emp',
 
 
 
-class QuickInputSchema(ma.ModelSchema):
+class QuickInputSchema(ma.SQLAlchemySchema ):
     id = field_for(QuickInput , 'id' , dump_only = True)
     date = field_for(QuickInput , 'date' , dump_only = True)
     report =  field_for(QuickInput , 'report' , dump_only = True)
