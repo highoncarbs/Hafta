@@ -1,4 +1,8 @@
 <p align="center">
+New version under active development , checkout alpha branch.
+</p>
+
+<p align="center">
 <img align="center" src="./docs/assets/sumup.png">
    <br><br>
 <br>
