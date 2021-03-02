@@ -12,13 +12,13 @@ import json
 
 
 @bp.route('/performance', methods=['GET'])
-@login_required
+
 def show_performance():
     return render_template('transaction/performance.html')
 
 
 @bp.route('/get/performance', methods=['GET'])
-@login_required
+
 def get_performance_factors():
     data_schema = PerformanceSchema(many=True)
     data = Performance.query.all()
@@ -27,7 +27,7 @@ def get_performance_factors():
 
 
 @bp.route('/performance/all', methods=['POST'])
-@login_required
+
 def get_performance_all():
 
     data_schema = TransPerformanceSchema(many=True)
@@ -58,7 +58,7 @@ def get_performance_all():
 
 
 @bp.route('/performance/company', methods=['POST'])
-@login_required
+
 def get_performance_factors_for_emp():
     if request.method == 'POST':
 
@@ -102,7 +102,7 @@ def get_performance_factors_for_emp():
 
 
 @bp.route('/performance/get/employee/<id>', methods=['GET'])
-@login_required
+
 def get_performance_by_employee(id):
     data_schema = TransPerformanceSchema(many=True)
     data = TransPerformance.query.filter_by(emp_id=int(id)).all()
@@ -111,7 +111,7 @@ def get_performance_by_employee(id):
 
 
 @bp.route('/performance/save', methods=['POST'])
-@login_required
+
 def save_performance():
     if request.method == 'POST':
         payload = request.json

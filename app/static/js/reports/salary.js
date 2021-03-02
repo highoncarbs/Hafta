@@ -43,7 +43,7 @@ new Vue({
         generateSalarySheet() {
             if (this.checkData()) {
                 this.isGenerating = true
-                let rawdata = this
+                let self = this
                 let formdata = { 'company': this.company, 'month': this.month }
                 let checkformdata = { 'company': this.company, 'date': this.month }
 
@@ -51,7 +51,7 @@ new Vue({
                     .then(function (response) {
                         let payload = response.data
 
-                        rawdata.salarySheetView = JSON.parse(payload.data)
+                        self.salarySheetView = JSON.parse(payload.data)
 
 
                         let days = Number(0)
@@ -68,7 +68,7 @@ new Vue({
                         let total_deductions = 0
                         let net_pay = 0
 
-                        rawdata.salarySheetView.forEach(function (item) {
+                        self.salarySheetView.forEach(function (item) {
                             console.log(item.net_payable)
                             days = Number(item.daysatt)
                             late += item.latecomin
@@ -85,19 +85,19 @@ new Vue({
                             net_pay += item.net_payable
                         })
 
-                        rawdata.days = days
-                        rawdata.late = late
-                        rawdata.going = going
-                        rawdata.salary = salary
-                        rawdata.daysPayable = daysPayable
-                        rawdata.pay_1 = Math.round(pay_1, 2)
-                        rawdata.adv_deduction = adv_deduction
-                        rawdata.esi = esi
-                        rawdata.pf = pf
-                        rawdata.tds = tds
-                        rawdata.other_deduction = other_deduction
-                        rawdata.total_deductions = total_deductions
-                        rawdata.net_pay = Math.round(net_pay, 2)
+                        self.days = days
+                        self.late = late
+                        self.going = going
+                        self.salary = salary
+                        self.daysPayable = daysPayable
+                        self.pay_1 = Math.round(pay_1, 2)
+                        self.adv_deduction = adv_deduction
+                        self.esi = esi
+                        self.pf = pf
+                        self.tds = tds
+                        self.other_deduction = other_deduction
+                        self.total_deductions = total_deductions
+                        self.net_pay = Math.round(net_pay, 2)
 
 
                     })
@@ -108,7 +108,7 @@ new Vue({
                 axios.post('/transaction/salary_sheet/generate', formdata)
                     .then(function (response) {
                         if (response.data.message) {
-                            rawdata.$buefy.snackbar.open({
+                            self.$buefy.snackbar.open({
                                 duration: 4000,
                                 message: response.data.message,
                                 type: 'is-light',
@@ -119,18 +119,18 @@ new Vue({
                                     this.isActive = false;
                                 }
                             })
-                            rawdata.salarySheet = null
+                            self.salarySheet = null
 
-                            rawdata.isGenerating = null;
+                            self.isGenerating = null;
                         }
                         else {
-                            rawdata.salarySheet = response.data
+                            self.salarySheet = response.data
 
-                            rawdata.isGenerating = null;
+                            self.isGenerating = null;
                         }
                     })
                     .catch(function (error) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: 'Salary sheet could not be geenrated. Please check logs.',
                             type: 'is-light',
@@ -142,7 +142,7 @@ new Vue({
                             }
                         })
 
-                        rawdata.isGenerating = null;
+                        self.isGenerating = null;
 
                     })
 
@@ -174,7 +174,7 @@ new Vue({
         },
         printAll() {
 
-            let rawdata = this
+            let self = this
             localStorage.clear()
             let formdata = { 'company': this.company, 'date': this.month, 'data': this.salarySheet }
             console.log(this.salarySheet)
@@ -189,7 +189,7 @@ new Vue({
             
         // },
         printSavedAll() {
-            let rawdata = this
+            let self = this
             localStorage.clear()
             let formdata = { 'company': this.company, 'date': this.month, 'data': this.salarySheetView }
             localStorage.setItem('jsondata', JSON.stringify(formdata))
@@ -216,10 +216,10 @@ new Vue({
             }
         },
         printSelected() {
-            let rawdata = this
+            let self = this
             let selectedData = []
             this.selectedRow.forEach(function (index) {
-                selectedData.push(rawdata.salarySheet[rawdata.selectedRow.indexOf(index)])
+                selectedData.push(self.salarySheet[self.selectedRow.indexOf(index)])
             })
             let formdata = { 'company': this.company, 'date': this.month, 'data': selectedData }
             localStorage.setItem('selecteddata', JSON.stringify(formdata))
@@ -230,12 +230,12 @@ new Vue({
                 })
         },
         processSalary() {
-            let rawdata = this
+            let self = this
             let formdata = { 'company': this.company, 'date': this.month, 'data': this.salarySheet }
             axios.post('/transaction/salary_sheet/process', formdata)
                 .then(function (response) {
                     if (response.data.success) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: response.data.success,
                             type: 'is-light',
@@ -248,7 +248,7 @@ new Vue({
                         })
                     }
                     else if (response.data.message) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: response.data.message,
                             type: 'is-light',

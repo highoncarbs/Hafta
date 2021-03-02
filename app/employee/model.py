@@ -4,7 +4,8 @@ from datetime import datetime
 from app.master.model import Post, Department, Company, CompanySchema,\
     Benefit, Location, LocationSchema, PostSchema, DepartmentSchema, BenefitSchema , Appointment , AppointmentSchema , City ,CitySchema
         
-from marshmallow_sqlalchemy import field_for
+from marshmallow_sqlalchemy import field_for 
+from marshmallow import  fields
 
 
 class TimestampMixin(object):
@@ -115,7 +116,7 @@ db.Table('emp_benefit',
          )
 
 
-class EmployeeBasicSchema(ma.SQLAlchemySchema ):
+class EmployeeBasicSchema(ma.SQLAlchemyAutoSchema ):
     id = field_for(Employee, 'id', dump_only=True)
     name = field_for(Employee, 'name', dump_only=True)
     company = ma.Nested(CompanySchema, many=True)
@@ -125,7 +126,7 @@ class EmployeeBasicSchema(ma.SQLAlchemySchema ):
         model = Employee
 
 
-class EmployeeSchema(ma.SQLAlchemySchema ):
+class EmployeeSchema(ma.SQLAlchemyAutoSchema ):
     id = field_for(Employee, 'id', dump_only=True)
     name = field_for(Employee, 'name', dump_only=True)
     dob = field_for(Employee, 'dob', dump_only=True)
@@ -148,6 +149,10 @@ class EmployeeSchema(ma.SQLAlchemySchema ):
     resumefile = field_for(Employee, 'resumefile', dump_only=True)
     reference = field_for(Employee, 'reference', dump_only=True)
     dateofapp = field_for(Employee, 'dob', dump_only=True)
+    bankname = field_for(Employee, 'bankname', dump_only=True)
+    accnumber = field_for(Employee, 'accnumber', dump_only=True)
+    ifsccode = field_for(Employee, 'ifsccode', dump_only=True)
+    ifsccode = field_for(Employee, 'ifsccode', dump_only=True)
     post = ma.Nested(PostSchema, many=True)
     department = ma.Nested(DepartmentSchema, many=True)
     company = ma.Nested(CompanySchema, many=True)
@@ -168,7 +173,7 @@ class EmployeeSchema(ma.SQLAlchemySchema ):
         model = Employee
 
 
-class EmployeeMainSchema(ma.SQLAlchemySchema ):
+class EmployeeMainSchema(ma.SQLAlchemyAutoSchema ):
     id = field_for(Employee, 'id', dump_only=True)
     name = field_for(Employee, 'name', dump_only=True)
 
@@ -184,7 +189,7 @@ class EmployeeMainSchema(ma.SQLAlchemySchema ):
         model = Employee
 
 
-class EmployeeAdvanceSchema(ma.SQLAlchemySchema ):
+class EmployeeAdvanceSchema(ma.SQLAlchemyAutoSchema ):
     id = field_for(Employee, 'id', dump_only=True)
     name = field_for(Employee, 'name', dump_only=True)
 
@@ -196,7 +201,27 @@ class EmployeeAdvanceSchema(ma.SQLAlchemySchema ):
     department = ma.Nested(DepartmentSchema, many=True)
     company = ma.Nested(CompanySchema, many=True)
     appointment = ma.Nested(AppointmentSchema, many=True)
+    outstanding = fields.Method('get_outstanding_adv')
+    adv_total = fields.Method('get_total_adv')
 
-
+    def get_outstanding_adv(self,obj):
+        total = 0
+        adv_list = obj.adv_emp
+        for item in adv_list:
+            if (item.trans != "debit") :
+                total += float(item.advanceamt);
+             
+            if (item.trans == "debit"):
+                total -= float(item.advanceamt);
+            
+        return total
+    def get_total_adv(self,obj):
+        total = 0
+        adv_list = obj.adv_emp
+        for item in adv_list:
+            if (item.trans != "debit") :
+                total += float(item.advanceamt);
+                         
+        return total
     class meta:
         model = Employee

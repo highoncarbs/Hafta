@@ -6,10 +6,12 @@ from app.transaction.model_att import Attendence, AttendenceSchema , CompanySche
 from app.employee.model import Employee
 from app.master.model import Company
 
-from app import db, ma
-from datetime import datetime
+from app import db, ma , hours_added
+from datetime import datetime 
 
 import json
+
+
 @bp.route('/attendence/', methods=['GET'])
 def show_attendence():
     return render_template('transaction/attendence.html')
@@ -20,14 +22,17 @@ def get_attendence():
     if request.method == "POST":
         payload = request.json
         if payload != None:
-            payload_date = payload['date'].split('-')
-            payload_date = datetime(
-                int(payload_date[0]), int(payload_date[1]), int(1))
+            dob = payload['date'].replace('"' , '') 
+            dob_obj = datetime.strptime(dob , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+            payload_date = dob_obj.date()
+            print('---', payload_date)
+            # payload_date = payload['date'].split('-')
+          
             company = payload['company']
             data = Attendence.query.filter(
                 Attendence.company.any(Company.id == int(company)), Attendence.date == payload_date).all()
             data_schema = AttendenceSchema(many=True)
-            json_data = data_schema.dumps(data)
+            json_data = data_schema.dump(data)
             return jsonify(json_data)
         else:
             return jsonify({'message': 'Empty Data Recieved'})
@@ -107,15 +112,39 @@ def summary_late_attendence():
         return jsonify({'message': 'Invalid HTTP request method.'})
 
 
+@bp.route('/attendence/status', methods = ['POST'])
+def status_attendence():
+    payload = request.json
+    dob = payload['date'].replace('"' , '') 
+    dob_obj = datetime.strptime(dob , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+    dob_obj  = dob_obj.replace(minute=00,hour=00,second=00,day=1)
+    dob_date = dob_obj.date()
+    att_data = Company.query.filter_by(id = payload['id']).first()
+    att = Attendence.query.filter(Attendence.date == dob_date).all()
+    if len(att) == len(att_data.emp_company):
+        return jsonify({'status':'done'})
+    else:
+        return jsonify({'status':'pending'})
+
+
 @bp.route('/attendence/save', methods = ['POST'])
 def save_attendence():
     if request.method == 'POST':
         payload=request.json
         if payload != None:
             payload_data=payload['data']
-            payload_date=payload['date'].split('-')
-            payload_date=datetime(
-                int(payload_date[0]), int(payload_date[1]), int(1))
+            company_data=payload['company']
+            dob = payload['date'].replace('"' , '') 
+            dob_obj = datetime.strptime(dob , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+            payload_date = dob_obj.date()
+
+            company=Company.query.filter_by(
+                id = int(company_data['id'])).first()
+            # payload_date=payload['date'].split('T')[0].split('-')
+            # print(payload_date)
+            # payload_date=datetime(
+            #     int(payload_date[0]), int(payload_date[1]), int(1))
+            print('here')
             # Date checks to be done
             table_columns=(
                 'daysatt',
@@ -127,13 +156,20 @@ def save_attendence():
 
                 # Need Update cehck inside
                 for item in payload_data:
-                    new_data=Attendence()
                     emp=Employee.query.filter_by(
                         id = int(item['id'])).first()
-                    company=Company.query.filter_by(
-                        id = int(payload['company'])).first()
-                    new_data.company.append(company)
-                    new_data.employee.append(emp)
+                    print('HOHO')
+                    if 'att_id' in item.keys():
+                        new_data = Attendence.query.filter_by(id = item['att_id']).first()
+                        print('---AAA---------', new_data)
+                        print('HOHO')
+                    else:
+                        new_data=Attendence()
+                        print('---', item)
+                        new_data.company.append(company)
+                        new_data.employee.append(emp)
+                        new_data.employee_id = emp.id
+                    
                     for field in table_columns:
                         val=item[field]
                         if val == '' or val is None:
@@ -160,13 +196,16 @@ def save_attendence():
                     if 'pfval' in item.keys():
                         if item['pfval'] != "":
                             setattr(new_data, 'pf', item['pfval'])
-
-                db.session.add(new_data)
-                db.session.commit()
+                    if 'att_id' in item.keys():
+                        db.session.commit()
+                    else:
+                        db.session.add(new_data)
+                        db.session.commit()
                 return jsonify({'success': 'Data Added'})
 
             except Exception as e:
                 db.session.rollback()
+                print('-----',str(e))
                 return jsonify({'message': 'Something went wrong'})
 
             return jsonify({'message': 'Something went wrong'})

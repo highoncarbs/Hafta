@@ -8,13 +8,13 @@ from app import db
 import json
 
 @bp.route('/firms', methods=['GET', 'POST'])
-@login_required
+
 def show_firms():
     return render_template('reports/firms.html', title=('Firms'))
 
 
 @bp.route('/firms/info', methods=['GET', 'POST'])
-@login_required
+
 def firms_info():
     data_schema = CompanySchema(many=True)
     data = db.session.query(Company).join(Employee.company).all()

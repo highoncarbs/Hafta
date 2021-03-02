@@ -8,13 +8,13 @@ from app import db
 import json
 
 @bp.route('/firms', methods=['GET', 'POST'])
-@login_required
+
 def show_firms():
     return render_template('reports/firms.html', title=('Firms'))
 
 
 @bp.route('/firms/info', methods=['GET', 'POST'])
-@login_required
+
 def firms_info():
     data_schema = CompanySchema(many=True)
     data = db.session.query(Company).join(Employee.company).all()
@@ -25,7 +25,7 @@ def firms_info():
         item['total_emp'] = len(all_emp)
         item['total_pay'] = 0
         for emp in all_emp:
-            item['total_pay'] += float(emp.basicpay)
+            item['total_pay'] += float(emp.basicpay) if emp.basicpay else 0
 
     json_dump = json.dumps(temp_json)
     return jsonify(json_dump)

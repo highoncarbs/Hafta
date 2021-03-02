@@ -9,7 +9,7 @@ from app import db
 
 @bp.route('/' , methods=['GET' , 'POST'])
 @bp.route('/home' , methods=['GET' , 'POST'])
-@login_required
+
 def home():
     return render_template('reports/dash.html', title=('Home'))
 

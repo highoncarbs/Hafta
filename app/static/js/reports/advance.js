@@ -80,22 +80,22 @@ new Vue({
         },
         employeeDetail(id) {
             this.detailModal = !this.detailModal
-            let rawdata = this
+            let self = this
             axios.post('/employee/get/detail/' + String(id))
                 .then(function (response) {
-                    rawdata.empDetail = JSON.parse(response.data)
+                    self.empDetail = JSON.parse(response.data)
                 })
         },
         getAdvanceDetail(e) {
-            let rawdata = this
+            let self = this
 
             if (this.company != null) {
                 axios.get('/transaction/advance/all/' + String(this.company))
                     .then(function (response) {
                         console.log(response.data);
-                        rawdata.empAdvanceDetail = JSON.parse(response.data)
-                        rawdata.getAdvanceList();
-                        rawdata.showAdvList = true;
+                        self.empAdvanceDetail = JSON.parse(response.data)
+                        self.getAdvanceList();
+                        self.showAdvList = true;
 
 
 
@@ -113,17 +113,17 @@ new Vue({
             e.preventDefault();
         },
         getAdvanceList() {
-            let rawdata = this
+            let self = this
 
             if (this.emp_id != null) {
                 axios.post('/transaction/advance/get/' + String(this.emp_id))
                     .then(function (response) {
                         console.log(response.data);
-                        rawdata.empAdvanceList = JSON.parse(response.data)
-                        console.log(rawdata.empAdvanceList.length)
-                        rawdata.more = true
-                        if (rawdata.empAdvanceList.length >= rawdata.empAdvanceDetail.advancenum) {
-                            rawdata.more = false;
+                        self.empAdvanceList = JSON.parse(response.data)
+                        console.log(self.empAdvanceList.length)
+                        self.more = true
+                        if (self.empAdvanceList.length >= self.empAdvanceDetail.advancenum) {
+                            self.more = false;
                         }
 
                     })
@@ -153,7 +153,7 @@ new Vue({
             return this.formatedNumber(outstandingamt)
         },
         getAll(e) {
-            let rawdata = this
+            let self = this
             this.advanceForm.errors = {}
             this.data = null
             this.dataList = []
@@ -163,12 +163,12 @@ new Vue({
                 axios.get('/employee/get/by/company/' + String(this.company))
                     .then(function (response) {
                         console.log(response.data);
-                        rawdata.dataName = []
-                        rawdata.dataList = JSON.parse(response.data)
-                        rawdata.showEmpSelect = true
-                        rawdata.employee = ""
-                        rawdata.showAdvList = false
-                        rawdata.dataList.forEach((item) => rawdata.dataName.push(item))
+                        self.dataName = []
+                        self.dataList = JSON.parse(response.data)
+                        self.showEmpSelect = true
+                        self.employee = ""
+                        self.showAdvList = false
+                        self.dataList.forEach((item) => self.dataName.push(item))
 
                     })
 
@@ -181,7 +181,7 @@ new Vue({
             e.preventDefault();
         },
         submitData(e) {
-            let rawdata = this
+            let self = this
             if (this.checkData()) {
                 console.log(this.advanceForm.errors.length)
                 if (Object.keys(this.advanceForm.errors).length == 0) {
@@ -196,7 +196,7 @@ new Vue({
                             if (response.data.success) {
                                 // Run notificaiton 
                                 // Open selection for reports and printing
-                                rawdata.$buefy.snackbar.open({
+                                self.$buefy.snackbar.open({
                                     duration: 4000,
                                     message: response.data.success,
                                     type: 'is-light',
@@ -218,7 +218,7 @@ new Vue({
                             }
                             else if (response.data.message) {
                                 // Run message
-                                rawdata.$buefy.snackbar.open({
+                                self.$buefy.snackbar.open({
                                     duration: 4000,
                                     message: response.data.message,
                                     type: 'is-light',
@@ -291,12 +291,12 @@ new Vue({
             window.location.href = "/employee/edit/view/" + String(this.emp_id)
         },
         deleteAdvance(id, index) {
-            let rawdata = this
+            let self = this
             axios.post('/transaction/advance/delete/' + String(id))
                 .then(function (response) {
                     if (response.data.success) {
-                        rawdata.empAdvanceList.splice(index, 1)
-                        rawdata.$buefy.snackbar.open({
+                        self.empAdvanceList.splice(index, 1)
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: response.data.success,
                             type: 'is-light',
@@ -309,7 +309,7 @@ new Vue({
                         })
                     }
                     else if (response.data.message) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: response.data.message,
                             type: 'is-light',

@@ -14,15 +14,15 @@ new Vue({
     },
     delimiters: ['[[', ']]'],
     mounted() {
-        let rawdata = this
+        let self = this
 
         axios.get('/employee/get/basic')
             .then(function (response) {
                 console.log(response.data);
-                rawdata.dataName = []
-                rawdata.dataList = JSON.parse(response.data)
-                rawdata.employee = ""
-                rawdata.dataList.forEach((item) => rawdata.dataName.push(item))
+                self.dataName = []
+                self.dataList = JSON.parse(response.data)
+                self.employee = ""
+                self.dataList.forEach((item) => self.dataName.push(item))
 
             })
     },
@@ -67,7 +67,7 @@ new Vue({
         },
         printAll() {
 
-            let rawdata = this
+            let self = this
             localStorage.clear()
             let formdata = { 'company': this.company, 'date': this.month, 'data': this.salarySheet }
             console.log(this.salarySheet)
@@ -82,7 +82,7 @@ new Vue({
 
         // },
         printSavedAll() {
-            let rawdata = this
+            let self = this
             localStorage.clear()
             let formdata = { 'company': this.company, 'date': this.month, 'data': this.salarySheetView }
             localStorage.setItem('jsondata', JSON.stringify(formdata))
@@ -116,10 +116,10 @@ new Vue({
             }
         },
         printSelected() {
-            let rawdata = this
+            let self = this
             let selectedData = []
             this.selectedRow.forEach(function (index) {
-                selectedData.push(rawdata.salarySheet[rawdata.selectedRow.indexOf(index)])
+                selectedData.push(self.salarySheet[self.selectedRow.indexOf(index)])
             })
             let formdata = { 'company': this.company, 'date': this.month, 'data': selectedData }
             localStorage.setItem('selecteddata', JSON.stringify(formdata))
@@ -130,7 +130,7 @@ new Vue({
                 })
         },
         submitData() {
-            let rawdata = this
+            let self = this
             if (true) {
 
                 let formdata = { 'emp_id': this.emp_id, 'start_date': this.start_month, 'end_date': this.end_month }
@@ -138,7 +138,7 @@ new Vue({
                 axios.post('/transaction/salary_sheet/slips/range', formdata)
                     .then(function (response) {
                         if (response.data.success) {
-                            rawdata.$buefy.snackbar.open({
+                            self.$buefy.snackbar.open({
                                 duration: 4000,
                                 message: "Data Loaded",
                                 type: 'is-light',
@@ -150,12 +150,12 @@ new Vue({
                                 }
                             })
 
-                            rawdata.slips = response.data.success
+                            self.slips = response.data.success
 
                         }
                         else if (response.data.message) {
                             // Run message
-                            rawdata.$buefy.snackbar.open({
+                            self.$buefy.snackbar.open({
                                 duration: 4000,
                                 message: response.data.message,
                                 type: 'is-light',

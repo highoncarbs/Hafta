@@ -25,12 +25,15 @@ class Attendence(TimestampMixin,  db.Model):
     daysatt = db.Column(db.Float, default=0, nullable=False)
     latecomin = db.Column(db.Float, default=0, nullable=False)
     earlygoing = db.Column(db.Float, default=0, nullable=False)
+    employee_id = db.Column(db.Integer)
     esi = db.Column(db.Float, default=0)
     pf = db.Column(db.Float, default=0)
     tds = db.Column(db.Float, default=0)
     other_deduction = db.Column(db.Float, default=0)
-    # __table_args__ = (db.UniqueConstraint(
-    #     'employee.id', 'date', name='att_id'), )
+    
+
+    __table_args__ = (db.UniqueConstraint(
+        'employee_id', 'date', name='att_id'), )
 
 
 db.Table('att_emp',
@@ -54,7 +57,7 @@ db.Table('att_comp',
 # Unique Constraint over Attendence -> Needs DB level uniqueness
 
 
-class AttendenceSchema(ma.SQLAlchemySchema ):
+class AttendenceSchema(ma.SQLAlchemyAutoSchema ):
     id = field_for(Attendence , 'id' , dump_only = True)
     date = field_for(Attendence, 'date', dump_only=True)
     daysatt = field_for(Attendence, 'daysatt', dump_only=True)
@@ -68,6 +71,8 @@ class AttendenceSchema(ma.SQLAlchemySchema ):
     employee = ma.Nested(EmployeeMainSchema, many=True)
     company = ma.Nested(CompanySchema, many=True)
     basicpay = field_for(Employee, 'basicpay', dump_only=True)
-
+    def check_status(obj):
+        # if(obj.daysatt)
+        pass
     class meta:
         model = Attendence

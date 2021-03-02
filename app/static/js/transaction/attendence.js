@@ -1,4 +1,5 @@
 new Vue({
+    delimiters: ['[[', ']]'],
     el: "#attendence_form",
     data() {
 
@@ -43,7 +44,6 @@ new Vue({
 
 
     },
-    delimiters: ['[[', ']]'],
     methods: {
         formatedNumber(val) {
             let test = Number(val).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
@@ -67,42 +67,42 @@ new Vue({
         },
         employeeDetail(id) {
             this.detailModal = !this.detailModal
-            let rawdata = this
+            let self = this
             axios.post('/employee/get/detail/' + String(id))
                 .then(function (response) {
-                    rawdata.empDetail = JSON.parse(response.data)
+                    self.empDetail = JSON.parse(response.data)
                 })
         },
         getAttendence() {
-            let rawdata = this
+            let self = this
             let attendenceform = { 'company': this.company, 'date': this.month }
             axios.post('/transaction/attendence/get', attendenceform)
                 .then(function (response) {
-                    rawdata.attendenceList = []
+                    self.attendenceList = []
                     console.log(response.data)
-                    rawdata.attendenceList = JSON.parse(response.data)
+                    self.attendenceList = JSON.parse(response.data)
 
 
                     // Removes data from dataList if item present in AttendenceList
-                    rawdata.attendenceList.forEach(function (item) {
-                        if (rawdata.dataList.length != 0)
-                            rawdata.dataList.forEach(function (check, index) {
+                    self.attendenceList.forEach(function (item) {
+                        if (self.dataList.length != 0)
+                            self.dataList.forEach(function (check, index) {
                                 if (check.id == item.employee[0].id) {
                                     console.log(check)
-                                    rawdata.dataList.splice(index, 1)
+                                    self.dataList.splice(index, 1)
                                 }
 
                             })
                     })
 
-                    rawdata.data = rawdata.dataList
+                    self.data = self.dataList
 
 
                 });
 
         },
         getEmployee(e) {
-            let rawdata = this
+            let self = this
             this.errors = []
             this.data = null
             this.dataList = []
@@ -113,10 +113,10 @@ new Vue({
                 axios.get('/employee/get/by/company/' + String(this.company))
                     .then(function (response) {
                         console.log(response.data);
-                        // rawdata.data = JSON.parse(response.data)
-                        rawdata.dataList = JSON.parse(response.data)
-                        rawdata.getAttendence();
-                        rawdata.isLoading = false
+                        // self.data = JSON.parse(response.data)
+                        self.dataList = JSON.parse(response.data)
+                        self.getAttendence();
+                        self.isLoading = false
 
 
 
@@ -131,13 +131,13 @@ new Vue({
             e.preventDefault();
         },
         updateData(e) {
-            let rawdata = this
+            let self = this
             let formdata = { 'company': this.company, 'date': this.month, 'data': this.attendenceList }
-            axios.post('/transaction/attendence/update', rawdata.attendenceList)
+            axios.post('/transaction/attendence/update', self.attendenceList)
                 .then(function (response) {
                     console.log(response)
                     if (response.data.success) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 5000,
                             message: response.data.success,
                             type: 'is-light',
@@ -151,7 +151,7 @@ new Vue({
                     }
 
                     if (response.data.message) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 8000,
                             message: response.data.message,
                             type: 'is-light',
@@ -168,7 +168,7 @@ new Vue({
             e.preventDefault();
         },
         submitData() {
-            let rawdata = this
+            let self = this
             
             if (this.checkData()) {
 
@@ -182,7 +182,7 @@ new Vue({
                         if (response.data.success) {
                             // Run notificaiton 
                             // Open selection for reports and printing
-                            rawdata.$buefy.snackbar.open({
+                            self.$buefy.snackbar.open({
                                 duration: 4000,
                                 message: response.data.success,
                                 type: 'is-light',
@@ -194,10 +194,10 @@ new Vue({
                                 }
                             })
 
-                            rawdata.getAttendence();
+                            self.getAttendence();
                         }
                         else if (response.data.message) {
-                            rawdata.$buefy.snackbar.open({
+                            self.$buefy.snackbar.open({
                                 duration: 4000,
                                 message: response.data.message,
                                 type: 'is-light',

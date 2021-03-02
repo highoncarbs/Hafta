@@ -21,7 +21,14 @@ class SalarySheet(TimestampMixin,  db.Model):
     month = db.Column(db.DateTime, default=None, nullable=False)
     deductionsamt = db.Column(db.Float, default=0, nullable=False)
     paidamt = db.Column(db.Float, default=0, nullable=False)
+    company_id = db.Column(db.Integer)
+
     attendence = db.Column(db.String(250), default=None, nullable=False)
+    # Unqiue per company , date 
+    # Add unique index
+    __table_args__ = (db.UniqueConstraint(
+        'company_id', 'month', name='att_id'), )
+
 
     def __init__(self, month, deductionsamt, paidamt, attendence):
         self.month = month
@@ -35,6 +42,7 @@ class SalarySheetSlips(TimestampMixin, db.Model):
     employee = db.relationship('Employee', secondary='sal_emp',
                               backref='sal_emp', cascade='all ,delete', lazy='joined')
     adv_deduction = db.Column(db.Float, default=0, nullable=False)
+    overtime = db.Column(db.Float, default=0, nullable=False)
     date = db.Column(db.DateTime, default=None, nullable=False)
     sheet =  db.relationship('SalarySheet', secondary='sal_slip',
                               backref='sal_slip', cascade='all ,delete', lazy='joined')
@@ -43,8 +51,10 @@ class SalarySheetSlips(TimestampMixin, db.Model):
         self.adv_deduction = adv_deduction 
         self.date = date 
 
-
-
+class SalarySheetSlipsSchema(ma.SQLAlchemyAutoSchema ):
+    class meta:
+        model = SalarySheetSlips
+        
 db.Table('sal_comp',
          db.Column('comp_id', db.Integer, db.ForeignKey(
              'company.id', ondelete='SET NULL')),

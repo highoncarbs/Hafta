@@ -2,29 +2,38 @@ from flask import Blueprint
 from flask import render_template, redirect, url_for, request, session, jsonify
 from flask_login import login_user, logout_user, current_user , login_required
 from app.master import bp
-from app.master.model import Company, Location, LocationSchema, CompanySchema, EmployeeCategory, EmployeeCatSchema
+from app.master.model import Company, Location, LocationSchema, CompanySchema, EmployeeCategory, EmployeeCatSchema,CompanyDetailSchema
 from app import db, ma
 from sqlalchemy.exc import IntegrityError
+from datetime import datetime , timedelta
 
+hours_added = timedelta(hours = 6)
 
 @bp.route('/', methods=['GET'])
-@login_required
+
 def view_master():
     return render_template('master/master.html')
 
     
 #  Company Master Routes
 @bp.route('/get/company', methods=['GET'])
-@login_required
+
 def view_company():
     if request.method == 'GET':
         data_schema = CompanySchema(many=True)
         data = Company.query.all()
         return jsonify(data_schema.dump(data))
+@bp.route('/get/company/detail', methods=['GET'])
+
+def view_company_detail():
+    if request.method == 'GET':
+        data_schema = CompanyDetailSchema(many=True)
+        data = Company.query.all()
+        return jsonify(data_schema.dump(data))
 
 
 @bp.route('/add/company', methods=['POST'])
-@login_required
+
 def add_company():
     if request.method == 'POST':
         payload = request.json
@@ -55,7 +64,7 @@ def add_company():
 
 
 @bp.route('/edit/company', methods=['POST'])
-@login_required
+
 def edit_company():
     if request.method == 'POST':
         payload = request.json
@@ -90,7 +99,7 @@ def edit_company():
 
 
 @bp.route('/delete/company', methods=['POST'])
-@login_required
+
 def delete_company():
     if request.method == 'POST':
         payload = request.json
@@ -119,7 +128,7 @@ def delete_company():
 
 
 @bp.route('/get/location', methods=['GET'])
-@login_required
+
 def get_location():
     if request.method == 'GET':
         data_schema = LocationSchema(many=True)
@@ -129,7 +138,7 @@ def get_location():
 
 
 @bp.route('/add/location', methods=['POST'])
-@login_required
+
 def add_location():
     if request.method == 'POST':
         payload = request.json
@@ -157,7 +166,7 @@ def add_location():
 
 
 @bp.route('/edit/location', methods=['POST'])
-@login_required
+
 def edit_location():
     if request.method == 'POST':
         payload = request.json
@@ -186,7 +195,7 @@ def edit_location():
 
 
 @bp.route('/delete/location', methods=['POST'])
-@login_required
+
 def delete_location():
     if request.method == 'POST':
         payload = request.json
@@ -215,7 +224,7 @@ def delete_location():
 
 
 @bp.route('/get/cat', methods=['GET'])
-@login_required
+
 def get_cat():
     if request.method == 'GET':
         data_schema = EmployeeCatSchema(many=True)
@@ -225,7 +234,7 @@ def get_cat():
 
 
 @bp.route('/add/cat', methods=['POST'])
-@login_required
+
 def add_cat():
     if request.method == 'POST':
         payload = request.json
@@ -253,7 +262,7 @@ def add_cat():
 
 
 @bp.route('/edit/cat', methods=['POST'])
-@login_required
+
 def edit_cat():
     if request.method == 'POST':
         payload = request.json
@@ -282,7 +291,7 @@ def edit_cat():
 
 
 @bp.route('/delete/cat', methods=['POST'])
-@login_required
+
 def delete_cat():
     if request.method == 'POST':
         payload = request.json

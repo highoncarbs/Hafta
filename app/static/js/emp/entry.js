@@ -129,8 +129,8 @@ new Vue({
                 this.submitting = true;
                 this.value = 'Saving';
                 
-                let rawdata = this
-                formData.append('data', JSON.stringify(rawdata.formdata))
+                let self = this
+                formData.append('data', JSON.stringify(self.formdata))
 
                 if (this.formfiles.panfile) {
                     formData.append('panfile', this.formfiles.panfile, this.formfiles.panfile.name)
@@ -161,8 +161,8 @@ new Vue({
                 })
                     .then(function (response) {
                         if (response.data.success) {
-                            rawdata.clearData()
-                            rawdata.$buefy.snackbar.open({
+                            self.clearData()
+                            self.$buefy.snackbar.open({
                                 duration: 4000,
                                 message: response.data.success,
                                 type: 'is-light',
@@ -173,12 +173,12 @@ new Vue({
                                     this.isActive = false;
                                 }
                             })
-                            rawdata.confirmExit = true
+                            self.confirmExit = true
 
 
                         }
                         if (response.data.message) {
-                            rawdata.$buefy.snackbar.open({
+                            self.$buefy.snackbar.open({
                                 indefinate: true,
                                 message: response.data.message,
                                 type: 'is-warning',
@@ -191,12 +191,12 @@ new Vue({
                             })
                         }
 
-                        rawdata.submitting = false;
-                        rawdata.value = 'Save';
+                        self.submitting = false;
+                        self.value = 'Save';
                     })
 
                     .catch(function (error) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: 'Something went wrong . Please check logs.',
                             type: 'is-light',

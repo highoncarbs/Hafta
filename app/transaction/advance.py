@@ -6,7 +6,7 @@ from app.transaction.model_adv import Advance, AdvanceSchema
 from app.employee.model import Employee, EmployeeAdvanceSchema
 from app.master.model import Company
 
-from app import db, ma
+from app import db, ma , hours_added
 from datetime import datetime
 
 import json
@@ -15,20 +15,20 @@ def show_advance():
     return render_template('transaction/advance.html')
 
 
-@bp.route('/advance/employee/<id>', methods=['POST'])
+@bp.route('/advance/employee/<id>', methods=['GET'])
 def get_advance_for_emp(id):
     # Get's advance details on employees
 
     data_schema = EmployeeAdvanceSchema()
     data = Employee.query.filter_by(id=int(id)).first()
-    json_data = data_schema.dumps(data)
+    json_data = data_schema.dump(data)
     return jsonify(json_data)
 
 @bp.route('/advance/all/<id>', methods=['GET'])
 def get_advance_firm(id):
     # Get's advance details on employees
     data = Company.query.first()
-    data_t = Company.query.all()[1]
+    data_t = Company.query.all()[0]
     adv = Advance.query.filter(Advance.company.any(Company.id == int(id))).all()
     print(adv)
     data_schema = AdvanceSchema(many=True)
@@ -41,10 +41,9 @@ def get_advance_firm(id):
     return jsonify({})
 
 
-@bp.route('/advance/get/<emp_id>', methods=['POST'])
+@bp.route('/advance/get/<emp_id>', methods=['GET'])
 def get_advance(emp_id):
     # GEt Advacne history of employee
-    if request.method == "POST":
 
         today = datetime.today()
         year_start = datetime(today.year, 1, 1)
@@ -57,11 +56,8 @@ def get_advance(emp_id):
         data = Advance.query.filter(
             Advance.employee.any(Employee.id == int(emp_id)), Advance.date >= year_start, Advance.date <= year_end).all()
         data_schema = AdvanceSchema(many=True)
-        json_data = data_schema.dumps(data)
+        json_data = data_schema.dump(data)
         return jsonify(json_data)
-    else:
-        return jsonify({'message': 'Invalid HTTP Request , use POST.'})
-
 
 @bp.route('/advance/save', methods=['POST'])
 def save_advance():
@@ -69,9 +65,9 @@ def save_advance():
         payload = request.json
         if payload != None:
             payload_data = payload['data']
-            payload_date = payload_data['date'].split('-')
-            payload_date = datetime(
-                int(payload_date[0]), int(payload_date[1]), int(payload_date[2]))
+            dob_obj = datetime.strptime(payload_data['date'] , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+            dob_obj  = dob_obj.replace(minute=00,hour=00,second=00,day=1)
+            payload_date = dob_obj.date()
 
             # Date checks to be done
             table_columns = (
@@ -88,23 +84,27 @@ def save_advance():
                 new_data = Advance()
                 emp = Employee.query.filter_by(
                     id=int(payload['emp_id'])).first()
-                comp = Company.query.filter_by(
-                    id=int(payload['company_id'])).first()
+                if len(emp.emp_advance) < emp.advancenum:
+                    # comp = Company.query.filter_by(
+                    #     id=int(payload['company_id'])).first()
 
-                new_data.employee.append(emp)
-                new_data.company.append(comp)
-                for field in table_columns:
-                    val = payload_data[field]
-                    if val == '' or val is None:
-                        continue
+                    new_data.employee.append(emp)
+                    # new_data.company.append(comp)
+                    for field in table_columns:
+                        val = payload_data[field]
+                        if val == '' or val is None:
+                            continue
 
-                    setattr(new_data, field, val)
-                setattr(new_data, 'date', payload_date)
-                setattr(new_data, 'trans', 'credit')
+                        setattr(new_data, field, val)
+                    setattr(new_data, 'date', payload_date)
+                    setattr(new_data, 'trans', 'credit')
 
-                db.session.add(new_data)
-                db.session.commit()
-                return jsonify({'success': 'Data Added'})
+                    db.session.add(new_data)
+                    db.session.commit()
+                    return jsonify({'success': 'Data Added'})
+                else:
+                    return jsonify({'success': 'Max. Amount of advances taken'})
+
 
             except Exception as e:
                 db.session.rollback()
@@ -129,7 +129,7 @@ def update_advance():
 
                 # Need Update check inside
                 for item in payload:
-                    saved_att = db.session.query(Attendence).filter_by(
+                    saved_att = db.session.query(Advance).filter_by(
                         id=int(item['id'])).first()
                     for field in table_columns:
                         val = item[field]

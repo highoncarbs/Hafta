@@ -52,7 +52,7 @@ class PerformanceItem(db.Model):
 
 
 
-class PerformanceItemSchema(ma.SQLAlchemySchema ):
+class PerformanceItemSchema(ma.SQLAlchemyAutoSchema ):
     id = field_for(PerformanceItem , 'id' , dump_only = True)
     trans_per_id = field_for(PerformanceItem , 'trans_per_id' , dump_only = True)
     performance_id = field_for(PerformanceItem , 'performance_id' , dump_only = True)
@@ -62,7 +62,7 @@ class PerformanceItemSchema(ma.SQLAlchemySchema ):
     class meta:
         model = PerformanceItem
 
-class TransPerformanceSchema(ma.SQLAlchemySchema ):
+class TransPerformanceSchema(ma.SQLAlchemyAutoSchema ):
     id = field_for(TransPerformance , 'id' , dump_only = True)
     fromdate = field_for(TransPerformance , 'fromdate' , dump_only = True)
     todate = field_for(TransPerformance , 'todate' , dump_only = True)

@@ -10,7 +10,7 @@ from app.master.model import Company, AttendenceRules
 from app.transaction.model_att import Attendence, AttendenceSchema
 from app.transaction.model_adv import Advance, AdvanceSchema
 from app.transaction.model_sal import SalarySheet, SalarySheetSlips
-from app import db, ma
+from app import db, ma ,hours_added
 from datetime import datetime
 import requests
 import json
@@ -21,6 +21,19 @@ import json
 def show_sheet():
     return render_template('transaction/salary_sheet.html')
 
+@bp.route('/salary_sheet/status', methods = ['POST'])
+def status_salary_sheet():
+    payload = request.json
+    dob = payload['date'].replace('"' , '') 
+    dob_obj = datetime.strptime(dob , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+    dob_obj  = dob_obj.replace(minute=00,hour=00,second=00,day=1)
+    dob_date = dob_obj.date()
+    # att_data = Company.query.filter_by(id = payload['id']).first()
+    sal = SalarySheet.query.filter(SalarySheet.month == dob_date).filter(SalarySheet.company.any(Company.id.in_([payload['id']]))).first()
+    if sal:
+        return jsonify({'status':'done'})
+    else:
+        return jsonify({'status':'pending'})
 
 @bp.route('/salary_sheet/print/all', methods=['GET', 'POST'])
 def print_salatry_sheet_company():
@@ -38,19 +51,19 @@ def delete_salatry_sheet_company(id):
     except Exception as e:
         return jsonify({'message' : 'Somethign went wrong' + str(e)})
 
-@bp.route('/salary_sheet/print/selected', methods=['GET', 'POST'])
-def print_salatry_sheet_selected():
-    return render_template('reports/print_sheet_selected.html')
-
 
 @bp.route('/salary_sheet/slips', methods=['POST'])
 def salary_slips_emp():
     # Needs none checks
     payload = request.json
     if payload is not None:
-        payload_date = payload['date'].split('-')
-        payload_date = datetime(
-            int(payload_date[0]), int(payload_date[1]), int(1))
+        dob = payload['date'].replace('"' , '') 
+        dob_obj = datetime.strptime(dob , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+        dob_obj  = dob_obj.replace(minute=00,hour=00,second=00,day=1)
+        payload_date = dob_obj.date()
+        # payload_date = payload['date'].split('-')
+        # payload_date = datetime(
+        #     int(payload_date[0]), int(payload_date[1]), int(1))
         emp_id = payload['emp_id']
         json_schema = AttendenceSchema()
 
@@ -92,7 +105,9 @@ def salary_slips_emp():
 
             json_data['total_deductions'] = float(json_data['esi']) + float(json_data['pf']) + float(
                 json_data['tds']) + float(json_data['other_deduction']) + float(json_data['net_adv_deduction'])
-
+            print('---', slips )
+            print('---OVER---', slips.overtime )
+            json_data['overtime'] = slips.overtime
             json_data['net_payable'] = float(
                 json_data['pay_1'] - json_data['total_deductions'])
             return jsonify({'success': json_data})
@@ -183,9 +198,10 @@ def process_sheet():
         json_data = payload['data']
         payload_company = Company.query.filter_by(
             id=int(payload['company'])).first()
-        payload_date = payload['date'].split('-')
-        payload_date = datetime(
-            int(payload_date[0]), int(payload_date[1]), int(1))
+        dob = payload['date'].replace('"' , '') 
+        dob_obj = datetime.strptime(dob , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+        dob_obj  = dob_obj.replace(minute=00,hour=00,second=00,day=1)
+        payload_date = dob_obj.date()
 
         net_paid = float(0)
         net_advance_deduction = float(0)
@@ -196,6 +212,7 @@ def process_sheet():
         if check_data.first() is None:
             salary = SalarySheet(
                 payload_date, net_advance_deduction, net_paid, json.dumps(net_attendence))
+            salary.company_id = int(payload['company'])
             for item in json_data:
                 # Debit advance
                 try:
@@ -203,14 +220,16 @@ def process_sheet():
                         id=int(item['employee'][0]['id'])).first()
                     slip_data = SalarySheetSlips(
                         item['net_adv_deduction'], payload_date)
+                    slip_data.overtime = item['overtime']
                     slip_data.employee.append(emp)
                     pending_advance = float(
                         item['net_deduction_month']) + float(item['net_deduction_year'])
-                    if pending_advance is not float(0):
+                    print(pending_advance == float(0) , pending_advance)
+                    if pending_advance != float(0):
+                        print('huh' , emp)
                         new_data = Advance(advanceamt=float(
                             item['net_adv_deduction']), trans="debit", date=payload_date, deduction_period="debit")
                         new_data.employee.append(emp)
-                        new_data.employee.append(payload_company)
                         db.session.add(new_data)
 
                     slip_data.sheet.append(salary)
@@ -262,10 +281,14 @@ def get_processed_sheet():
 
     payload = request.json
     if payload is not None:
-
-        payload_date = payload['date'].split('-')
-        payload_date = datetime(
-            int(payload_date[0]), int(payload_date[1]), int(1))
+        dob = payload['date'].replace('"' , '') 
+        dob_obj = datetime.strptime(dob , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+        dob_obj  = dob_obj.replace(minute=00,hour=00,second=00,day=1)
+        payload_date = dob_obj.date()
+        print(payload_date)
+        # payload_date = payload['date'].split('-')
+        # payload_date = datetime(
+        #     int(payload_date[0]), int(payload_date[1]), int(1))
 
         check_data = SalarySheet.query.filter(SalarySheet.company.any(Company.id == int(payload['company'])),
                                               SalarySheet.month == payload_date).first()
@@ -280,9 +303,9 @@ def get_processed_sheet():
                     for slip in saved_data:
                         if (item['employee'][0]['id'] == slip.employee[0].id):
                             item['net_adv_deduction'] = slip.adv_deduction
+                            item['overtime'] = slip.overtime
 
-                json_data = json.dumps(generate_data)
-                return jsonify({'data': json_data})
+                return jsonify({'data': generate_data})
             except Exception as e:
                 print(str(e))
                 return jsonify({'message': 'Data not entered for required company & month.'})
@@ -292,10 +315,10 @@ def get_processed_sheet():
 
 def generate_sheet(company, month):
     # Payload Date from User
-
-    payload_date = month.split('-')
-    payload_date = datetime(
-        int(payload_date[0]), int(payload_date[1]), int(1))
+    dob = month.replace('"' , '') 
+    dob_obj = datetime.strptime(dob , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+    dob_obj  = dob_obj.replace(minute=00,hour=00,second=00,day=1)
+    payload_date = dob_obj.date()
 
     # Attendence data for company and month
     att_data = Attendence.query.filter(
@@ -363,7 +386,7 @@ def generate_sheet(company, month):
                     adv_item['deduction'])
 
             if adv_item['deduction_period'] == 'year':
-                if payload_date.month is 12:
+                if payload_date.month == 12:
 
                     net_advance_year += float(adv_item['advanceamt'])
                     net_deduction_year += float(adv_item['deduction'])
@@ -403,6 +426,7 @@ def generate_sheet(company, month):
 
         att_item['net_deduction_month'] = float(net_deduction_month)
         att_item['net_deduction_year'] = float(net_deduction_year)
+        att_item['overtime'] = float(0)
 
         net_deduction_advance = float(
             net_deduction_month) + float(net_deduction_year)

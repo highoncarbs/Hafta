@@ -95,7 +95,7 @@ new Vue({
         }
     },
     mounted() {
-        let rawdata = this
+        let self = this
 
         let today = new Date()
         var dd = String(today.getDate()).padStart(2, '0');
@@ -106,9 +106,9 @@ new Vue({
 
         axios.get('/employee/get/basic')
             .then(function (response) {
-                rawdata.dataName = []
-                rawdata.dataList = JSON.parse(response.data)
-                rawdata.dataList.forEach((item) => rawdata.dataName.push(item))
+                self.dataName = []
+                self.dataList = JSON.parse(response.data)
+                self.dataList.forEach((item) => self.dataName.push(item))
 
                 console.log(response.data)
             })

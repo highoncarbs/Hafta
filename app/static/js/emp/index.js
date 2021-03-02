@@ -86,11 +86,11 @@ new Vue({
             window.location.href = "/employee/view/detail/"+String(this.empDetail.id)  
           },
         getEmployees() {
-            let rawdata = this
+            let self = this
             axios.get('/employee/get/basic')
                 .then(function (response) {
-                    rawdata.data = JSON.parse(response.data)
-                    rawdata.dataList = JSON.parse(response.data)
+                    self.data = JSON.parse(response.data)
+                    self.dataList = JSON.parse(response.data)
                 })
         },
         formatedNumber(val) {
@@ -118,10 +118,10 @@ new Vue({
         },
         employeeDetail(id) {
             this.detailModal = !this.detailModal
-            let rawdata = this
+            let self = this
             axios.post('/employee/get/detail/' + String(id))
                 .then(function (response) {
-                    rawdata.empDetail = JSON.parse(response.data)
+                    self.empDetail = JSON.parse(response.data)
                 })
         },
         setConfirm(index) {
@@ -134,13 +134,13 @@ new Vue({
         },
         employeeDelete(id) {
             this.confirmModal.close = !this.confirmModal.close
-            let rawdata = this
+            let self = this
             let emp_id = id
             // console.log(id , emp_index)
             axios.post('/employee/delete/' + String(id))
                 .then(function (response) {
                     if (response.data.success) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: response.data.success,
                             type: 'is-light',
@@ -152,12 +152,12 @@ new Vue({
                             }
                         })
 
-                        rawdata.data.filter(function (item) {
+                        self.data.filter(function (item) {
 
                             if (Number(item.id) == Number(emp_id)) {
-                                console.log(emp_id , item.id , rawdata.data.indexOf(item))
-                                rawdata.data.splice(rawdata.data.indexOf(item), 1)
-                                console.log('-------DAATA-----------'+rawdata.data)
+                                console.log(emp_id , item.id , self.data.indexOf(item))
+                                self.data.splice(self.data.indexOf(item), 1)
+                                console.log('-------DAATA-----------'+self.data)
                             }
                         })
                     }

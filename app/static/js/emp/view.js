@@ -82,11 +82,11 @@ new Vue({
                 let today = new Date 
                 let fromdate = today.getFullYear()+'-01-01'
                 let todate = today.getFullYear() + '-12-31'
-                let rawdata = this
+                let self = this
                 let reportdata = { 'emp_id': this.emp_id, 'fromdate': fromdate, 'todate': todate }
                 axios.post('/transaction/quick/get', reportdata)
                     .then(function (response) {
-                        rawdata.quickReports = JSON.parse(response.data)
+                        self.quickReports = JSON.parse(response.data)
                     })
             }
         }
@@ -150,7 +150,7 @@ new Vue({
                 })
         },
         printSelected() {
-            let rawdata = this
+            let self = this
             localStorage.clear()
             let selectedData = []
             selectedData.push(this.slip)

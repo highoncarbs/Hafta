@@ -6,6 +6,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 # from flask_moment import Moment
 from config import Config
+from flask_cors import CORS
 from werkzeug.debug import DebuggedApplication
 from flask_marshmallow import Marshmallow
 import sentry_sdk
@@ -14,14 +15,16 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 db = SQLAlchemy()
 migrate = Migrate()
 ma = Marshmallow()
+cors = CORS()
 
 login = LoginManager()
 login.login_view = 'auth.login'
 login.login_message = 'Please log in to access this page.'
 
 # moment = Moment()
+from datetime import timedelta
 
-
+hours_added = timedelta(hours=6)
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -31,6 +34,7 @@ def create_app(config_class=Config):
     login.init_app(app)
     # moment.init_app(app)
     ma.init_app(app)
+    cors.init_app(app)
 
     sentry_sdk.init(
         dsn="https://3313de1a38b04d3ea4ec37ea3f7ad81b@sentry.io/1759344",

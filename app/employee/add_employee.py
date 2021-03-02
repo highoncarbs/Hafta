@@ -11,10 +11,12 @@ import os
 from sqlalchemy.exc import IntegrityError
 import shutil
 
+from datetime import datetime , timedelta
 
 ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg', 'gif'])
 UPLOAD_FOLDER = os.path.abspath('./app/static/uploads')
 
+hours_added = timedelta(hours= 6) 
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -22,19 +24,18 @@ def allowed_file(filename):
 
 
 @bp.route('/new', methods=['GET'])
-@login_required
 def new():
     return render_template('employees/entry.html')
 
 
 @bp.route('/edit/view/<id>', methods=['GET', 'POST'])
-@login_required
+
 def edit_view_employee(id):
     return render_template('employees/edit.html')
 
 
 @bp.route('/update', methods=['POST'])
-@login_required
+
 def update_employee():
     if request.method == 'POST':
         payload = json.loads(request.form['data'])
@@ -73,8 +74,8 @@ def update_employee():
 
         # init for Employee data
         new_data = Employee.query.filter_by(id=payload['emp_id']).first()
-        payload = payload['formdata']
-        # TEMP folder name for employee
+        print(new_data)
+       # TEMP folder name for employee
         tempfolder = str(payload['name']+'-' +
                          payload['dob']+'-'+payload['fathername'])
 
@@ -86,11 +87,24 @@ def update_employee():
                 temp = str(fields)
             
                 val = payload[str(temp)]
-                if val is not None:
+                if temp == 'dob' :
+                    print('#1')
+                    dob = payload['dob'].replace('"' , '') 
+                    dob_obj = datetime.strptime(dob , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+                    dob_date = dob_obj.date()
+                    print('#3')
+                    new_data.dob = dob_date
+                    print('#2')
+                if temp == 'dateeff' :
+                    deff = payload['dateeff'].replace('"' , '') 
+                    deff_obj = datetime.strptime(deff , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+                    deff_date = deff_obj.date()
+                    new_data.dateeff = deff_date
+                if val != None:
 
-                    if temp == 'post' and (val is not None):
+                    if temp == 'post' and (val != None):
 
-                        if val is not '-1':
+                        if val != '-1':
                             data = Post.query.filter_by(id=int(val)).first()
                             new_data.post = []
                             new_data.post.append(data)
@@ -98,8 +112,8 @@ def update_employee():
                         else:
                             return jsonify({'message': 'Please select post.'})
 
-                    if temp == 'department' and (val is not None):
-                        if val is not '-1':
+                    if temp == 'department' and (val != None):
+                        if val != '-1':
                             data = Department.query.filter_by(
                                 id=int(val)).first()
                             new_data.department = []
@@ -108,8 +122,8 @@ def update_employee():
                         else:
                             return jsonify({'message': 'Please select current city.'})
 
-                    if temp == 'company' and (val is not None):
-                        if val is not '-1':
+                    if temp == 'company' and (val != None):
+                        if val != '-1':
                             data = Company.query.filter_by(id=int(val)).first()
 
                             new_data.company = []
@@ -117,8 +131,8 @@ def update_employee():
                             continue
                         else:
                             return jsonify({'message': 'Please select company.'})
-                    if temp == 'appointment' and (val is not None):
-                        if val is not '-1':
+                    if temp == 'appointment' and (val != None):
+                        if val != '-1':
                             data = Appointment.query.filter_by(
                                 id=int(val)).first()
                             new_data.appointment = []
@@ -127,11 +141,11 @@ def update_employee():
                         else:
                             return jsonify({'message': 'Please select appointment.'})
 
-                    if temp == 'curr_city' and (val is not None):
-                        if payload['curr_address'] is not None:
+                    if temp == 'curr_city' and (val != None):
+                        if payload['curr_address'] != None:
 
-                            if val is not -1:
-                                data = Location.query.filter_by(
+                            if val != -1:
+                                data = City.query.filter_by(
                                     id=int(val)).first()
                                 new_data.curr_city = []
                                 new_data.curr_city.append(data)
@@ -141,11 +155,11 @@ def update_employee():
                         else:
                             continue
 
-                if temp == 'perm_city' and (val is not None):
-                        if payload['perm_address'] is not None:
-                            if val is not -1:
+                if temp == 'perm_city' and (val != None):
+                        if payload['perm_address'] != None:
+                            if val != -1:
 
-                                data = Location.query.filter_by(
+                                data = City.query.filter_by(
                                     id=int(val)).first()
                                 new_data.perm_city = []
                                 new_data.perm_city.append(data)
@@ -155,7 +169,7 @@ def update_employee():
                         else:
                             continue
 
-                if temp == 'benefits' and (len(val) is not 0):
+                if temp == 'benefits' and (len(val) != 0):
                     new_data.benefits = []
 
                     for item in val:
@@ -164,7 +178,7 @@ def update_employee():
                         new_data.benefits.append(data)
                     continue
 
-                if val is not '' and val is not None and temp != 'benefits':
+                if val != '' and val != None and temp != 'benefits'  and temp != 'dob' and temp != 'dateeff':
                     setattr(new_data, str(temp), val)
 
                 # else:
@@ -352,34 +366,33 @@ def update_employee():
                 print(str(e))
                 pass
 
-            db.session.add(new_data)
+            # db.session.add(new_data)
             db.session.commit()
+            print('HMHMHMH')
             return jsonify({'success': 'Employee updated'})
 
         except IntegrityError as e:
             db.session.rollback()
-            errorInfo = e.orig.args
 
-            return jsonify({'message': ''+str(errorInfo[1])})
+            return jsonify({'message': ''+str(e)})
         except Exception as e:
             db.session.rollback()
-            errorInfo = e.orig.args
+            # errorInfo = e.orig.args
 
-            return jsonify({'message': ''+str(errorInfo[1])})
+            return jsonify({'message': ''+str(e)})
 
 
 @bp.route('/edit/<id>', methods=['GET', 'POST'])
-@login_required
+
 def edit_employee(id):
     data = Employee.query.filter_by(id=int(id)).first()
     data_schema = EmployeeSchema()
-    json_data = data_schema.dumps(data)
+    json_data = data_schema.dump(data)
     return jsonify(json_data)
     # return render_template('employees/edit.html')
 
 
 @bp.route('/new/add', methods=['POST'])
-@login_required
 def add_emp():
     # Needs reformating , and handling of Filename with vals
 
@@ -433,19 +446,30 @@ def add_emp():
                 temp = str(fields)
                
                 val = payload[str(temp)]
-                if val is not None:
+                if temp == 'dob' :
+                    dob = payload['dob'].replace('"' , '') 
+                    dob_obj = datetime.strptime(dob , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+                    dob_date = dob_obj.date()
+                    new_data.dob = dob_date
+                if temp == 'dateeff' :
+                    deff = payload['dateeff'].replace('"' , '') 
+                    deff_obj = datetime.strptime(deff , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+                    deff_date = deff_obj.date()
+                    new_data.dateeff = deff_date
+                if val != None:
 
-                    if temp == 'post' and (val is not None):
+
+                    if temp == 'post' and (val != None):
                        
-                        if val is not '-1':
+                        if val != '-1':
                             data = Post.query.filter_by(id=int(val)).first()
                             new_data.post.append(data)
                             continue
                         else:
                             return jsonify({'message': 'Please select post.'})
 
-                    if temp == 'department' and (val is not None):
-                        if val is not '-1':
+                    if temp == 'department' and (val != None):
+                        if val != '-1':
                             data = Department.query.filter_by(
                                 id=int(val)).first()
                             new_data.department.append(data)
@@ -453,15 +477,15 @@ def add_emp():
                         else:
                             return jsonify({'message': 'Please select current city.'})
 
-                    if temp == 'company' and (val is not None):
-                        if val is not '-1':
+                    if temp == 'company' and (val != None):
+                        if val != '-1':
                             data = Company.query.filter_by(id=int(val)).first()
                             new_data.company.append(data)
                             continue
                         else:
                             return jsonify({'message': 'Please select company.'})
-                    if temp == 'appointment' and (val is not None):
-                        if val is not '-1':
+                    if temp == 'appointment' and (val != None):
+                        if val != '-1':
                             data = Appointment.query.filter_by(
                                 id=int(val)).first()
                             new_data.appointment.append(data)
@@ -469,10 +493,10 @@ def add_emp():
                         else:
                             return jsonify({'message': 'Please select appointment.'})
 
-                    if temp == 'curr_city' and (val is not None):
-                        if payload['curr_address'] is not None:
+                    if temp == 'curr_city' and (val != None):
+                        if payload['curr_address'] != None:
 
-                            if val is not -1:
+                            if val != -1:
                                 data = City.query.filter_by(
                                     id=int(val)).first()
                                 new_data.curr_city.append(data)
@@ -482,9 +506,9 @@ def add_emp():
                         else:
                             continue
 
-                    if temp == 'perm_city' and (val is not None):
-                        if payload['perm_address'] is not None:
-                            if val is not -1:
+                    if temp == 'perm_city' and (val != None):
+                        if payload['perm_address'] != None:
+                            if val != -1:
 
                                 data = City.query.filter_by(
                                     id=int(val)).first()
@@ -495,14 +519,14 @@ def add_emp():
                         else:
                             continue
 
-                    if temp == 'benefits' and (len(val) is not 0):
+                    if temp == 'benefits' and (len(val) != 0):
                         for item in val:
                             data = Benefit.query.filter_by(
                                 id=item['id']).first()
                             new_data.benefits.append(data)
                         continue
 
-                    if val is not '' and val is not None and temp != 'benefits':
+                    if val != '' and val != None and temp != 'benefits' and temp != 'dob' and temp != 'dateeff':
                         setattr(new_data, str(temp), val)
 
                 

@@ -155,7 +155,7 @@ new Vue({
                 this.submitting = true;
                 this.value = 'Updating';
 
-                let rawdata = this
+                let self = this
                 let formdata = {'emp_id' : this.emp_id , 'formdata': this.formdata}
                 formData.append('data', JSON.stringify(formdata))
 
@@ -188,7 +188,7 @@ new Vue({
                 })
                     .then(function (response) {
                         if (response.data.success) {
-                            rawdata.$buefy.snackbar.open({
+                            self.$buefy.snackbar.open({
                                 duration: 4000,
                                 message: response.data.success,
                                 type: 'is-light',
@@ -199,12 +199,12 @@ new Vue({
                                     this.isActive = false;
                                 }
                             })
-                            rawdata.confirmExit = true
+                            self.confirmExit = true
 
 
                         }
                         if (response.data.message) {
-                            rawdata.$buefy.snackbar.open({
+                            self.$buefy.snackbar.open({
                                 indefinate: true,
                                 message: response.data.message,
                                 type: 'is-warning',
@@ -217,12 +217,12 @@ new Vue({
                             })
                         }
 
-                        rawdata.submitting = false;
-                        rawdata.value = 'Update';
+                        self.submitting = false;
+                        self.value = 'Update';
                     })
 
                     .catch(function (error) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: 'Something went wrong . Please check logs.',
                             type: 'is-light',

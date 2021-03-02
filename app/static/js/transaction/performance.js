@@ -137,7 +137,7 @@ new Vue({
 
         },
         getFactor() {
-            let rawdata = this
+            let self = this
             this.viewPast = false;
             this.showEmpSelect = true;
             this.showPerfTable = true;
@@ -148,16 +148,16 @@ new Vue({
 
                 axios.post('/transaction/quick/get', reportdata)
                     .then(function (response) {
-                        rawdata.quickReports = JSON.parse(response.data)
+                        self.quickReports = JSON.parse(response.data)
                     })
                 axios.get('/transaction/get/performance')
                     .then(function (response) {
-                        rawdata.showPerfTable = true
+                        self.showPerfTable = true
                         console.log(response.data);
-                        rawdata.viewPastButton = true
-                        rawdata.factorName = []
-                        rawdata.factorList = JSON.parse(response.data)
-                        rawdata.factorList.forEach((item) => rawdata.factorName.push(item))
+                        self.viewPastButton = true
+                        self.factorName = []
+                        self.factorList = JSON.parse(response.data)
+                        self.factorList.forEach((item) => self.factorName.push(item))
 
                     })
 
@@ -176,7 +176,7 @@ new Vue({
             return tempdataList
         },
         getEmployee() {
-            let rawdata = this
+            let self = this
             this.errors = {}
             this.data = null
             this.dataList = []
@@ -188,9 +188,9 @@ new Vue({
                 axios.get('/employee/get/by/company/' + String(this.company))
                     .then(function (response) {
                         console.log(response.data);
-                        rawdata.dataName = []
-                        rawdata.dataList = JSON.parse(response.data)
-                        rawdata.dataList.forEach((item) => rawdata.dataName.push(item))
+                        self.dataName = []
+                        self.dataList = JSON.parse(response.data)
+                        self.dataList.forEach((item) => self.dataName.push(item))
 
                     })
 
@@ -256,7 +256,7 @@ new Vue({
         },
         submitData() {
             this.submitting = true
-            let rawdata = this
+            let self = this
             let formdata = { 'emp_id': this.emp_id, 'fromdate': this.fromdate, 'todate': this.todate, 'data': this.factorList }
             if (this.checkData()) {
                 axios.post('/transaction/performance/save', formdata)
@@ -264,7 +264,7 @@ new Vue({
                         if (response.data.success) {
                             // Run notificaiton 
                             // Open selection for reports and printing
-                            rawdata.$buefy.snackbar.open({
+                            self.$buefy.snackbar.open({
                                 duration: 4000,
                                 message: response.data.success,
                                 type: 'is-light',
@@ -276,15 +276,15 @@ new Vue({
                                 }
                             })
 
-                            rawdata.showPerfTable = false
-                            rawdata.employee = ''
+                            self.showPerfTable = false
+                            self.employee = ''
 
 
 
                         }
                         else if (response.data.message) {
                             // Run message
-                            rawdata.$buefy.snackbar.open({
+                            self.$buefy.snackbar.open({
                                 duration: 4000,
                                 message: response.data.message,
                                 type: 'is-light',
@@ -303,7 +303,7 @@ new Vue({
 
                     })
                     .catch(function (error) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: "Couldn't send request. Server Error.",
                             type: 'is-light',
@@ -328,16 +328,16 @@ new Vue({
             if (this.company && this.fromdate && this.todate) {
 
                 let formdata = { 'company': this.company, 'fromdate': this.fromdate, 'todate': this.todate }
-                let rawdata = this
+                let self = this
                 this.viewPast = true;
                 this.showEmpSelect = false;
                 this.showPerfTable = false;
 
                 axios.post('/transaction/performance/company', formdata)
                     .then(function (response) {
-                        rawdata.pastRecords = JSON.parse(response.data)
-                        rawdata.tempPastRecords = JSON.parse(response.data)
-                        rawdata.$buefy.snackbar.open({
+                        self.pastRecords = JSON.parse(response.data)
+                        self.tempPastRecords = JSON.parse(response.data)
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: "Performance Loaded",
                             type: 'is-light',
@@ -351,7 +351,7 @@ new Vue({
 
                     })
                     .catch(function (error) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: "Couldn't send request. Server Error.",
                             type: 'is-light',
@@ -372,19 +372,19 @@ new Vue({
         },
         performanceModal(id) {
             this.attModal = !this.attModal
-            let rawdata = this
+            let self = this
             axios.get('/transaction/performance/get/employee/' + String(id))
                 .then(function (response) {
-                    rawdata.performanceDetail = JSON.parse(response.data)
+                    self.performanceDetail = JSON.parse(response.data)
                 })
         },
         deletePerformance(id, index) {
-            let rawdata = this
+            let self = this
             axios.post('/transaction/performance/delete/' + String(id))
                 .then(function (response) {
                     if (response.data.success) {
-                        rawdata.tempPastRecords.splice(index, 1)
-                        rawdata.$buefy.snackbar.open({
+                        self.tempPastRecords.splice(index, 1)
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: response.data.success,
                             type: 'is-light',
@@ -397,7 +397,7 @@ new Vue({
                         })
                     }
                     else if (response.data.message) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: response.data.message,
                             type: 'is-light',
@@ -417,7 +417,7 @@ new Vue({
         },
         updateData() {
             this.submitting = true
-            let rawdata = this
+            let self = this
             let formdata = this.editFactorList
             if (this.checkEditData()) {
 
@@ -426,7 +426,7 @@ new Vue({
                         if (response.data.success) {
                             // Run notificaiton 
                             // Open selection for reports and printing
-                            rawdata.$buefy.snackbar.open({
+                            self.$buefy.snackbar.open({
                                 duration: 4000,
                                 message: response.data.success,
                                 type: 'is-light',
@@ -437,13 +437,13 @@ new Vue({
                                     this.isActive = false;
                                 }
                             })
-                            rawdata.editPerfModal = !rawdata.editPerfModal
-                            rawdata.viewPastRecords()
+                            self.editPerfModal = !self.editPerfModal
+                            self.viewPastRecords()
 
                         }
                         else if (response.data.message) {
                             // Run message
-                            rawdata.$buefy.snackbar.open({
+                            self.$buefy.snackbar.open({
                                 duration: 4000,
                                 message: response.data.message,
                                 type: 'is-light',
@@ -462,7 +462,7 @@ new Vue({
 
                     })
                     .catch(function (error) {
-                        rawdata.$buefy.snackbar.open({
+                        self.$buefy.snackbar.open({
                             duration: 4000,
                             message: "Couldn't send request. Server Error.",
                             type: 'is-light',

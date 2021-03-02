@@ -7,20 +7,20 @@ from flask_login import login_required
 from app.transaction import bp
 from app.employee.model import Employee
 from app.transaction.model_qck import QuickInput, QuickInputSchema
-from app import db, ma
+from app import db, ma , hours_added
 from datetime import datetime
 
 import json
 
 
 @bp.route('/quick', methods=['GET'])
-@login_required
+
 def show_quick():
     return render_template('transaction/quickinput.html')
 
 
 @bp.route('/quick/get', methods=['POST'])
-@login_required
+
 def get_quick_emp():
     payload = request.json
     if payload is not None:
@@ -34,7 +34,7 @@ def get_quick_emp():
         data = QuickInput.query.filter(
             QuickInput.employee.any(Employee.id == int(payload['emp_id'])),
             QuickInput.date >= fromdate, QuickInput.date <= todate).all()
-        json_data = data_schema.dumps(data)
+        json_data = data_schema.dump(data)
         return jsonify(json_data)
 
     else:
@@ -42,16 +42,17 @@ def get_quick_emp():
 
 
 @bp.route('/quick/add', methods=['POST'])
-@login_required
+
 def add_quick():
     payload = request.json
     if payload is not None:
         emp = Employee.query.filter_by(id=int(payload['emp_id'])).first()
         report = str(payload['report'])
         feedback = str(payload['feedback'])
-        payload_date = str(payload['date']).split('-')
-        payload_date = datetime(
-            int(payload_date[0]), int(payload_date[1]), int(payload_date[2]))
+        dob = payload['date'].replace('"' , '') 
+        dob_obj = datetime.strptime(dob , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+        dob_obj  = dob_obj.replace(minute=00,hour=00,second=00,day=1)
+        payload_date = dob_obj.date()
 
         try:
             data = QuickInput(payload_date, report, feedback)
