@@ -34,8 +34,8 @@
                       class="is-size-5 is-size-6-mobile has-text-weight-normal-mobile"
                       v-if="empDetail.company.length"
                     >
-                      {{ empDetail.company[0].name }} ,
-                      {{ empDetail.company[0].location[0].name }}
+                      {{ titleCase(empDetail.company[0].name) }} ,
+                      {{ titleCase(empDetail.company[0].location[0].name) }}
                     </p>
                   </th>
                   <th colspan="2">

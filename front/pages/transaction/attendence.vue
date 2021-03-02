@@ -1118,7 +1118,7 @@ export default {
       this.detailModal = !this.detailModal;
       let self = this;
       this.$axios
-        .post("/employee/get/detail/" + String(id))
+        .post("/employee/get/profile/" + String(id))
         .then(function (response) {
           self.empDetail = response.data;
         });

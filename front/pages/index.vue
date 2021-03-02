@@ -161,7 +161,7 @@ export default {
       return company[0].name + ", " + company[0].location[0].name;
     },
     viewReport(id) {
-      window.location.href = "/employee/view/detail/" + String(id);
+      window.location.href = "/employee/profile/" + String(id);
     },
   },
 };
