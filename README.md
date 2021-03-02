@@ -1,5 +1,7 @@
-<p align="center">
+<p align="center" style="font-color:blue">
+   <b>
 New version under active development , checkout alpha branch.
+   </b>
 </p>
 
 <p align="center">
