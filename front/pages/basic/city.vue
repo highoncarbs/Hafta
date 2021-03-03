@@ -8,55 +8,37 @@
         <p class="is-size-5 has-text-weight-bold">City</p>
         <br />
         <!-- Edit Modal -->
-        <div
-          class="modal animated fadeIn"
-          :class="{ 'is-active': modal == true }"
-        >
-          <div class="modal-background" @click="modal = !modal"></div>
-          <div class="modal-content">
-            <div class="card">
-              <div class="card-content">
-                <div class="content">
-                  <p class="has-text-weight-bold is-size-5">Edit City</p>
+        <b-modal v-model="modal">
+          <div class="card">
+            <div class="card-content">
+              <div class="content">
+                <p class="has-text-weight-bold is-size-5">Edit City</p>
 
-                  <b-field
-                    labe="City"
-                    :type="{ 'is-danger': edit.errors.name }"
-                  >
-                    <b-input
-                      v-model="edit.name"
-                      red="editname"
-                      placeholder="Enter City"
-                    ></b-input>
-                  </b-field>
-                </div>
+                <b-field labe="City" :type="{ 'is-danger': edit.errors.name }">
+                  <b-input
+                    v-model="edit.name"
+                    red="editname"
+                    placeholder="Enter City"
+                  ></b-input>
+                </b-field>
               </div>
-              <footer class="card-footer">
-                <a class="card-footer-item" @click="saveEditData">
-                  <span class="icon icon-in">
-                    <b-icon icon="refresh"></b-icon>
-                  </span>
-                  Update
-                </a>
-                <a
-                  class="card-footer-item has-text-grey"
-                  @click="modal = !modal"
-                >
-                  <span class="icon icon-in">
-                    <b-icon icon="close"></b-icon>
-                  </span>
-                  Close
-                </a>
-              </footer>
             </div>
-
-            <button
-              class="modal-close is-large"
-              aria-label="close"
-              @click="modal = !modal"
-            ></button>
+            <footer class="card-footer">
+              <a class="card-footer-item" @click="saveEditData">
+                <span class="icon icon-in">
+                  <b-icon icon="refresh"></b-icon>
+                </span>
+                Update
+              </a>
+              <a class="card-footer-item has-text-grey" @click="modal = !modal">
+                <span class="icon icon-in">
+                  <b-icon icon="close"></b-icon>
+                </span>
+                Close
+              </a>
+            </footer>
           </div>
-        </div>
+        </b-modal>
 
         <!-- Entry Form -->
 
@@ -96,7 +78,6 @@
                   View
                 </button>
               </div>
-           
             </div>
           </div>
         </form>
@@ -230,8 +211,8 @@ export default {
       if (this.form.name) {
         return true;
       }
-        if (!this.form.name) {
-        this.$set(this.form.errors , 'name' , true )
+      if (!this.form.name) {
+        this.$set(this.form.errors, "name", true);
       }
     },
 

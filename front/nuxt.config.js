@@ -1,13 +1,16 @@
 const config= {
-  // static_path: process.env.NODE_ENV !== 'production' ? 'http://127.0.0.1:8888' : 'http://api.jaitexart.org/static',
-  // static_base: process.env.NODE_ENV !== 'production' ? 'http://127.0.0.1:5555/static/uploads' : 'https://saas-space.ams3.cdn.digitaloceanspaces.com/',
+  static_path: process.env.NODE_ENV !== 'production' ? 'http://127.0.0.1:5234' : 'http://api.jaitexart.org/static',
+  static_base: process.env.NODE_ENV !== 'production' ? 'http://127.0.0.1:5234/static/uploads' : 'https://saas-space.ams3.cdn.digitaloceanspaces.com/',
   apiserver: process.env.NODE_ENV !== 'production' ? '127.0.0.1' : 'h-api.jaitexart.org',
   apiserver_port: process.env.NODE_ENV !== 'production' ? '5234' : '80',
 }
 
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
- 
+  env: {
+    static_path: config.static_path,
+    static_base: config.static_base,
+  },
  
   head: {
     title: 'Hafta',

@@ -8,12 +8,7 @@
         <p class="is-size-5 has-text-weight-bold">Post</p>
         <br />
         <!-- Edit Modal -->
-        <div
-          class="modal animated fadeIn"
-          :class="{ 'is-active': modal == true }"
-        >
-          <div class="modal-background" @click="modal = !modal"></div>
-          <div class="modal-content">
+        <b-modal v-model="modal">
             <div class="card">
               <div class="card-content">
                 <div class="content">
@@ -50,13 +45,7 @@
               </footer>
             </div>
 
-            <button
-              class="modal-close is-large"
-              aria-label="close"
-              @click="modal = !modal"
-            ></button>
-          </div>
-        </div>
+            </b-modal>
 
         <!-- Entry Form -->
 

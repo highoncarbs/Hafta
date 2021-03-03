@@ -10,7 +10,7 @@
         :open.sync="showCalc"
       >
         <div class="my-4 px-4">
-          <div class="level">
+          <div class="level is-mobile">
             <div class="left-left">
               <div class="level-item">
                 <p class="has-text-weight-medium is-size-5">Quick Calculator</p>

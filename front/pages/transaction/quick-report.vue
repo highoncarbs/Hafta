@@ -140,7 +140,7 @@
       :open.sync="showAdvLedger"
     >
       <div class="my-4 px-4">
-          <div class="level my-0"  v-if="employee_adv_deets != null"
+          <div class="level is-mobile my-0"  v-if="employee_adv_deets != null"
          >
               <div class="level-left">
                   <div class="level-item">

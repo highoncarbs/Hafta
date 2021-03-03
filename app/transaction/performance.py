@@ -5,7 +5,7 @@ from app.transaction import bp
 from app.employee.model import Employee, EmployeeAdvanceSchema
 from app.master.model import Company, Performance, PerformanceSchema
 from app.transaction.model_per import PerformanceItem, TransPerformance, TransPerformanceSchema
-from app import db, ma
+from app import db, ma , hours_added
 from datetime import datetime
 
 import json
@@ -22,7 +22,7 @@ def show_performance():
 def get_performance_factors():
     data_schema = PerformanceSchema(many=True)
     data = Performance.query.all()
-    json_data = data_schema.dumps(data)
+    json_data = data_schema.dump(data)
     return jsonify(json_data)
 
 
@@ -64,13 +64,15 @@ def get_performance_factors_for_emp():
 
         data_schema = TransPerformanceSchema(many=True)
         payload = request.json
-        temp_date = payload['fromdate'].split('-')
-        fromdate = datetime(
-            int(temp_date[0]), int(temp_date[1]), int(temp_date[2]))
+        from_date = payload['fromdate'].replace('"' , '') 
+        from_dob_obj = datetime.strptime(from_date , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+        from_obj  = from_dob_obj.replace(minute=00,hour=00,second=00)
+        fromdate = from_obj.date()
 
-        temp_date = payload['todate'].split('-')
-        todate = datetime(
-            int(temp_date[0]), int(temp_date[1]), int(temp_date[2]))
+        to_date = payload['todate'].replace('"' , '') 
+        to_dob_obj = datetime.strptime(to_date , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+        to_obj  = to_dob_obj.replace(minute=00,hour=00,second=00)
+        todate = to_obj.date()
 
         data = TransPerformance.query.join(TransPerformance.employee).join(Employee.company).filter(
             Company.id == int(payload['company']), TransPerformance.fromdate >= fromdate, TransPerformance.todate <= todate).all()
@@ -106,7 +108,7 @@ def get_performance_factors_for_emp():
 def get_performance_by_employee(id):
     data_schema = TransPerformanceSchema(many=True)
     data = TransPerformance.query.filter_by(emp_id=int(id)).all()
-    json_data = data_schema.dumps(data)
+    json_data = data_schema.dump(data)
     return jsonify(json_data)
 
 
@@ -119,13 +121,16 @@ def save_performance():
 
             emp = Employee.query.filter_by(id=int(payload['emp_id'])).first()
 
-            temp_date = payload['fromdate'].split('-')
-            fromdate = datetime(
-                int(temp_date[0]), int(temp_date[1]), int(temp_date[2]))
+            from_date = payload['fromdate'].replace('"' , '') 
+            from_dob_obj = datetime.strptime(from_date , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+            from_obj  = from_dob_obj.replace(minute=00,hour=00,second=00)
+            fromdate = from_obj.date()
 
-            temp_date = payload['todate'].split('-')
-            todate = datetime(
-                int(temp_date[0]), int(temp_date[1]), int(temp_date[2]))
+            to_date = payload['todate'].replace('"' , '') 
+            to_dob_obj = datetime.strptime(to_date , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+            to_obj  = to_dob_obj.replace(minute=00,hour=00,second=00)
+            todate = to_obj.date()
+            print(fromdate , todate)
 
             payload_data = payload['data']
 

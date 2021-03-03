@@ -25,12 +25,22 @@ def get_quick_emp():
     payload = request.json
     if payload is not None:
         data_schema = QuickInputSchema(many=True)
-        fromdate = str(payload['fromdate']).split('-')
-        fromdate = datetime(
-            int(fromdate[0]), int(fromdate[1]), int(fromdate[2]))
-        todate = str(payload['todate']).split('-')
-        todate = datetime(
-            int(todate[0]), int(todate[1]), int(todate[2]))
+        from_date = payload['fromdate'].replace('"' , '') 
+        from_dob_obj = datetime.strptime(from_date , '%Y-%m-%d') + hours_added
+        from_obj  = from_dob_obj.replace(minute=00,hour=00,second=00)
+        fromdate = from_obj.date()
+        
+        to_date = payload['todate'].replace('"' , '') 
+        to_dob_obj = datetime.strptime(to_date , '%Y-%m-%d') + hours_added
+        to_obj  = to_dob_obj.replace(minute=00,hour=00,second=00)
+        todate = to_obj.date()
+        
+        # fromdate = str(payload['fromdate']).split('-')
+        # fromdate = datetime(
+        #     int(fromdate[0]), int(fromdate[1]), int(fromdate[2]))
+        # todate = str(payload['todate']).split('-')
+        # todate = datetime(
+        #     int(todate[0]), int(todate[1]), int(todate[2]))
         data = QuickInput.query.filter(
             QuickInput.employee.any(Employee.id == int(payload['emp_id'])),
             QuickInput.date >= fromdate, QuickInput.date <= todate).all()
@@ -51,7 +61,7 @@ def add_quick():
         feedback = str(payload['feedback'])
         dob = payload['date'].replace('"' , '') 
         dob_obj = datetime.strptime(dob , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
-        dob_obj  = dob_obj.replace(minute=00,hour=00,second=00,day=1)
+        dob_obj  = dob_obj.replace(minute=00,hour=00,second=00)
         payload_date = dob_obj.date()
 
         try:

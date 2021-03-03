@@ -11,11 +11,10 @@ from app import db, ma
 
 @bp.route('/get/performance', methods=['GET'])
 def get_perfomance():
-    if request.method == 'GET':
-        data_schema = PerformanceSchema(many=True)
-        data = Performance.query.all()
-        json_data = data_schema.dump(data)
-        return jsonify(json_data)
+    data_schema = PerformanceSchema(many=True)
+    data = Performance.query.all()
+    json_data = data_schema.dump(data)
+    return jsonify(json_data)
 
 
 @bp.route('/add/performance', methods=['POST'])

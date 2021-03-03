@@ -5,7 +5,7 @@ Vue.mixin({
         formatedNumberNoCurr(val) {
             let test = Number(val).toLocaleString("en-IN");
             return test;
-          },
+        },
         formatDate(date) {
             let temp_date = new Date(date);
             return temp_date.toLocaleDateString("en-IN");
@@ -16,14 +16,22 @@ Vue.mixin({
 
             return date.toLocaleDateString("en-IN", options);
         },
+        getStaticImg(path) {
+            let new_path = ""
+            if (process.env.NODE_ENV == 'development') {
+                new_path = process.env.static_base + String(path).split('uploads')[1]
+                console.log('--', new_path)
+            }
+            return new_path
+        },
         getNormalImage(path, type) {
             let new_path = ""
 
             console.log(process.env.NODE_ENV)
             if (process.env.NODE_ENV == 'development') {
                 new_path = String(path).split('uploads')[1]
-                console.log('--' , new_path)
-            } 
+                console.log('--', new_path)
+            }
             if (new_path != "") {
                 if (type == "normal_jpg") {
                     let fileSrc =

@@ -243,22 +243,13 @@
             </table>
 
             <!-- Image Viewer -->
-            <div class="modal animated is-active fadeIn" v-show="viewUpload">
-              <div
-                class="modal-background"
-                @click="viewUpload = !viewUpload"
-              ></div>
-              <div class="modal-content">
+            <b-modal v-model="viewUpload">
+
                 <figure class="image">
                   <img :src="fileSrc" alt="" />
                 </figure>
-                <button
-                  class="modal-close is-large"
-                  aria-label="close"
-                  @click="viewUpload = !viewUpload"
-                ></button>
-              </div>
-            </div>
+            </b-modal>
+         
             <!-- End Image Modal -->
             <div class="columns">
               <div class="column">
@@ -473,27 +464,39 @@
                     Quick Reports
                   </p>
                   <br />
-                  <b-table :data="quickReports" :empty="quickReports.length == 0">
+                  <b-table
+                    :data="quickReports"
+                    :empty="quickReports.length == 0"
+                  >
                     <template slot="empty">
                       <div class="my-6 has-text-centered">
-                        
-                        <b-icon icon="table-remove" size="is-medium" class="has-text-grey-light"></b-icon>
-                      <p class="has-text-weight-medium has-text-grey">No Reports Added</p>
+                        <b-icon
+                          icon="table-remove"
+                          size="is-medium"
+                          class="has-text-grey-light"
+                        ></b-icon>
+                        <p class="has-text-weight-medium has-text-grey">
+                          No Reports Added
+                        </p>
                       </div>
                     </template>
-                    <b-table-column v-slot="props" label="Date">{{ formatedDate(props.row.date) }}</b-table-column>
+                    <b-table-column v-slot="props" label="Date">{{
+                      formatedDate(props.row.date)
+                    }}</b-table-column>
                     <b-table-column v-slot="props" label="Feedback">
-<span  class="tag heading has-text-weight-medium is-rounded"
-                          :class="{
-                            'is-danger':
-                              props.row.feedback == 'negative',
-                            'is-info': props.row.feedback == 'positive',
-                          }"
-                        >
-                          {{ props.row.feedback }}</span>
-
+                      <span
+                        class="tag heading has-text-weight-medium is-rounded"
+                        :class="{
+                          'is-danger': props.row.feedback == 'negative',
+                          'is-info': props.row.feedback == 'positive',
+                        }"
+                      >
+                        {{ props.row.feedback }}</span
+                      >
                     </b-table-column>
-                    <b-table-column v-slot="props" label="Report">{{ props.row.report }}</b-table-column>
+                    <b-table-column v-slot="props" label="Report">{{
+                      props.row.report
+                    }}</b-table-column>
                   </b-table>
                 </div>
               </div>
@@ -502,12 +505,18 @@
                   <p class="is-size-5 has-text-weight-semibold">Performance</p>
                   <br />
                   <div
-                    v-if="[].length == 0"
+                    v-if="perfDetail.length == 0"
                     class="notification has-text-centered"
                   >
                     <span class="icon">
-                      <b-icon icon="info"></b-icon>
+                      <b-icon
+                        icon="information"
+                        class="has-text-grey-light"
+                        size="is-medium"
+                      ></b-icon>
                     </span>
+                    <br />
+                    <br />
                     <p>
                       Performances has not been added for
                       <span class="has-text-weight-semibold">
@@ -517,82 +526,98 @@
                     </p>
                   </div>
                   <div
-                    v-if="[] != null && [].length != 0"
-                    v-for="(row, index) in []"
+                    v-if="perfDetail.length != 0"
+                    v-for="(row, index) in perfDetail"
                     :key="index"
                   >
-                    <small class="has-text-grey has-text-weight-semibold"
-                      >DATE</small
-                    >
                     <p
                       class="has-text-semibold has-text-black has-text-weight-medium"
                     >
+                      <span class="mr-2 has-text-grey"
+                        >DATE
+                      </span>
                       {{ formatedDate(row.fromdate) }} -
                       {{ formatedDate(row.todate) }}
                     </p>
-                    <Columnchart></Columnchart>
+                    <Columnchart :datalist="[row]"></Columnchart>
+                    <hr class="my-3">
                   </div>
                 </div>
                 <div class="box">
                   <p class="is-size-5 has-text-weight-semibold">Advances</p>
                   <div class="my-4 px-4">
-        <p
-          v-if="employee_adv_deets != null"
-          class="has-text-weight-medium is-size-5"
-        >
-          Advance Ledger for {{ this.employee_adv_deets.name }}
-        </p>
-        <hr class="my-2" />
-        <p>
-          <span class="has-text-weight-semibold has-text-grey">Balance</span>
-          <span class="is-pulled-right">
-            {{ formatedNumber(getTotalCredit() - getTotalDebit()) }}
-          </span>
-        </p>
-        <br />
-        <b-table :data="advance_list" :empty="advance_list.length == 0">
-          <template #empty>
-            <div class="has-text-centered">
-              <br />
-              <b-icon
-                icon="table-remove"
-                class="has-text-grey-lighter"
-                size="is-large"
-              ></b-icon>
-              <p class="mt-4 has-text-weight-medium has-text-grey">
-                No Advances taken yet
-              </p>
-            </div>
-          </template>
-          <b-table-column label="Date" v-slot="props">{{
-            formatDate(new Date(props.row.date))
-          }}</b-table-column>
-          <!-- <b-table-column label="Amt." v-slot="props">{{
+                    <p
+                      v-if="advance_list != null"
+                      class="has-text-weight-medium is-size-5"
+                    >
+                      Advance Ledger for {{ this.empDetail.name }}
+                    </p>
+                    <hr class="my-2" />
+                    <p>
+                      <span class="has-text-weight-semibold has-text-grey"
+                        >Balance</span
+                      >
+                      <span class="is-pulled-right">
+                        {{ formatedNumber(getTotalCredit() - getTotalDebit()) }}
+                      </span>
+                    </p>
+                    <br />
+                    <b-table
+                      :data="advance_list"
+                      :empty="advance_list.length == 0"
+                    >
+                      <template #empty>
+                        <div class="has-text-centered">
+                          <br />
+                          <b-icon
+                            icon="table-remove"
+                            class="has-text-grey-lighter"
+                            size="is-large"
+                          ></b-icon>
+                          <p class="mt-4 has-text-weight-medium has-text-grey">
+                            No Advances taken yet
+                          </p>
+                        </div>
+                      </template>
+                      <b-table-column label="Date" v-slot="props">{{
+                        formatDate(new Date(props.row.date))
+                      }}</b-table-column>
+                      <!-- <b-table-column label="Amt." v-slot="props">{{
             formatedNumber(props.row.advanceamt)
           }}</b-table-column> -->
-          <b-table-column centered label="Debit" v-slot="props">
-            <span v-if="props.row.trans == 'debit'" class="is-pulled-right">
-              {{ formatedNumberNoCurr(props.row.advanceamt) }}
-            </span>
-          </b-table-column>
-          <b-table-column centered label="Credit" v-slot="props">
-            <span v-if="props.row.trans == 'credit'" class="is-pulled-right">
-              {{ formatedNumberNoCurr(props.row.advanceamt) }}
-            </span>
-          </b-table-column>
-          <!-- <b-table-column label="Ded." v-slot="props"
+                      <b-table-column centered label="Debit" v-slot="props">
+                        <span
+                          v-if="props.row.trans == 'debit'"
+                          class="is-pulled-right"
+                        >
+                          {{ formatedNumberNoCurr(props.row.advanceamt) }}
+                        </span>
+                      </b-table-column>
+                      <b-table-column centered label="Credit" v-slot="props">
+                        <span
+                          v-if="props.row.trans == 'credit'"
+                          class="is-pulled-right"
+                        >
+                          {{ formatedNumberNoCurr(props.row.advanceamt) }}
+                        </span>
+                      </b-table-column>
+                      <!-- <b-table-column label="Ded." v-slot="props"
             >{{ formatedNumber(props.row.deduction) }} /
             <span class="has-text-grey has-text-weight-medium">{{
               props.row.deduction_period
             }}</span></b-table-column> -->
 
-          <template #footer>
-            <td></td>
-            <td class="has-text-right">{{ formatedNumberNoCurr(getTotalDebit()) }}</td>
-            <td class="has-text-right">{{ formatedNumberNoCurr(getTotalCredit()) }}</td>
-          </template>
-        </b-table>
-      </div>
+                      <template #footer>
+                        <td></td>
+                        <td class="has-text-right">
+                          {{ formatedNumberNoCurr(getTotalDebit()) }}
+                        </td>
+                        <td class="has-text-right">
+                          {{ formatedNumberNoCurr(getTotalCredit()) }}
+                        </td>
+                      </template>
+                    </b-table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -618,9 +643,9 @@ export default {
     return {
       empDetail: null,
       emp_id: null,
-            advance_list: [],
+      advance_list: [],
 
-      perfDetail: null,
+      perfDetail: [],
       attDetail: [],
       viewUpload: false,
       total: {
@@ -647,11 +672,10 @@ export default {
     this.emp_id = this.$route.params.id;
     let raw = this;
     this.$axios
-            .get("/transaction/advance/get/" + this.emp_id)
-            .then((response) => {
-              this.advance_list = response.data;
-            
-            });
+      .get("/transaction/advance/get/" + this.emp_id)
+      .then((response) => {
+        this.advance_list = response.data;
+      });
     if (this.emp_id != null) {
       this.$axios
         .post("/employee/get/detail/" + String(this.emp_id))
@@ -687,7 +711,7 @@ export default {
       this.$axios
         .get("/transaction/performance/get/employee/" + String(this.emp_id))
         .then(function (response) {
-          raw.perfDetail = JSON.parse(response.data);
+          raw.perfDetail = response.data;
         });
       this.$axios
         .get("/transaction/attendence/employee/" + String(this.emp_id))
@@ -727,7 +751,7 @@ export default {
     },
   },
   methods: {
-     getTotalDebit() {
+    getTotalDebit() {
       return this.advance_list.reduce(function (total, value) {
         return value.trans == "debit" ? total + value.advanceamt : total + 0;
       }, 0);
@@ -756,18 +780,15 @@ export default {
     showUpload(filetype) {
       this.viewFile = filetype;
       if (this.viewFile != null) {
+        this.fileSrc = this.getStaticImg(this.empDetail[this.viewFile])
         this.viewUpload = !this.viewUpload;
-        this.fileSrc =
-          String("\\static") +
-          String(this.empDetail[this.viewFile]).split("static")[1];
       }
     },
     viewPDF(filetype) {
       this.viewFile = filetype;
       if (this.viewFile != null) {
-        this.fileSrc =
-          String("\\static") +
-          String(this.empDetail[this.viewFile]).split("static")[1];
+        this.fileSrc = this.getStaticImg(this.empDetail[this.viewFile])
+
         window.open(this.fileSrc, "_blank");
       }
     },

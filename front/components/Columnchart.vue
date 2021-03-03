@@ -6,9 +6,9 @@
       :data-tooltip="getTooltip(box, index)"
       :style="{ height: setHeight(box) }"
     >
-      {{ box.performance.name}}
+      {{ box.performance_items[0].performance.name}}
       <br />
-      <small>WEIGHT: {{ box.performance.weight}} </small>
+      <small>WEIGHT: {{ box.performance_items[0].performance.weight}} </small>
     </span>
   </div>
 </template>
@@ -24,36 +24,7 @@ export default {
    props: {
     datalist: {
       type: Array,
-      default: () => [
-        {
-          id: 119,
-          performance: { weight: 5, id: 1, name: "Cleaniless", score: 10 },
-          obt_score: 7,
-          performance_id: 1,
-          trans_per_id: 22,
-        },
-        {
-          id: 120,
-          performance: { weight: 5, id: 2, name: "On Time", score: 10 },
-          obt_score: 10,
-          performance_id: 2,
-          trans_per_id: 22,
-        },
-        {
-          id: 121,
-          performance: { weight: 10, id: 3, name: "hard Working", score: 10 },
-          obt_score: 10,
-          performance_id: 3,
-          trans_per_id: 22,
-        },
-        {
-          id: 122,
-          performance: { weight: 10, id: 4, name: "Overtime", score: 10 },
-          obt_score: 10,
-          performance_id: 4,
-          trans_per_id: 22,
-        },
-      ],
+      default: () => [],
     },
   },
   mounted() {
@@ -63,10 +34,14 @@ export default {
     });
   },
   methods: {
-    setHeight(val) {
+    setHeight(data) {
+      let val = data.performance_items[0]
+      console.log('----H--', val)
       return (Number(val.obt_score) / val.performance.score) * 100 + "px";
     },
-    getTooltip(factor, index) {
+    getTooltip(data, index) {
+      let factor = data.performance_items[0]
+      console.log('----F--', factor)
       return (
         factor.obt_score +
         "/" +

@@ -973,8 +973,8 @@ export default {
           })
 
           .catch(function (error) {
+            duration: 4000,
             self.$buefy.snackbar.open({
-              duration: 4000,
               message: "Something went wrong . Please check logs.",
               type: "is-light",
               position: "is-top-right",
@@ -1051,27 +1051,27 @@ export default {
       if (field == "pan") {
         this.formfiles.panfile = this.$refs.panfile.files[0];
 
-        this.fileUploadType(this.formfiles.panfile.name, field);
+        // this.fileUploadType(this.formfiles.panfile.name, field);
       }
       if (field == "aadhar") {
         this.formfiles.aadharfile = this.$refs.aadharfile.files[0];
-        this.fileUploadType(this.formfiles.aadharfile.name, field);
+        // this.fileUploadType(this.formfiles.aadharfile.name, field);
       }
       if (field == "photo") {
         this.formfiles.photofile = this.$refs.photofile.files[0];
-        this.fileUploadType(this.formfiles.photofile.name, field);
+        // this.fileUploadType(this.formfiles.photofile.name, field);
       }
       if (field == "extraidfile") {
         this.formfiles.extraidfile = this.$refs.extraidfile.files[0];
-        this.fileUploadType(this.formfiles.extraidfile.name, field);
+        // this.fileUploadType(this.formfiles.extraidfile.name, field);
       }
       if (field == "educertfile") {
         this.formfiles.educertfile = this.$refs.educertfile.files[0];
-        this.fileUploadType(this.formfiles.educertfile.name, field);
+        // this.fileUploadType(this.formfiles.educertfile.name, field);
       }
       if (field == "resumefile") {
         this.formfiles.resumefile = this.$refs.resumefile.files[0];
-        this.fileUploadType(this.formfiles.resumefile.name, field);
+        // this.fileUploadType(this.formfiles.resumefile.name, field);
       }
     },
     fileUploadType(type, field) {

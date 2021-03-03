@@ -77,6 +77,15 @@ def get_basic():
     json_data=data_schema.dump(results.items)
     return jsonify({'data': json_data, 'total': results.total})
 
+@bp.route('/get/all', methods=['GET'])
+def get_basic_all():
+
+    data_schema = EmployeeBasicSchema(many=True)
+    data = Employee.query.all()
+
+    json_data=data_schema.dump(data)
+    return jsonify({'data': json_data})
+
 
 @ bp.route('/delete/<emp_id>', methods = ['POST'])
 def delete_employee(emp_id):

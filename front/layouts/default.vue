@@ -38,7 +38,7 @@
               </nuxt-link>
             </b-dropdown>
           </div>
-          <div class="has-dropdown is-hoverable">
+          <!-- <div class="has-dropdown is-hoverable">
             <b-dropdown :triggers="['hover']" aria-role="list">
               <p class="has-text-white" slot="trigger">
                 <span class="icon icon-btn">
@@ -58,7 +58,7 @@
                 </b-dropdown-item>
               </nuxt-link>
             </b-dropdown>
-          </div>
+          </div> -->
           <div class="has-dropdown is-hoverable">
             <b-dropdown :triggers="['hover']" aria-role="list">
               <p class="has-text-white" slot="trigger">

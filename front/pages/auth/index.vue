@@ -2,7 +2,7 @@
   <div>
     <section class=" hero my-0  is-fullwidth">
       <div class="hero-head">
-        <div class="level has-background-black my-0 py-4 px-4">
+        <div class="level has-background-black my-0 py-2 px-4">
         
             <div class="level-left">
               <div class="level-item">
@@ -21,7 +21,8 @@
             </div>
             <div class="level-right">
 
-              <a href="" class="has-text-right heading has-text-white  level-item">
+              <a href="" class="has-text-right heading has-tex
+              t-white  level-item">
                 PRODUCT OF <br> PEPLUM STUDIO
               </a>
             </div>

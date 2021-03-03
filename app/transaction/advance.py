@@ -66,7 +66,7 @@ def save_advance():
         if payload != None:
             payload_data = payload['data']
             dob_obj = datetime.strptime(payload_data['date'] , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
-            dob_obj  = dob_obj.replace(minute=00,hour=00,second=00,day=1)
+            dob_obj  = dob_obj.replace(minute=00,hour=00,second=00)
             payload_date = dob_obj.date()
 
             # Date checks to be done

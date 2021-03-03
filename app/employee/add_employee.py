@@ -13,7 +13,7 @@ import shutil
 
 from datetime import datetime , timedelta
 
-ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg', 'gif',"PDF", "PNG", "JPG", "JPEG", "GIF"])
 UPLOAD_FOLDER = os.path.abspath('./app/static/uploads')
 
 hours_added = timedelta(hours= 6) 
@@ -82,7 +82,7 @@ def update_employee():
         try:
             # Adding data to table
             for fields in emp_fields:
-
+                print('---', fields)
                 # Gets the str type of field from employee.name -> str(name)
                 temp = str(fields)
             
@@ -100,6 +100,13 @@ def update_employee():
                     deff_obj = datetime.strptime(deff , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
                     deff_date = deff_obj.date()
                     new_data.dateeff = deff_date
+                if temp == 'dateofapp' :
+                    if val is not '' and val is not None:
+
+                        dapp = payload['dateofapp'].replace('"' , '') 
+                        dapp_obj = datetime.strptime(dapp , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+                        dapp_date = dapp_obj.date()
+                        new_data.dateofapp = dapp_date
                 if val != None:
 
                     if temp == 'post' and (val != None):
@@ -178,7 +185,7 @@ def update_employee():
                         new_data.benefits.append(data)
                     continue
 
-                if val != '' and val != None and temp != 'benefits'  and temp != 'dob' and temp != 'dateeff':
+                if val != '' and val != None and temp != 'benefits'  and temp != 'dob' and temp != 'dateeff' and temp != 'dateofapp' :
                     setattr(new_data, str(temp), val)
 
                 # else:
@@ -435,8 +442,7 @@ def add_emp():
         new_data = Employee()
 
         # TEMP folder name for employee
-        tempfolder = str(payload['name']+'-' +
-                         payload['dob']+'-'+payload['fathername'])
+        tempfolder = str(payload['name']+'-'+payload['fathername'])
 
         try:
             # Adding data to table
@@ -456,6 +462,12 @@ def add_emp():
                     deff_obj = datetime.strptime(deff , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
                     deff_date = deff_obj.date()
                     new_data.dateeff = deff_date
+                if temp == 'dateofapp' :
+                    if val is not '' and val is not None:
+                        dapp = payload['dateofapp'].replace('"' , '') 
+                        dapp_obj = datetime.strptime(dapp , '%Y-%m-%dT%H:%M:%S.%fZ') + hours_added
+                        dapp_date = dapp_obj.date()
+                        new_data.dateofapp = dapp_date
                 if val != None:
 
 
@@ -526,7 +538,7 @@ def add_emp():
                             new_data.benefits.append(data)
                         continue
 
-                    if val != '' and val != None and temp != 'benefits' and temp != 'dob' and temp != 'dateeff':
+                    if val != '' and val != None and temp != 'benefits' and temp != 'dob' and temp != 'dateeff' and temp != 'dateofapp':
                         setattr(new_data, str(temp), val)
 
                 
@@ -597,19 +609,24 @@ def add_emp():
                     filename = secure_filename(file.filename)
                     foldertemp = os.path.join(
                         UPLOAD_FOLDER, tempfolder, 'photo')
-
+                    print('--#1-',foldertemp)
+                    print('--#2-',filename)
                     if not os.path.exists(foldertemp):
+                        print('--#3-IN--',filename)
                         os.makedirs(foldertemp)
                         filetemp = os.path.join(foldertemp, filename)
                         file.save(filetemp)
                         setattr(new_data, 'photofile', filetemp)
                     else:
+                        print('--#3-els--',filename)
                         shutil.rmtree(foldertemp)
                         os.makedirs(foldertemp)
 
                         filetemp = os.path.join(foldertemp, filename)
                         file.save(filetemp)
+                        print('--#4-IN--',filetemp)
                         setattr(new_data, 'photofile', filetemp)
+                        print('--#55-IN--',new_data.photofile)
                 else:
                     return jsonify({'message': 'Please check filetype of Photo.'})
 
