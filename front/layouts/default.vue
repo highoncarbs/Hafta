@@ -1,7 +1,160 @@
 <template>
   <div>
     <!-- Mobile Nav -->
+    <nav
+      class="navbar header is-hidden-desktop has-background-black"
+      @routeChanged="showMobileMenu = !showMobileMenu"
+    >
+      <div class="container">
+        <div class="navbar-brand pb-0 mb-0">
+          <div class="navbar-item">
+            <div class="navbar-item">
+              <nuxt-link to="/">
+                <img src="~/static/logo.svg" width="20px" alt="" />
+              </nuxt-link>
+            </div>
+          </div>
+          <div
+            class="navbar-burger has-text-white"
+            :class="{ 'is-active': showMobileMenu }"
+            @click="showMobileMenu = !showMobileMenu"
+          >
+            <span />
+            <span class="has-background-black py-1" />
+            <span />
+          </div>
+        </div>
+        <div class="navbar-menu" :class="{ 'is-active': showMobileMenu }">
+          <div class="navbar-start">
+            <b-collapse
+              ref="mininav"
+              :open="false"
+              animation="slide"
+              aria-id="contentIdForA11y1"
+              style="border-bottom: 1px solid #dbdbdb"
+            >
+              <template #trigger="props">
+                <div class="has-text-black media px-4 py-2">
+                  <div class="media-left">
+                    <b-icon icon="chart-pie"></b-icon>
+                  </div>
+                  <div class="media-content">General</div>
+                  <div class="media-right">
+                    <b-icon
+                      :icon="props.open ? 'chevron-down' : 'chevron-up'"
+                    ></b-icon>
+                  </div>
+                </div>
+              </template>
+              <div
+                class="navbar-item"
+                v-for="(item, index) in general_items"
+                :key="index + '_d'"
+              >
+                <nuxt-link class="has-text-grey pl-6" :to="item.to">{{
+                  item.title
+                }}</nuxt-link>
+              </div>
+            </b-collapse>
+            <b-collapse
+              ref="mininav"
+              :open="false"
+              animation="slide"
+              aria-id="contentIdForA11y1"
+              style="border-bottom: 1px solid #dbdbdb"
+            >
+              <template #trigger="props">
+                <div class="has-text-black media px-4 py-2">
+                  <div class="media-left">
+                    <b-icon icon="swap-vertical-circle"></b-icon>
+                  </div>
+                  <div class="media-content">Transactions</div>
+                  <div class="media-right">
+                    <b-icon
+                      :icon="props.open ? 'chevron-down' : 'chevron-up'"
+                    ></b-icon>
+                  </div>
+                </div>
+              </template>
+              <p class="heading  pl-6 ml-3 has-text-weight-semibold">PAYROLL</p>
+              <div
+                class="navbar-item"
+                v-for="(item, index) in trans_items.payroll"
+                :key="index + '_d'"
+              >
+                <nuxt-link class="has-text-grey pl-6" :to="item.to">{{
+                  item.title
+                }}</nuxt-link>
+              </div>
+              <hr class="my-2 ">
+                            <p class="heading pl-6 ml-3 has-text-weight-semibold">HR</p>
 
+              <div
+                class="navbar-item"
+                v-for="(item, index) in trans_items.hr"
+                :key="index + '_d'"
+              >
+                <nuxt-link class="has-text-grey pl-6" :to="item.to">{{
+                  item.title
+                }}</nuxt-link>
+              </div>
+            </b-collapse>
+             <b-collapse
+              ref="mininav"
+              :open="false"
+              animation="slide"
+              aria-id="contentIdForA11y1"
+              style="border-bottom: 1px solid #dbdbdb"
+            >
+              <template #trigger="props">
+                <div class="has-text-black media px-4 py-2">
+                  <div class="media-left">
+                    <b-icon icon="layers"></b-icon>
+                  </div>
+                  <div class="media-content">Basic Master</div>
+                  <div class="media-right">
+                    <b-icon
+                      :icon="props.open ? 'chevron-down' : 'chevron-up'"
+                    ></b-icon>
+                  </div>
+                </div>
+              </template>
+              <div
+                class="navbar-item"
+                v-for="(item, index) in basic_items"
+                :key="index + '_d'"
+              >
+                <nuxt-link class="has-text-grey pl-6" :to="item.to">{{
+                  item.title
+                }}</nuxt-link>
+              </div>
+            </b-collapse>
+            <nuxt-link to="/employee/new" class="navbar-item has-text-black pt-3  ">
+            <div class="has-text-black media pl-3 py-0">
+                  <div class="media-left">
+                    <b-icon icon="account-supervisor-circle"></b-icon>
+                  </div>
+                  <div class="media-content">New Employee</div>
+                  
+                </div>
+         
+        </nuxt-link>
+        <hr class="my-1">
+            <nuxt-link to="/employee/new" class="navbar-item has-text-black pl-3 ">
+            <div class="has-text-black media pl-3 py-0">
+                  <div class="media-left">
+                    <b-icon icon="exit-to-app"></b-icon>
+                  </div>
+                  <div class="media-content">Logout</div>
+                  
+                </div>
+      
+        </nuxt-link>
+          </div>
+          <div class="navbar-end"></div>
+        </div>
+      </div>
+    </nav>
     <!-- Burger Navingation  -->
 
     <!-- Desktop Nav -->
@@ -67,7 +220,9 @@
                 >Transactions
                 <b-icon icon="chevron-down" class="icon-btn" />
               </p>
-              <p class="dropdown-item heading is-size-7 has-text-grey">PAYROLL</p>
+              <p class="dropdown-item heading is-size-7 has-text-grey">
+                PAYROLL
+              </p>
               <nuxt-link
                 v-for="(item, index) in trans_items.payroll"
                 :to="'/transaction' + item.to"
@@ -78,7 +233,7 @@
                   {{ item.title }}
                 </b-dropdown-item>
               </nuxt-link>
-                <hr class="my-2">
+              <hr class="my-2" />
               <p class="dropdown-item heading is-size-7 has-text-grey">HR</p>
               <nuxt-link
                 v-for="(item, index) in trans_items.hr"
@@ -124,6 +279,8 @@
         </p>
       </div>
     </nav>
+
+    <!-- Functional NAv -->
     <nav
       class="level is-mobile mb-0 has-background-light py-1 px-4"
       style="border-bottom: 1.5px solid #e9e9e9"
@@ -174,11 +331,11 @@
         </div>
       </div>
     </nav>
-    <transition name="fade">
-      <section class="py-0 my-0">
+    <section class="py-0 my-0">
+      <transition name="fade">
         <nuxt />
-      </section>
-    </transition>
+      </transition>
+    </section>
 
     <!-- <b-modal
       custom-class="has-overflow"
@@ -248,6 +405,8 @@ export default {
   components: {},
   data() {
     return {
+      showMobileMenu: false,
+
       glb_search: false,
       expanded: false,
       g_search: null,
@@ -360,6 +519,12 @@ export default {
     };
   },
   methods: {
+    changePage(page) {
+      this.$router.push("/" + String(page));
+      setTimeout(() => {
+        this.showMobileMenu = false;
+      }, 200);
+    },
     logoutUser() {
       this.$auth.logout().then(() => {
         this.$router.push("/auth");
@@ -403,7 +568,7 @@ html {
 
 .b-sidebar .sidebar-content {
   width: 450px !important;
-   z-index:99;
+  z-index: 99;
 }
 
 .libre {
