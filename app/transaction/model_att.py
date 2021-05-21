@@ -57,7 +57,7 @@ db.Table('att_comp',
 # Unique Constraint over Attendence -> Needs DB level uniqueness
 
 
-class AttendenceSchema(ma.SQLAlchemyAutoSchema ):
+class AttendenceSchema(ma.ModelSchema ):
     id = field_for(Attendence , 'id' , dump_only = True)
     date = field_for(Attendence, 'date', dump_only=True)
     daysatt = field_for(Attendence, 'daysatt', dump_only=True)

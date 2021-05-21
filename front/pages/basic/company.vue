@@ -316,7 +316,7 @@ export default {
       this.$axios
         .get("/master/get/company")
         .then(function (response) {
-          self.data = response["data"];
+          self.data = response.data;
         })
         .catch(function (error) {
           console.log(error);

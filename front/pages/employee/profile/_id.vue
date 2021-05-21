@@ -635,7 +635,7 @@
 </template>
 
 <script>
-import Columnchart from "~/components/columnchart";
+import Columnchart from "~/components/Columnchart";
 import Heatmap from "~/components/Heatmap";
 export default {
   components: [Heatmap, Columnchart],
@@ -821,16 +821,16 @@ export default {
         data: selectedData,
       };
       localStorage.setItem("selecteddata", JSON.stringify(formdata));
-      this.$axios
-        .post("/transaction/salary_sheet/print/selected", formdata)
-        .then(function (response) {
-          const win = window.open(
-            "/transaction/salary_sheet/print/selected",
+         window.open(
+            "/print/salary-sheet-selected",
             "_blank",
             [],
             true
           );
-        });
+      // this.$axios
+      //   .post("/transaction/salary_sheet/print/selected", formdata)
+      //   .then(function (response) {
+      //   });
     },
   },
 };

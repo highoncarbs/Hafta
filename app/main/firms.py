@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from flask import render_template, redirect, url_for, request, session, jsonify
-from flask_login import login_required
+
 from app.main import bp
 from app.master.model import Company, CompanySchema
 from app.employee.model import Employee

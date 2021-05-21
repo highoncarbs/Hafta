@@ -140,7 +140,7 @@
          
         </nuxt-link>
         <hr class="my-1">
-            <nuxt-link to="/employee/new" class="navbar-item has-text-black pl-3 ">
+            <a @click="logout()" class="navbar-item has-text-black pl-3 ">
             <div class="has-text-black media pl-3 py-0">
                   <div class="media-left">
                     <b-icon icon="exit-to-app"></b-icon>
@@ -149,7 +149,7 @@
                   
                 </div>
       
-        </nuxt-link>
+        </a>
           </div>
           <div class="navbar-end"></div>
         </div>
@@ -273,10 +273,10 @@
           <b-icon icon="account-supervisor-circle" />
           <span class="ml-2"> New Emp. </span>
         </nuxt-link>
-        <p class="level-item button is-dark">
+        <a @click="logout()" class="level-item button is-dark">
           <b-icon icon="exit-to-app"></b-icon>
           <span class="ml-2"> Logout </span>
-        </p>
+        </a>
       </div>
     </nav>
 
@@ -403,6 +403,7 @@ import { mapState, mapGetters, mapActions } from "vuex";
 
 export default {
   components: {},
+  middleware: ["auth-user"],
   data() {
     return {
       showMobileMenu: false,
@@ -519,6 +520,11 @@ export default {
     };
   },
   methods: {
+    async logout() {
+      await this.$auth.logout().then((response) => {
+        this.$router.push("/auth/login");
+      });
+    },
     changePage(page) {
       this.$router.push("/" + String(page));
       setTimeout(() => {

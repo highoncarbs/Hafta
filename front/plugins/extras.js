@@ -2,6 +2,20 @@ import Vue from 'vue'
 
 Vue.mixin({
     methods: {
+        formatedNumber(val) {
+            let test = Number(val).toLocaleString("en-IN", {
+              style: "currency",
+              currency: "INR",
+            });
+            return test;
+          },
+
+          formatedDate(val) {
+            var date = new Date(val);
+            return (
+              date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
+            );
+          },
         formatedNumberNoCurr(val) {
             let test = Number(val).toLocaleString("en-IN");
             return test;

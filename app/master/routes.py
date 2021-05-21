@@ -1,6 +1,5 @@
 from flask import Blueprint
 from flask import render_template, redirect, url_for, request, session, jsonify
-from flask_login import login_user, logout_user, current_user , login_required
 from app.master import bp
 from app.master.model import Company, Location, LocationSchema, CompanySchema, EmployeeCategory, EmployeeCatSchema,CompanyDetailSchema
 from app import db, ma

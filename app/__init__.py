@@ -3,23 +3,21 @@ import os
 from flask import Flask, request, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import LoginManager
 # from flask_moment import Moment
 from config import Config
 from flask_cors import CORS
 from werkzeug.debug import DebuggedApplication
 from flask_marshmallow import Marshmallow
-import sentry_sdk
-from sentry_sdk.integrations.flask import FlaskIntegration
+# import sentry_sdk
+# from sentry_sdk.integrations.flask import FlaskIntegration
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 db = SQLAlchemy()
 migrate = Migrate()
 ma = Marshmallow()
 cors = CORS()
 
-login = LoginManager()
-login.login_view = 'auth.login'
-login.login_message = 'Please log in to access this page.'
+jwt = JWTManager()
 
 # moment = Moment()
 from datetime import timedelta
@@ -31,15 +29,14 @@ def create_app(config_class=Config):
 
     db.init_app(app)
     migrate.init_app(app, db)
-    login.init_app(app)
-    # moment.init_app(app)
+    jwt.init_app(app)
     ma.init_app(app)
     cors.init_app(app)
 
-    sentry_sdk.init(
-        dsn="https://3313de1a38b04d3ea4ec37ea3f7ad81b@sentry.io/1759344",
-        integrations=[FlaskIntegration()]
-    )
+    # sentry_sdk.init(
+    #     dsn="https://3313de1a38b04d3ea4ec37ea3f7ad81b@sentry.io/1759344",
+    #     integrations=[FlaskIntegration()]
+    # )
     with app.app_context():
         from app.auth import bp as auth_bp
         app.register_blueprint(auth_bp, url_prefix='/auth')

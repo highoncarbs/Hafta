@@ -116,7 +116,7 @@ db.Table('emp_benefit',
          )
 
 
-class EmployeeBasicSchema(ma.SQLAlchemyAutoSchema ):
+class EmployeeBasicSchema(ma.ModelSchema ):
     id = field_for(Employee, 'id', dump_only=True)
     name = field_for(Employee, 'name', dump_only=True)
     company = ma.Nested(CompanySchema, many=True)
@@ -126,7 +126,7 @@ class EmployeeBasicSchema(ma.SQLAlchemyAutoSchema ):
         model = Employee
 
 
-class EmployeeSchema(ma.SQLAlchemyAutoSchema ):
+class EmployeeSchema(ma.ModelSchema ):
     id = field_for(Employee, 'id', dump_only=True)
     name = field_for(Employee, 'name', dump_only=True)
     dob = field_for(Employee, 'dob', dump_only=True)
@@ -173,7 +173,7 @@ class EmployeeSchema(ma.SQLAlchemyAutoSchema ):
         model = Employee
 
 
-class EmployeeMainSchema(ma.SQLAlchemyAutoSchema ):
+class EmployeeMainSchema(ma.ModelSchema ):
     id = field_for(Employee, 'id', dump_only=True)
     name = field_for(Employee, 'name', dump_only=True)
 
@@ -189,7 +189,7 @@ class EmployeeMainSchema(ma.SQLAlchemyAutoSchema ):
         model = Employee
 
 
-class EmployeeAdvanceSchema(ma.SQLAlchemyAutoSchema ):
+class EmployeeAdvanceSchema(ma.ModelSchema ):
     id = field_for(Employee, 'id', dump_only=True)
     name = field_for(Employee, 'name', dump_only=True)
 

@@ -36,7 +36,7 @@
               v-model="filter_company"
               placeholder="Select Company"
             >
-              <option value="jta">Jai Texart</option>
+              <option :key="item.id" v-for="item in company_list" :value="item.id">{{titleCase(item.name)}}</option>
             </b-select>
           </b-field>
           <b-field label-position="on-border" label="Advances">
@@ -91,22 +91,21 @@
               </p>
             </div>
           </template>
-          <b-table-column label="Name" v-slot="props"
+              <b-table-column label="Name" v-slot="props"
             >{{ props.row.name }}
           </b-table-column>
-          <b-table-column label="Company" v-slot="props">
-            <span v-if="props.row.company.length == 0" class="has-text-grey"
-              >None</span
-            >
-            <span v-else>
-              {{ props.row.company[0].name }}
-            </span>
+          <b-table-column label="Company" v-slot="props"
+            >{{ props.row.company[0].name }}
           </b-table-column>
           <b-table-column label="Salary" v-slot="props"
-            >{{ props.row.basicpay }}
+            >{{ formatedNumber(props.row.basicpay) }}
           </b-table-column>
-          <b-table-column label="Adv. Taken" v-slot="props"> </b-table-column>
-          <b-table-column label="Adv. Pending" v-slot="props"> </b-table-column>
+          <b-table-column label="Adv. Taken" v-slot="props">
+            {{ formatedNumber(props.row.adv_total) }}
+          </b-table-column>
+          <b-table-column label="Adv. Pending" v-slot="props">
+            {{ formatedNumber(props.row.outstanding) }}
+          </b-table-column>
           <b-table-column label="" v-slot="props">
             <div class="buttons">
               <button
@@ -150,10 +149,15 @@ export default {
       filter_company: null,
       filter_advance: null,
       employee: null,
+      company_list: [],
     };
   },
   mounted() {
     this.loadAsyncData();
+    let self = this
+    this.$axios.get('/master/get/company').then(response => {
+      self.company_list = response.data
+    })
   },
   methods: {
     clearFields() {
@@ -178,7 +182,7 @@ export default {
         `company=${this.filter_company}`,
       ].join("&");
       let self = this;
-      this.$axios.get("/employee/get?" + params).then((response) => {
+      this.$axios.get("/employee/get/advance?" + params).then((response) => {
         self.data = response.data.data;
         self.totalItems = response.data.total;
       });

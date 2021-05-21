@@ -842,7 +842,7 @@ export default {
     this.$axios.get("/master/get/benefits").then((response) => {
       this.data_benefits = response.data;
     });
-    this.$axios.post("/employee/get/profile/" + this.emp_id).then((response) => {
+    this.$axios.post("/employee/get/detail/" + this.emp_id).then((response) => {
       let payload = response.data;
       this.$set(this.formdata, "name", response.data["name"]);
       this.$set(this.formdata, "spousename", response.data["spousename"]);

@@ -36,22 +36,28 @@ class SalarySheet(TimestampMixin,  db.Model):
         self.paidamt = paidamt
         self.attendence = attendence
 
-
+# class SalarySheetSchema(ma.ModelSchema):
+#     salary_slips=  ma.Nested(SalarySheetSlipsSchema)
+#     class meta:
+#         model = SalarySheet
+    pass
 class SalarySheetSlips(TimestampMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     employee = db.relationship('Employee', secondary='sal_emp',
                               backref='sal_emp', cascade='all ,delete', lazy='joined')
     adv_deduction = db.Column(db.Float, default=0, nullable=False)
+    adv_id = db.Column(db.String(10))
     overtime = db.Column(db.Float, default=0, nullable=False)
     date = db.Column(db.DateTime, default=None, nullable=False)
     sheet =  db.relationship('SalarySheet', secondary='sal_slip',
                               backref='sal_slip', cascade='all ,delete', lazy='joined')
-
+    remarks = db.Column(db.String(750), default = '')
+    paidamt = db.Column(db.Float, default=0)
     def __init__(self  , adv_deduction , date):
         self.adv_deduction = adv_deduction 
         self.date = date 
 
-class SalarySheetSlipsSchema(ma.SQLAlchemyAutoSchema ):
+class SalarySheetSlipsSchema(ma.ModelSchema ):
     class meta:
         model = SalarySheetSlips
         

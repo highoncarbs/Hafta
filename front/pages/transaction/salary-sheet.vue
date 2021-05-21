@@ -62,6 +62,59 @@
           </div>
         </div>
       </b-sidebar>
+      <b-sidebar
+        mobile="fullwidth"
+        type="is-white"
+        :fullheight="true"
+        :overlay="true"
+        :right="true"
+        :open.sync="showRemarks"
+      >
+        <div class="my-4 px-4" v-if="remarks_id != null">
+          <div class="level is-mobile">
+            <div class="left-left">
+              <div class="level-item">
+                <p class="has-text-weight-medium is-size-5">Add Remarks</p>
+              </div>
+            </div>
+            <div class="left-right">
+              <div class="level-item">
+                <p @click="showRemarks = !showRemarks" class="delete"></p>
+              </div>
+            </div>
+          </div>
+          <hr class="my-2" />
+          <p class="is-size-4 has-text-weight-bold">{{salarySheet[remarks_id].employee[0].name}}</p>
+          <br />
+          <div class="level">
+            <div class="level-left">
+                              <div>
+<p class="heading">COMPANY</p>
+
+              <div class="level-item"><span class="is-size-5">{{titleCase(salarySheet[remarks_id].employee[0].company[0].name)}}</span></div>
+            </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <div>
+<p class="heading">SALARY</p>
+                          <p class="is-size-5">{{formatedNumber(salarySheet[remarks_id].net_payable)}}</p>
+                </div>
+</div>
+            </div>
+          </div>
+          
+          <b-field >
+            <div class="control">
+              <b-field label="Remarks" >
+                <b-input type="textarea" placeholder="Add Remarks or Salary Payment Note" v-model="salarySheet[remarks_id].remarks"></b-input>
+              </b-field>
+            </div>
+          
+          </b-field>
+        <button class="button is-black" @click="resetRemark">Save & Close</button>
+        </div>
+      </b-sidebar>
       <div
         class="section py-4 pt-5 is-fullwidth is-fullheight"
         :class="{ 'container px-0': $store.state.win }"
@@ -160,7 +213,7 @@
           </p>
 
           <div
-            class="notification is-link has-text-white"
+            class="notification is-info has-text-white"
             v-if="currSheetStatus == 'done'"
           >
             <p
@@ -178,7 +231,7 @@
             <p class="has-text-weight-medium">
               Salary Sheet has been processed for this month.
             </p>
-            <p>No further changes will be saved. You can <b>Print</b>  this sheet or <b>select empolyees</b>  for whom you want the slips.</p>
+            <!-- <p>No further changes will be saved. You can <b>Print</b>  this sheet or <b>select empolyees</b>  for whom you want the slips.</p> -->
           </div>
 
           <div class="level is-mobile">
@@ -252,7 +305,14 @@
               >
                 <b-table-column v-slot="props" field="name" label="Name">{{
                   props.row.employee[0].name
-                }}</b-table-column>
+                }}
+                <br>
+                <button @click="viewRemarks(props.index)" class="button tag heading is-rounded is-info">
+                  <b-icon icon="plus" size="is-small" class=" mr-2"></b-icon>
+                  Add Remarks</button>
+                  <p class="is-size-7 has-text-grey" v-for="row in props.row.remarks.split('\n')">{{row}}</p>
+                
+                </b-table-column>
                 <b-table-column v-slot="props" field="" label="Dept.">
                   <span v-if="props.row.employee[0].department.length != 0">
                     {{ props.row.employee[0].department[0].name }}</span
@@ -289,7 +349,7 @@
                   <small class="has-text-grey">MONTHLY</small>
                   <span v-if="typeof props.row.deductions.month == 'object'">
                     <ul
-                      :key="index"
+                      :key="index+'_ded_mnth'"
                       v-for="(dec, index) in props.row.deductions.month"
                     >
                       <li>{{ dec }}</li>
@@ -337,7 +397,16 @@
                 }}</b-table-column>
                 <b-table-column v-slot="props" label="Net (#1 - #2)">{{
                   formatedNumber(props.row.net_payable)
-                }}</b-table-column>
+                }}
+                <hr class="my-1">
+                <b-numberinput
+                      :controls="false"
+                      v-model.number="props.row.paidamt"
+                      controls-rounded
+                    ></b-numberinput>
+                <p class="heading mt-2">PENDING</p>
+                <p>{{ formatedNumber(props.row.net_payable - props.row.paidamt)}}</p>
+                </b-table-column>
               </b-table>
             </div>
           </div>
@@ -368,7 +437,9 @@ export default {
         time: null,
         final: null,
       },
+      remarks_id: null,
       showCalc: false,
+      showRemarks: false,
       showView: true,
       company: null,
       month: null,
@@ -585,8 +656,18 @@ export default {
         date: this.month,
         data: selectedData,
       };
+      localStorage.setItem("selecteddata", null);
       localStorage.setItem("selecteddata", JSON.stringify(formdata));
       window.open("/print/salary-sheet-selected", "_blank", [], true);
+    },
+    viewRemarks(data){
+      this.showRemarks = !this.showRemarks
+      this.remarks_id = data
+    },
+    resetRemark(){
+      this.showRemarks = !this.showRemarks
+      this.remarks_id = null
+
     },
     processSalary() {
       let self = this;

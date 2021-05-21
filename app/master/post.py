@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask import render_template, redirect, url_for, request, session, jsonify
-from flask_login import login_user, logout_user, current_user
+
 from app.master import bp
 from app.master.model import Post, PostSchema
 from app import db, ma

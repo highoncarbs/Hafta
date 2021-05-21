@@ -326,8 +326,8 @@
 {{formatedNumber(advSuccessAmt)}}
           </p>
         </div>
-  <div v-show="advSuccess">
-        <div class="px-4">
+  <div>
+        <div class="px-4 mt-3">
           <div class="level">
             <div class="level-left">
               <div class="level-item">
@@ -540,7 +540,7 @@ export default {
     return {
       showSide: false,
       showLedger: false,
-      advSuccess: false,
+      advSuccess: true,
       advSuccessAmt: null,
       data: [],
       set_disabled: false,
@@ -683,6 +683,7 @@ export default {
 
           let formdata = {
             emp_id: this.employee_adv_deets.id,
+            adv_total: this.employee_adv_deets.adv_total,
             data: this.form,
             // company_id: this.company,
             month: this.month,

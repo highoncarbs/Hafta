@@ -37,7 +37,9 @@
                         <td colspan="1">
 
                             <small class="has-text-weight-semibold">POST</small>
-                            <p>{{ row.employee[0].post[0].name }}</p>
+                            <p v-if="row.employee[0].post.length != 0">{{ row.employee[0].post[0].name }}</p>
+                            <p v-else class="has-text-grey">None</p>
+                            <!-- <p>{{ row.employee[0].post[0].name }}</p> -->
                         </td>
 
                         <td colspan="1">
@@ -133,7 +135,11 @@
                 </tbody>
 
             </table>
+            <div v-if="row.remarks != '' ">
 
+                <span class="heading">REMARKS</span>
+                <p v-for="row in row.remarks.split('\n')">{{row}}</p>
+            </div>
             <hr>
         </div>
 
@@ -165,14 +171,14 @@ export default {
   },
   delimiters: ["{{", "}}"],
   mounted() {
-    if (localStorage.jsondata) {
+    // if (localStorage.jsondata) {
                 let payload = JSON.parse(localStorage.getItem('selecteddata'))
       console.log(payload);
       this.salary_sheet = payload.data;
       this.company = payload["company"];
       this.date = payload["date"];
       // this.totalCalc();
-    }
+    
 
     if (this.salary_sheet != null) {
       let days = Number(0);

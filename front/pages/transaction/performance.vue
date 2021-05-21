@@ -616,7 +616,7 @@ export default {
     getFactor() {
       let self = this;
       this.errors = {};
-      if (this.employee && this.fromdate && this.todadte) {
+      if (this.employee && this.fromdate && this.todate) {
         this.viewPast = false;
         this.showEmpSelect = true;
         this.showPerfTable = true;

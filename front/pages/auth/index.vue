@@ -1,12 +1,12 @@
 <template>
-  <div>
-    <section class=" hero my-0  is-fullwidth">
+  <div class="">
+    <section class=" hero my-0 is-fullwidth">
       <div class="hero-head">
-        <div class="level has-background-black my-0 py-2 px-4">
+        <div class="level is-mobile my-0 py-2 px-4">
         
             <div class="level-left">
               <div class="level-item">
-                <figure class="image" style="width: 100px">
+                <figure class="image"  style="width: 100px;filter:invert(100%)">
                   <img src="~/static/type-logo.svg" alt="" />
                 </figure>
               </div>
@@ -21,14 +21,14 @@
             </div>
             <div class="level-right">
 
-              <a href="" class="has-text-right heading has-tex
-              t-white  level-item">
+              <a href="" class="has-text-right  heading has-text-dark  level-item">
                 PRODUCT OF <br> PEPLUM STUDIO
               </a>
             </div>
           
         </div>
       </div>
+      <hr class="my-1">
       <!-- <hr class="has-background-grey-lighter" style="height: 1px" /> -->
       <div class="hero-body" style="margin-top: 5rem">
         <div class="container">
@@ -40,7 +40,9 @@
               <br />
               <br />
               <p class="is-size-5 has-text-grey">
-                Welcome back.
+              <span class="has-text-weight-bold">
+                  Welcome back.
+                </span>
                 <br />Please login in to continue
               </p>
               <br />

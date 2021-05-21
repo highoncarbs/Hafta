@@ -1,58 +1,62 @@
 from flask import Blueprint, render_template
 from flask import render_template, redirect, url_for, request, session, jsonify
-from flask_login import login_user, logout_user, current_user
 from app.auth import bp
 from app.model import User, Role
-from app.auth.forms import LoginForm, RegistrationForm
-from app import db
+from app import db , jwt
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, create_refresh_token, get_raw_jwt 
+# jwt_refresh_token_required
 
 
-@bp.route('/login',  methods=['GET', 'POST'])
+# @jwt.token_in_blacklist_loader
+# def check_if_token_in_blacklist(decrypted_token):
+#     jti = decrypted_token['jti']
+#     return jti in blacklist
+blacklist = set()
+
+
+@bp.route('/login',  methods=['POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    form = LoginForm()
-    session['mssg'] = ""
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            session['mssg'] = "Invalid Username or Password"
-            return redirect(url_for('auth.login'))
-        login_user(user)
-        return redirect(url_for('main.home'))
-
-    return render_template('auth/login.html', title=('Log In'), form=form, mssg=session['mssg'])
-
-
-@bp.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('main.home'))
-
-
-@bp.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    form = RegistrationForm()
-    session['mssg'] = ""
-    if form.validate_on_submit():
-        if str(form.key.data) == "admin":
-            user = User(username=form.username.data)
-            user.set_password(form.password.data)
-            role = Role.query.filter_by(name="ADMIN").first()
-            user.roles.append(role)
-            db.session.add(user)
-            db.session.commit()
-            session['mssg'] = "Thanks for Signing Up . Please login to use Hafta"
-            return redirect(url_for('auth.login'))
+    auth = request.json
+    if auth:
+        user = str(auth['username']).lower().strip()
+        if user == 'admin':
+            if(auth['password'] == '101'):
+                access_token = create_access_token(identity=auth['username'])
+                refresh_token = create_refresh_token(identity=auth['username'])
+                return jsonify({'token': access_token, 'refresh_token': refresh_token})
+            else:
+                return jsonify({'message': "Invalid Data"})
         else:
-            session['mssg'] = "Invalid Key"
-    return render_template('auth/register.html', title='Register',
-                           form=form, mssg=session['mssg'])
+            return jsonify({'message': "Invalid Data"})
+
+    else:
+        return jsonify({'message': "Invalid Data"})
 
 
-@bp.route('/remove/session', methods=['POST'])
-def remove_mssg():
-    session['mssg'] = ""
-    return jsonify({'mssg': 'Emptying session mssg'})
+# @bp.route('/refresh', methods=['POST'])
+# @jwt_refresh_token_required
+# def refresh():
+#     current_user = get_jwt_identity()
+#     ret = {
+#         'token': create_access_token(identity=current_user)
+#     }
+#     return jsonify(ret), 200
+
+
+@bp.route('/user', methods=['GET'])
+@jwt_required
+def get_user_details():
+    try:
+        current_user = get_jwt_identity()
+        return jsonify({'user': {'name': current_user}})
+    except Exception as e:
+        print(str(e))
+        return jsonify({'message': 'Unable to load user.'})
+
+
+@bp.route('/logout', methods=['DELETE'])
+@jwt_required
+def logout():
+    jti = get_raw_jwt()['jti']
+    blacklist.add(jti)
+    return jsonify({"message": "Successfully logged out"}), 200

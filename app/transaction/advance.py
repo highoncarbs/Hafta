@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask import render_template, redirect, url_for, request, session, jsonify
-from flask_login import login_user, logout_user, current_user
+
 from app.transaction import bp
 from app.transaction.model_adv import Advance, AdvanceSchema
 from app.employee.model import Employee, EmployeeAdvanceSchema
@@ -84,26 +84,27 @@ def save_advance():
                 new_data = Advance()
                 emp = Employee.query.filter_by(
                     id=int(payload['emp_id'])).first()
-                if len(emp.emp_advance) < emp.advancenum:
-                    # comp = Company.query.filter_by(
-                    #     id=int(payload['company_id'])).first()
+                num_adv_emp = Advance.query.filter_by()
+                # if int(payload['adv_total']) < emp.advancenum:
+                # comp = Company.query.filter_by(
+                #     id=int(payload['company_id'])).first()
 
-                    new_data.employee.append(emp)
-                    # new_data.company.append(comp)
-                    for field in table_columns:
-                        val = payload_data[field]
-                        if val == '' or val is None:
-                            continue
+                new_data.employee.append(emp)
+                # new_data.company.append(comp)
+                for field in table_columns:
+                    val = payload_data[field]
+                    if val == '' or val is None:
+                        continue
 
-                        setattr(new_data, field, val)
-                    setattr(new_data, 'date', payload_date)
-                    setattr(new_data, 'trans', 'credit')
+                    setattr(new_data, field, val)
+                setattr(new_data, 'date', payload_date)
+                setattr(new_data, 'trans', 'credit')
 
-                    db.session.add(new_data)
-                    db.session.commit()
-                    return jsonify({'success': 'Data Added'})
-                else:
-                    return jsonify({'success': 'Max. Amount of advances taken'})
+                db.session.add(new_data)
+                db.session.commit()
+                return jsonify({'success': 'Data Added'})
+                # else:
+                #     return jsonify({'success': 'Max. Amount of advances taken'})
 
 
             except Exception as e:

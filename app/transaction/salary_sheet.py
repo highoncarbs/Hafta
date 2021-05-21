@@ -3,7 +3,7 @@
 
 from flask import Blueprint
 from flask import render_template, redirect, url_for, request, session, jsonify
-from flask_login import login_user, logout_user, current_user
+
 from app.transaction import bp
 from app.employee.model import Employee, EmployeeAdvanceSchema
 from app.master.model import Company, AttendenceRules
@@ -220,7 +220,13 @@ def process_sheet():
                         id=int(item['employee'][0]['id'])).first()
                     slip_data = SalarySheetSlips(
                         item['net_adv_deduction'], payload_date)
+                    try:
+                        slip_data.remarks = item['remarks']
+                    except Exception as e:
+                        pass
                     slip_data.overtime = item['overtime']
+                    slip_data.paidamt = item['paidamt']
+
                     slip_data.employee.append(emp)
                     pending_advance = float(
                         item['net_deduction_month']) + float(item['net_deduction_year'])
@@ -233,11 +239,13 @@ def process_sheet():
                         db.session.add(new_data)
 
                     slip_data.sheet.append(salary)
+                    slip_data.adv_id = new_data.id
 
                     db.session.add(slip_data)
-                    db.session.commit()
+
                     net_paid += float(item['net_payable'])
                     net_advance_deduction += float(item['net_adv_deduction'])
+                    db.session.commit()
                 # Attendece Percentage later
                 except Exception as e:
                     print(str(e))
@@ -246,6 +254,8 @@ def process_sheet():
             try:
 
                 salary.company.append(payload_company)
+                salary.paidamt = net_paid
+                salary.deductionsamt = net_advance_deduction
 
                 db.session.add(salary)
                 db.session.commit()
@@ -255,7 +265,39 @@ def process_sheet():
                 print(str(e))
                 return jsonify({'message': 'Something went wrong. -'+str(e)})
         else:
-            return jsonify({'message': 'Salary Sheet already processed fo this month.'})
+            salary = check_data
+            # check json_data froom slip
+            # get that slip
+            for item in json_data:
+                slip_data = SalarySheetSlips.query.filter_by(id = item['slip_id']).first()
+                print(slip_data)
+
+                slip_data.overtime = item['overtime']
+                slip_data.paidamt = item['paidamt']
+                try:
+                        slip_data.remarks = item['remarks']
+                except Exception as e:
+                    pass
+                if(slip_data.adv_id is not None):
+                    adv = Advance.query.filter_by(id = int(slip_data.adv_id)).first()
+                    print('------------', adv)
+                    print('------------', adv.advanceamt)
+                    adv.advanceamt = item['net_adv_deduction']
+                    slip_data.adv_deduction = item['net_adv_deduction']
+                    db.session.commit()
+                    
+                net_advance_deduction+= float(item['net_adv_deduction'])
+                net_paid+= float(item['net_payable'])
+                db.session.commit()
+            salary.paidamt = net_paid
+            salary.deductionsamt = net_advance_deduction
+            db.session.commit()
+            # for slip in salary.sal_slip:
+            #     slip.overtime = 
+            #     pass                
+
+
+            return jsonify({'message': 'Salary Sheet Updated'})
 
         # Save payroll info - paid out , advances paid out ,deductions & attendence
     else:
@@ -295,6 +337,7 @@ def get_processed_sheet():
         if check_data is not None:
             saved_data = SalarySheetSlips.query.filter(
                 SalarySheetSlips.sheet.any(SalarySheet.id == int(check_data.id))).all()
+            
             try:
 
                 generate_data = json.loads(generate_sheet(
@@ -304,6 +347,9 @@ def get_processed_sheet():
                         if (item['employee'][0]['id'] == slip.employee[0].id):
                             item['net_adv_deduction'] = slip.adv_deduction
                             item['overtime'] = slip.overtime
+                            item['remarks'] = slip.remarks
+                            item['slip_id'] = slip.id
+                            item['paidamt'] = slip.paidamt
 
                 return jsonify({'data': generate_data})
             except Exception as e:
