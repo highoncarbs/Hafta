@@ -115,6 +115,121 @@
         <button class="button is-black" @click="resetRemark">Save & Close</button>
         </div>
       </b-sidebar>
+       <b-sidebar
+      mobile="fullwidth"
+      type="is-white"
+      :fullheight="true"
+      :overlay="true"
+      :right="true"
+      :open.sync="showSide"
+    >
+      <div class="my-4 px-4">
+        <p
+          v-if="employee_adv_deets != null"
+          class="has-text-weight-medium is-size-5"
+        >
+          Advances for {{ this.employee_adv_deets.name }}
+        </p>
+        <hr class="my-2" />
+        <b-table
+          :data="advance_list.filter((item) => item.trans == 'credit')"
+          :empty="advance_list.length == 0"
+        >
+          <template #empty>
+            <div class="has-text-centered">
+              <br />
+              <b-icon
+                icon="table-remove"
+                class="has-text-grey-lighter"
+                size="is-large"
+              ></b-icon>
+              <p class="mt-4 has-text-weight-medium has-text-grey">
+                No Advances taken yet
+              </p>
+            </div>
+          </template>
+          <b-table-column label="Date" v-slot="props">{{
+            formatDate(new Date(props.row.date))
+          }}</b-table-column>
+          <b-table-column label="Amt." v-slot="props">{{
+            formatedNumber(props.row.advanceamt)
+          }}</b-table-column>
+          <b-table-column label="Ded." v-slot="props"
+            >{{ formatedNumber(props.row.deduction) }} /
+            <span class="has-text-grey has-text-weight-medium">{{
+              props.row.deduction_period
+            }}</span></b-table-column
+          >
+        </b-table>
+      </div>
+    </b-sidebar>
+    <b-sidebar
+      mobile="fullwidth"
+      type="is-white"
+      :fullheight="true"
+      :overlay="true"
+      :right="true"
+      :open.sync="showLedger"
+    >
+      <div class="my-4 px-4">
+        <p
+          v-if="employee_adv_deets != null"
+          class="has-text-weight-medium is-size-5"
+        >
+          Advance Ledger for {{ this.employee_adv_deets.name }}
+        </p>
+        <hr class="my-2" />
+        <p>
+          <span class="has-text-weight-semibold has-text-grey">Balance</span>
+          <span class="is-pulled-right">
+            {{ formatedNumber(getTotalCredit() - getTotalDebit()) }}
+          </span>
+        </p>
+        <br />
+        <b-table :data="advance_list" :empty="advance_list.length == 0">
+          <template #empty>
+            <div class="has-text-centered">
+              <br />
+              <b-icon
+                icon="table-remove"
+                class="has-text-grey-lighter"
+                size="is-large"
+              ></b-icon>
+              <p class="mt-4 has-text-weight-medium has-text-grey">
+                No Advances taken yet
+              </p>
+            </div>
+          </template>
+          <b-table-column label="Date" v-slot="props">{{
+            formatDate(new Date(props.row.date))
+          }}</b-table-column>
+          <!-- <b-table-column label="Amt." v-slot="props">{{
+            formatedNumber(props.row.advanceamt)
+          }}</b-table-column> -->
+          <b-table-column centered label="Debit" v-slot="props">
+            <span v-if="props.row.trans == 'debit'" class="is-pulled-right">
+              {{ formatedNumberNoCurr(props.row.advanceamt) }}
+            </span>
+          </b-table-column>
+          <b-table-column centered label="Credit" v-slot="props">
+            <span v-if="props.row.trans == 'credit'" class="is-pulled-right">
+              {{ formatedNumberNoCurr(props.row.advanceamt) }}
+            </span>
+          </b-table-column>
+          <!-- <b-table-column label="Ded." v-slot="props"
+            >{{ formatedNumber(props.row.deduction) }} /
+            <span class="has-text-grey has-text-weight-medium">{{
+              props.row.deduction_period
+            }}</span></b-table-column> -->
+
+          <template #footer>
+            <td></td>
+            <td class="has-text-right">{{ formatedNumberNoCurr(getTotalDebit()) }}</td>
+            <td class="has-text-right">{{ formatedNumberNoCurr(getTotalCredit()) }}</td>
+          </template>
+        </b-table>
+      </div>
+    </b-sidebar>
       <div
         class="section py-4 pt-5 is-fullwidth is-fullheight"
         :class="{ 'container px-0': $store.state.win }"
@@ -176,7 +291,7 @@
         </div>
         <!-- </transition> -->
         <div v-if="!showView">
-          <div class="level my-0">
+          <div class="level is-mobile my-0">
             <div class="level-left">
               <div class="level-item">
                 <button class="button mb-4" @click="showView = !showView">
@@ -405,7 +520,16 @@
                       controls-rounded
                     ></b-numberinput>
                 <p class="heading mt-2">PENDING</p>
-                <p>{{ formatedNumber(props.row.net_payable - props.row.paidamt)}}</p>
+                <p>{{ formatedNumber(props.row.net_payable - props.row.paidamt)}}
+                </p>
+                  <span v-if="props.row.net_payable - props.row.paidamt<0">
+                    <button @click="giveAdvance(props.row.employee[0].id, Math.abs(props.row.net_payable - props.row.paidamt))" class="mt-1 button tag heading is-black is-rounded">
+                      <b-icon size="is-small" class="mr-1" icon="plus"></b-icon>
+                      <span>
+                      Advance
+                      </span>
+                      </button>
+                  </span>
                 </b-table-column>
               </b-table>
             </div>
@@ -423,6 +547,290 @@
           </p>
         </div>
       </div>
+      <b-modal v-model="showAdvModal">
+      <div v-if="employee_adv_deets != null" class="box pt-0 px-0">
+        <div
+          class="box has-background-link has-text-white"
+          v-if="
+            employee_adv_deets != null && employee_adv_deets.advance == 'not'
+          "
+        >
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <div class="media">
+                  <div class="media-left">
+                    <b-icon icon="information" class="has-text-white"></b-icon>
+                  </div>
+                  <div class="media-content">
+                    <p>
+                      This employee has not been allowed advance. <br />
+                      If you'd like to change that , please edit employee's
+                      details.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <button class="button">Edit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          v-if="
+            advance_list.length >= employee_adv_deets.advancenum &&
+            employee_adv_deets.advance != 'not'
+          "
+          class="notification has-background-warning has-text-black"
+        >
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <div class="media">
+                  <div class="media-left">
+                    <b-icon icon="alert-circle" class="has-text-black"></b-icon>
+                  </div>
+                  <div class="media-content">
+                    <p class="has-text-weight-medium">
+                      Employee has reached the allowed advance limit. <br />
+                      If you'd like to increase advance limit , please edit
+                      Employee details.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <button class="button">Edit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div :class="{ 'is-hidden': advSuccess }"
+          class=" success-bg notification has-text-centered has-background-link-light"
+        >
+          <b-icon
+            size="is-large"
+            class="has-text-link"
+            icon="check-decagram"
+          ></b-icon>
+
+          <p class="is-size-5 mt-4 has-text-link-dark">
+            Advance given to {{titleCase(employee_adv_deets.name)}}
+
+          </p>
+          <p class="is-size-5 has-text-weight-bold has-text-link-dark">
+{{formatedNumber(advSuccessAmt)}}
+          </p>
+        </div>
+  <div>
+        <div class="px-4 mt-3">
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <p class="is-size-5 mt-4 has-text-weight-semibold">
+                  New Advance
+                  <span
+                    class="has-text-weight-normal"
+                    v-if="employee_adv_deets != null"
+                  >
+                    - {{ employee_adv_deets.name }}</span
+                  >
+                </p>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <div class="buttons">
+
+                <button @click="showLedger = !showLedger" class="button is-link is-light">
+                  <span >
+                    <!-- TODO: Triggers Side bar for Advances List -->
+                    Show Ledger
+                  </span>
+                </button>
+                <button @click="showSide = !showSide" class="button is-link">
+                  <b-icon icon="table-eye"></b-icon>
+                  <span class="ml-2">
+                    <!-- TODO: Triggers Side bar for Advances List -->
+                    View Advances
+                  </span>
+                </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <table
+            class="table is-fullwidth is-boxed"
+            v-if="employee_adv_deets != null"
+          >
+            <tr>
+              <td>
+                <b-field>
+                  <template #label>
+                    <span class="heading">BASIC PAY</span>
+                  </template>
+                  <p class="has-text-black has-text-weight-semibold">
+                    {{
+                      Number(employee_adv_deets.basicpay).toLocaleString(
+                        "en-IN"
+                      )
+                    }}
+                  </p>
+                </b-field>
+              </td>
+              <td>
+                <b-field>
+                  <template #label>
+                    <span class="heading">ADVANCE</span>
+                  </template>
+                  <p class="has-text-black">
+                    {{ titleCase(employee_adv_deets.advance) }}
+                  </p>
+                </b-field>
+              </td>
+              <td>
+                <b-field>
+                  <template #label>
+                    <span class="heading">NO. OF ADVANCE</span>
+                  </template>
+                  <p class="has-text-black">
+                    <span class="has-text-weight-semibold has-text-black">{{
+                      advance_list.filter((item) => item.trans == "credit")
+                        .length
+                    }}</span>
+                    / {{ employee_adv_deets.advancenum }}
+                  </p>
+                </b-field>
+              </td>
+              <td>
+                <b-field>
+                  <template #label>
+                    <span class="heading">Total Allowed</span>
+                  </template>
+                  <p
+                    class="has-text-black"
+                    v-if="employee_adv_deets.advancevalue != null"
+                  >
+                    {{
+                      employee_adv_deets.advancevalue.toLocaleString("en-IN")
+                    }}
+                  </p>
+                  <p v-else class="has-text-grey">None</p>
+                </b-field>
+              </td>
+              <td>
+                <b-field>
+                  <template #label>
+                    <span class="heading">OUTSTANDING</span>
+                  </template>
+                  <p class="has-text-black has-text-weight-semibold">
+                    {{ getOutstandingAdvance() }}
+                  </p>
+                </b-field>
+              </td>
+            </tr>
+          </table>
+          <b-field grouped group-multiline>
+            <div class="control">
+              <b-field label="Date">
+                <b-datepicker
+                  :disabled="set_disabled"
+                  v-model="form.date"
+                  :dob-formatter="dobFormatter"
+                >
+                </b-datepicker>
+              </b-field>
+            </div>
+            <div class="control">
+              <b-field label="Amount">
+                <b-input
+                  :disabled="set_disabled"
+                  v-model="form.advanceamt"
+                  placeholder="Enter Amount"
+                ></b-input>
+              </b-field>
+            </div>
+          </b-field>
+          <p class="mt-4 has-text-grey has-text-weight-medium is-size-5">
+            Security
+          </p>
+          <hr class="my-2" />
+          <b-field grouped group-multiline>
+            <div class="control">
+              <b-field label="Cheque No.">
+                <b-input
+                  :disabled="set_disabled"
+                  v-model="form.cheque_no"
+                  placeholder="Enter Amount"
+                ></b-input>
+              </b-field>
+            </div>
+            <div class="control">
+              <b-field label="Letter">
+                <b-radio
+                  :disabled="set_disabled"
+                  v-model="form.letter"
+                  native-value="yes"
+                  >Yes</b-radio
+                >
+                <b-radio
+                  :disabled="set_disabled"
+                  v-model="form.letter"
+                  native-value="no"
+                  >No</b-radio
+                >
+              </b-field>
+            </div>
+          </b-field>
+          <b-field grouped group-multiline>
+            <div class="control">
+              <b-field label="Deduction Amount">
+                <b-input
+                  :disabled="set_disabled"
+                  v-model="form.deduction"
+                  placeholder="Enter Amount"
+                ></b-input>
+              </b-field>
+            </div>
+            <div class="control">
+              <b-field label="Period">
+                <b-radio
+                  :disabled="set_disabled"
+                  v-model="form.deduction_period"
+                  native-value="month"
+                  >Month</b-radio
+                >
+                <b-radio
+                  :disabled="set_disabled"
+                  v-model="form.deduction_period"
+                  native-value="year"
+                  >Year</b-radio
+                >
+              </b-field>
+            </div>
+          </b-field>
+          <button
+            :disabled="set_disabled"
+            @click="submitData"
+            class="button is-black"
+          >
+            <b-icon icon="check"></b-icon>
+            <span class="ml-3">Save</span>
+          </button>
+  </div>
+          <button @click="showAdvModal = !showAdvModal" :class="{ 'is-hidden': advSuccess }" class="button is-link is-fullwidth ">
+            <b-icon icon="check"></b-icon>
+            <span class="ml-3">Done</span>
+          </button>
+        </div>
+      </div>
+    </b-modal>
     </div>
   </div>
 </template>
@@ -437,6 +845,25 @@ export default {
         time: null,
         final: null,
       },
+       showSide: false,
+      showLedger: false,
+      form: {
+        date: null,
+        advanceamt: null,
+        cheque_no: null,
+        letter: null,
+        deduction: null,
+        deduction_period: null,
+        errors: {},
+      },
+       advance_list: [],
+             employee_adv_deets: null,
+
+      advSuccess: true,
+      set_disabled: false,
+      advSuccessAmt: null,
+       showAdvModal: false,
+      showAdvLedger: false,
       remarks_id: null,
       showCalc: false,
       showRemarks: false,
@@ -514,6 +941,126 @@ export default {
     },
   },
   methods: {
+     getTotalDebit() {
+      return this.advance_list.reduce(function (total, value) {
+        return value.trans == "debit" ? total + value.advanceamt : total + 0;
+      }, 0);
+    },
+    getTotalCredit() {
+      let tota = this.advance_list.reduce(function (total, value) {
+        console.log(total, value);
+        return value.trans == "credit" ? total + value.advanceamt : total + 0;
+      }, 0);
+      return tota;
+    },
+      submitData(e) {
+      let self = this;
+      if (this.checkData()) {
+        console.log(this.form.errors.length);
+        if (Object.keys(this.form.errors).length == 0) {
+          this.submitting = true;
+          this.value = "Saving";
+
+          let formdata = {
+            emp_id: this.employee_adv_deets.id,
+            adv_total: this.employee_adv_deets.adv_total,
+            data: this.form,
+            // company_id: this.company,
+            month: this.month,
+          };
+          console.log(formdata);
+          this.$axios
+            .post("/transaction/advance/save", formdata)
+            .then(function (response) {
+              if (response.data.success) {
+                // Run notificaiton
+                // Open selection for reports and printing
+                self.$buefy.snackbar.open({
+                  duration: 4000,
+                  message: response.data.success,
+                  type: "is-light",
+                  position: "is-top-right",
+                  actionText: "Close",
+                  queue: true,
+                  onAction: () => {
+                    this.isActive = false;
+                  },
+                });
+
+                this.advSuccessAmt = Object.freeze(this.form.advanceamt)
+                this.form.advanceamt = 0;
+                this.form.date = null;
+                this.form.deduction = null;
+                this.form.deduction_period = null;
+                this.form.cheque_no = null;
+                this.form.letter = null;
+                this.advSuccess = true
+              } else if (response.data.message) {
+                // Run message
+                self.$buefy.snackbar.open({
+                  duration: 4000,
+                  message: response.data.message,
+                  type: "is-light",
+                  position: "is-top-right",
+                  actionText: "Close",
+                  queue: true,
+                  onAction: () => {
+                    this.isActive = false;
+                  },
+                });
+                console.log(response.data.message);
+              }
+              this.submitting = false;
+              this.value = "Save";
+            })
+            .catch(function (error) {
+              // RUn error
+              console.error(error);
+            });
+          this.submitting = false;
+          this.value = "Save";
+        }
+      }
+
+      e.preventDefault();
+    },
+     getOutstandingAdvance() {
+      let outstandingamt = Number(0);
+      if (this.advance_list != null) {
+        this.advance_list.forEach(function (item) {
+          console.log(item);
+          if (item.trans != "debit") {
+            outstandingamt += Number(item.advanceamt);
+          } else if (item.trans == "debit") {
+            outstandingamt -= Number(item.advanceamt);
+          }
+        });
+      }
+      this.form.totalAdvance = Number(outstandingamt);
+      return this.formatedNumber(outstandingamt);
+    },
+      giveAdvance(emp_id , pending) {
+      this.$axios
+        .get("/transaction/advance/employee/" + emp_id)
+        .then((response) => {
+          this.employee_adv_deets = response.data;
+          this.form.advanceamt = pending
+          this.form.date = this.month
+          this.showAdvModal = !this.showAdvModal;
+          this.$axios
+            .get("/transaction/advance/get/" + emp_id)
+            .then((response) => {
+              this.advance_list = response.data;
+              if (
+                this.advance_list.length >= this.employee_adv_deets.advancenum
+              ) {
+                this.set_disabled = true;
+              } else {
+                this.set_disabled = false;
+              }
+            });
+        });
+    },
     async copyAmt() {
       try {
         await navigator.clipboard.writeText(this.getOverTime);

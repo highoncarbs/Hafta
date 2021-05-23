@@ -93,6 +93,11 @@
           </template>
               <b-table-column label="Name" v-slot="props"
             >{{ props.row.name }}
+            <br>
+            <span class="tag is-warning is-rounded has-text-weight-semibold" v-if="props.row.sal_upd">
+              INCREMENT
+            {{ formatedDate(props.row.sal_upd)}}
+            </span>
           </b-table-column>
           <b-table-column label="Company" v-slot="props"
             >{{ props.row.company[0].name }}

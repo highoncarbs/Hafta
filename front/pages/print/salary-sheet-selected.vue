@@ -135,7 +135,7 @@
                 </tbody>
 
             </table>
-            <div v-if="row.remarks != '' ">
+            <div v-if="row.remarks != '' && row.remarks ">
 
                 <span class="heading">REMARKS</span>
                 <p v-for="row in row.remarks.split('\n')">{{row}}</p>

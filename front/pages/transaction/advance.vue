@@ -347,8 +347,7 @@
                 <div class="buttons">
 
                 <button @click="showLedger = !showLedger" class="button is-link is-light">
-                  <b-icon icon="table-clock"></b-icon>
-                  <span class="ml-2">
+                  <span >
                     <!-- TODO: Triggers Side bar for Advances List -->
                     Show Ledger
                   </span>

@@ -1,6 +1,6 @@
 from app import db
 from app import ma
-from datetime import datetime
+from datetime import datetime, time, timedelta
 from app.master.model import Post, Department, Company, CompanySchema,\
     Benefit, Location, LocationSchema, PostSchema, DepartmentSchema, BenefitSchema , Appointment , AppointmentSchema , City ,CitySchema
         
@@ -188,6 +188,7 @@ class EmployeeMainSchema(ma.ModelSchema ):
     class meta:
         model = Employee
 
+from dateutil.relativedelta import relativedelta
 
 class EmployeeAdvanceSchema(ma.ModelSchema ):
     id = field_for(Employee, 'id', dump_only=True)
@@ -203,6 +204,7 @@ class EmployeeAdvanceSchema(ma.ModelSchema ):
     appointment = ma.Nested(AppointmentSchema, many=True)
     outstanding = fields.Method('get_outstanding_adv')
     adv_total = fields.Method('get_total_adv')
+    sal_upd = fields.Method('get_sal_upd')
 
     def get_outstanding_adv(self,obj):
         total = 0
@@ -223,5 +225,17 @@ class EmployeeAdvanceSchema(ma.ModelSchema ):
                 total += float(item.advanceamt);
                          
         return total
+    def get_sal_upd(self,obj):
+        if(obj.incrementpr):
+
+            sal_upd = obj.dateeff + relativedelta(months=obj.incrementpr)
+            if (sal_upd - obj.dateeff).days < 30:
+                return sal_upd
+            else:
+                # print('OJOJ---',(sal_upd - obj.dateeff).days)
+                return None
+        else:
+            return None
+
     class meta:
         model = Employee
